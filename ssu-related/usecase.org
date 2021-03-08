@@ -1,0 +1,132 @@
+#+startup: inlineimages
+#+title: UML billeder
+* Usecase diagram
+#+begin_src plantuml :file usecase_diagram.png
+  title Usecase diagram
+
+  left to right direction
+
+  actor :Drone-operator: as DO
+  actor :Data management system: as DMS
+  actor :First responder: as FR
+  actor :Drone: as DR
+  actor :Relay-box: as RB
+
+  rectangle System{
+          (Kill Switch) as (UC1)
+          (Load map for focusarea) as (UC2)
+          (Plan search area) as (UC3)
+          (Receive Video-feed) as (UC4)
+          (Send commands) as (UC5)
+          (Control specified drone) as (UC6)
+          (Change controlled drone) as (UC7)
+          (Calculate route) as (UC8)
+          (Save recieved data) as (UC9)
+          (Connect relay-box to drone-operator) as (UC10)
+          (Recognize POI) as (UC11)
+          (Save Snapshot) as (UC12)
+          (Save GPS - Coordinates) as (UC13)
+          (Turn drone off) as (UC14)
+          (Turn drone on) as (UC15)
+          (Turn relay-box off) as (UC16)
+          (Turn relay-box on) as (UC17)
+          (Send Video-feed) as (UC18)
+          (Connect drone to relay-box) as (UC19)
+          (Follow planned route) as (UC20)
+          (Receive command) as (UC21)
+          (Connect to telephone network) as (UC22)
+          (Create hotspot) as (UC23)
+          (Show battery) as (UC24)
+          (Change camera settings) as (UC25)
+  }
+
+  DO -- UC1
+  DO -- UC2
+  DO -- UC3
+  DO -- UC4
+  DO -- UC5
+  DO -- UC7
+
+  DMS -- UC8
+  DMS -- UC9
+  DMS -- UC10
+  DMS -- UC11
+  DMS -- UC12
+  DMS -- UC13
+
+  FR -- UC14
+  FR -- UC15
+  FR -- UC16
+  FR -- UC17
+
+  DR -u- UC1
+  DR -u- UC18
+  DR -u- UC19
+  DR -u- UC20
+  DR -u- UC21
+
+  RB -u- UC21
+  RB -u- UC10
+  RB -u- UC22
+  RB -u- UC23
+
+  UC5 <-d- UC6
+
+  UC2 -[hidden]- UC18
+  UC3 -[hidden]- UC19
+  UC4 -[hidden]- UC20
+
+  UC14 -[hidden]- UC21
+  UC15 -[hidden]- UC10
+  UC16 -[hidden]- UC22
+  UC17 -[hidden]- UC23
+#+end_src
+
+#+RESULTS:
+[[file:usecase_diagram.png]]
+* OSI model
+#+begin_src plantuml :file OSI-model-data-flow.png
+  skinparam componentStyle rectangle
+  left to right direction
+
+  [Application] as APP1
+  [Presentation] as PRES1
+  [Session] as SES1
+  [Transport] as TRA1
+  [Network] as NET1
+  [Data Link] as DAT1
+  [Physical] as PHY1
+
+  [Application] as APP2
+  [Presentation] as PRES2
+  [Session] as SES2
+  [Transport] as TRA2
+  [Network] as NET2
+  [Data Link] as DAT2
+  [Physical] as PHY2
+
+  APP1 -> PRES1
+  PRES1 -> SES1
+  SES1 -> TRA1
+  TRA1 -> NET1
+  NET1 -> DAT1
+  DAT1 -> PHY1
+
+  APP2 <- PRES2
+  PRES2 <-  SES2
+  SES2 <- TRA2
+  TRA2 <- NET2
+  NET2 <- DAT2
+  DAT2 <- PHY2
+
+  APP1  -[hidden]- APP2
+  PRES1 -[hidden]- PRES2
+  SES1  -[hidden]- SES2
+  TRA1  -[hidden]- TRA2
+  NET1  -[hidden]- NET2
+  DAT1  -[hidden]- DAT2
+  PHY1 -> PHY2
+#+end_src
+
+#+RESULTS:
+[[file:OSI-model-data-flow.png]]
