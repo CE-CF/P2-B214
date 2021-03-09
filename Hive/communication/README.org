@@ -1,0 +1,36 @@
+#+title: README for communications module
+#+author: Simon Christensen
+* Protocol specification
+** Protocol fields
++-----------+-----------------+-------------+-----------------+
+| Data Type | Checksum(SHA2)  | Destination | Data            |
+| 2 bits    | 256 bits        | 4 bytes     | variable length |
++-----------+-----------------+-------------+-----------------+
+*** Destinations
+ - Operator PC
+ - Data management system
+ - Relay box
+ - Drone [1-??]
+**** Destination format
+The destination should be the internal ip address of the target.
+: 10.10.10.10
+*** Type definitions
+**** Waypoint sequence
+Value: 0b00
+Corresponding data format
+: lat1:long1;lat2:long2;lat3:long3;lat4:long4;
+xy-delim: ":"
+point-delim: ";"
+**** Boundary points
+Value: 0b01
+Corresponding data format
+: lat1:long1;lat2:long2;lat3:long3;lat4:long4;
+xy-delim: ":"
+point-delim: ";"
+**** Drone cmd
+Value: 0b10
+Corresponding data format example
+: up 50; forward 20; emergency;
+**** Heart beat
+Value: 0b11
+No need for data
