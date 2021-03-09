@@ -2,6 +2,24 @@ import hashlib
 
 
 class Packet:
+    """
+    This is a class for the packets, in the Hive system, being sent between:
+      - Operator PC
+      - Data Management System
+      - Relay box
+
+    Attributes:
+      - p_type (int):
+              The packet type, can be assigned by either 0,1,2,3
+              or by writing one of the strings \"wayp\", \"bound\", \"drone\" or \"heart\"
+      - p_checksum (bytes object):
+              This attributes is calculated based on packet type, destination and data.
+      - p_dest (TBD):
+              This is the packet destination, should only be used when communicating directly with a drone.
+      - p_data (TBD):
+              This attribute holds the data that should be sent over the protocol
+    """
+
     # Attributes
     _p_type = None
     _p_checksum = None
