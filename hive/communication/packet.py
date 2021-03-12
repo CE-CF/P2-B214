@@ -1,4 +1,5 @@
 import hashlib
+import ipaddress
 
 
 class Packet:
@@ -9,14 +10,14 @@ class Packet:
       - Relay box
 
     Attributes:
-      - p_type (int):
+      - p_type (int): (default: \"heart\")
               The packet type, can be assigned by either 0,1,2,3
               or by writing one of the strings \"wayp\", \"bound\", \"drone\" or \"heart\"
       - p_checksum (bytes object):
               This attributes is calculated based on packet type, destination and data.
-      - p_dest (TBD):
+      - p_dest (string): (default: '127.0.0.1')
               This is the packet destination, should only be used when communicating directly with a drone.
-      - p_data (TBD):
+      - p_data (string):
               This attribute holds the data that should be sent over the protocol
     """
 
@@ -26,7 +27,7 @@ class Packet:
     _p_dest = None
     _p_data = None
 
-    def __init__(self, m_type="heart", m_dest=None, m_data=None):
+    def __init__(self, m_type="heart", m_dest="127.0.0.1", m_data=""):
         self.p_type = m_type
         self.p_dest = m_dest
         self.p_data = m_data
@@ -38,12 +39,17 @@ class Packet:
 
     @p_type.setter
     def p_type(self, p_type):
-        self._p_type = {
-            "wayp": 0,
-            "bound": 1,
-            "drone": 2,
-            "heart": 3,
-        }[p_type]
+        if type(p_type) is str:
+            self._p_type = {
+                "wayp": 0,
+                "bound": 1,
+                "drone": 2,
+                "heart": 3,
+            }[p_type]
+        elif type(p_type) is int and p_type in [0, 1, 2, 3]:
+            self._p_type = p_type
+        else:
+            pass
 
     @property
     def p_checksum(self):
@@ -56,7 +62,7 @@ class Packet:
     def _set_checksum(self):
         checksum = hashlib.sha256()
         type_bytes = bytes(self.p_type)
-        dest_bytes = bytes(self.p_dest)
+        dest_bytes = self.p_dest.packed  # TODO
         data_bytes = bytes(self.p_data.encode())
 
         checksum.update(type_bytes)
@@ -71,7 +77,7 @@ class Packet:
 
     @p_dest.setter
     def p_dest(self, p_dest):
-        self._p_dest = p_dest
+        self._p_dest = ipaddress.IPv4Address(p_dest)
 
     @property
     def p_data(self):
@@ -80,3 +86,14 @@ class Packet:
     @p_data.setter
     def p_data(self, p_data):
         self._p_data = p_data
+
+    def dump(self):
+        """Prints all of the content of the packet"""
+        print("=====================================")
+        print("|          Packet content           |")
+        print("=====================================")
+        print(f"[TYPE]: {self.p_type}")
+        print(f"[CHECKSUM]: {self.p_checksum}")
+        print(f"[DESTINATION]: {self.p_dest}")
+        print(f"[DATA]: {self.p_data}")
+        print("=====================================")

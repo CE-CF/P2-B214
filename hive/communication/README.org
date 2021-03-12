@@ -34,3 +34,115 @@ Corresponding data format example
 **** Heart beat
 Value: 0b11
 No need for data
+* Class diagrams
+#+begin_src plantuml :file classdiagram.png
+  title Class diagram for communications module
+
+  class Packet{
+          Description
+          ..
+          This is the class for our
+          protocol packet.
+          --
+          Attributes:
+          ..
+          -p_checksum
+          +p_type
+          +p_dest
+          +p_data
+          --
+          Methods:
+          ..
+          -set_checksum()
+  }
+
+  abstract class Server{
+          Description
+          ..
+          This is the base class for our
+          server classes. It also acts as a
+          template for the client class
+          --
+          Attributes:
+          ..
+          -server_port_udp : Integer
+          -server_port_tcp : Integer
+          -packet : Packet
+          __
+          Methods
+          ..
+          +encode_packet()
+          +decode_packet()
+          ..Abstract methods..
+          +{abstract} run()
+  }
+
+  class DMSServer{
+          Description
+          ..
+          This class will be used by
+          the DMS to receive messages
+          from OPCClient and RBClient
+  }
+
+  class RBServer{
+          Description
+          ..
+          This class wil be used by
+          the relay box to receive
+          messages from the DMSClient
+  }
+
+  class Client{
+          Attributes:
+          ..
+          -server_port
+          -server_ip
+          -server_hostname
+          --
+          Methods
+          ..
+          +encode_packet()
+          +decode_packet()
+
+  }
+
+  class DMSClient{
+          Description
+          ..
+          This class will be used by
+          the DMS to send messages to
+          RBServer
+  }
+
+  class OPCClient{
+          Description
+          ..
+          This class will be used by
+          the OPC to send messages to
+          DMSServer
+  }
+
+  class RBClient{
+          Description
+          ..
+          This class will be used by
+          the relay box to send messages to
+          DMSServer
+  }
+
+  Client o-- OPCClient
+  Client o-- RBClient
+  Client o-- DMSClient
+
+  class Client extends Server
+
+  Server o-- DMSServer 
+  Server o-- RBServer  
+
+  Server - Packet : send/receive >
+  Packet - Client : > send/receive 
+#+end_src
+
+#+RESULTS:
+[[file:classdiagram.png]]
