@@ -8,9 +8,8 @@ def insert_string_middle_snapshot(str, word):
     return str[:34] + word + str[34:]
 
 
-
 #Insert new poi into table
-def new(latitude, longitude):
+def new(drone, latitude, longitude):
     try:
         connection = mysql.connector.connect(user='root', password='password', # Opretter forbindelse til MySQL databasen
                                             host='localhost',
@@ -36,9 +35,9 @@ def new(latitude, longitude):
         
         print("%s does not exist"% video)
         
-        mySql_new_query = """INSERT INTO hive.poi (latitude, longitude, video, picture, spotted) 
-                            VALUES (%s, %s, %s, %s, CURRENT_TIME) """
-        poi_data = (latitude, longitude, video, snapshot)
+        mySql_new_query = """INSERT INTO hive.poi (drone, latitude, longitude, video, picture, spotted) 
+                            VALUES (%s, %s, %s, %s, %s, CURRENT_TIME) """
+        poi_data = (drone, latitude, longitude, video, snapshot)
         cursor.execute(mySql_new_query, poi_data)
         connection.commit()
 

@@ -8,7 +8,10 @@ from tableHandlers import *
 
 #All point of interest related commands
 
-#poi.new(00.000000, 00.000000)
-poi.new(11.111111, 11.111111)
-poi.new(22.222222, 22.222222)
-poi.new(33.333333, 33.333333)
+#poi.new('testdrone', 00.000000, 00.000000)
+#poi.new('Drone1', 11.111111, 11.111111)
+#poi.new('Drone2', 22.222222, 22.222222)
+#poi.new('Drone3', 33.333333, 33.333333)
+
+
+route.route('testdrone', 1, 11.111111, 12.111111, 22.222222, 23.222222, 33.333333, 34.333333, 44.444444, 45.444444)
