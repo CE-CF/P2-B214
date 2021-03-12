@@ -13,5 +13,9 @@ from tableHandlers import *
 #poi.new('Drone2', 22.222222, 22.222222)
 #poi.new('Drone3', 33.333333, 33.333333)
 
+#All route related commands
 
-route.route('testdrone', 1, 11.111111, 12.111111, 22.222222, 23.222222, 33.333333, 34.333333, 44.444444, 45.444444)
+route.new('TESTER', 5, 66.666666, 66.666666)
+#route.new('testdrone1', 1, 12.345678, 12.345678)
+#route.new('testdrone2', 2, 87.654321, 87.654321)
+

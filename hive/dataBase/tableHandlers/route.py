@@ -9,7 +9,7 @@ def insert_string_long(str, word):
 
 
 #Insert new poi into table
-def route(drone, type, *coordinates):
+def new(drone, type, *coordinates):
     lat_list = coordinates[::2]
     long_list = coordinates[1::2]
     if type in [1,2]:
@@ -70,28 +70,42 @@ def route(drone, type, *coordinates):
                 connection.commit()
             
             if type == 1:
-                mySql_route_insert_info_query = """INSERT INTO hive.route (drone, type, received) 
-                            VALUES (%s, %s, CURRENT_TIME) """
                 type_converter = 'waypoint'
-                info = (drone, type_converter)
-                cursor.execute(mySql_route_insert_info_query, info)
-                connection.commit()
             else:
-                mySql_route_insert_info_query = """INSERT INTO hive.route (drone, type, received) 
-                            VALUES (%s, %s, CURRENT_TIME) """
                 type_converter = 'boundary'
-                info = (drone, type_converter)
-                cursor.execute(mySql_route_insert_info_query, info)
-                connection.commit()
-            
-            for i in range(len(lat_list)):
-                column = i+1
-                mySql_route_insert_cor_query = """INSERT INTO hive.route (lat%s, long%s) 
-                            VALUES (%s, %s) """
-                cor = (column, column, lat_list[i], long_list[i])
-                cursor.execute(mySql_route_insert_cor_query, cor)
-                connection.commit()
-            
+
+            ds_list= ('drone', 'type, ')
+            ending = (', received',)
+            query_cor = [None]*len(coordinates)
+            counter = 1
+            for i in range(len(coordinates)):
+                
+                converted_counter = '{}'.format(counter)
+                converted_counter2 = '{}'.format(counter-1)
+                if (i % 2) == 0:
+                    #print("{0} is Even".format(counter))
+                    query_cor[i] = insert_string_lat('lat', converted_counter)
+                    counter += 1
+                else:
+                    #print("{0} is Odd".format(counter))
+                    query_cor[i] = insert_string_long('long', converted_counter2)
+
+            query_placeholders = ', '.join(['%s'] * (len(coordinates)+2))
+            query_columns = ', '.join(ds_list)
+            query_cor = ', '.join(query_cor)
+            query_end = ', '.join(ending)
+
+            mySql_insert_route_query = ''' INSERT INTO hive.route (%s%s%s) VALUES (%s, CURRENT_TIME) ''' %(query_columns, query_cor, query_end, query_placeholders)
+
+            #print(mySql_insert_route_query)
+            dronetype = (drone,type_converter)
+            route_data = dronetype+coordinates
+            #print("this is my route_data: %s"% list(route_data))
+            cursor.execute(mySql_insert_route_query, route_data)
+            connection.commit()
+
+
+        
         except mysql.connector.Error as error:
             print("Failed to insert new route to table: {}".format(error))
         
@@ -101,4 +115,4 @@ def route(drone, type, *coordinates):
                 connection.close()
                 print("MySQL connection is closed")
     else:
-        print("Type not recognized")
+        print("Type not recognized, has to be in [1,2]")
