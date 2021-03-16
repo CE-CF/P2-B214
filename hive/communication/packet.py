@@ -1,5 +1,57 @@
 import hashlib
 import ipaddress
+from ..exceptions.packet_exceptions import *
+
+
+def encode_packet(packet):
+    """Encodes the supplied packet into a bytes object
+
+    Arguments:
+      - packet (Packet):
+              The packet to be encoded
+
+    Returns:
+      - packet_bytes (bytes)"""
+    if type(packet) is not Packet:
+        raise EncodeErrorPacket(packet, f"Argument is not of type: {type(Packet())} ")
+
+    packet_bytes_array = bytearray()
+    packet_bytes_array.append(packet.p_type)
+    packet_bytes_array += bytearray(packet.p_checksum)
+    packet_bytes_array += bytearray(packet.p_dest.packed)
+    packet_bytes_array += packet.p_data.encode()
+    packet_bytes_array += bytearray(0x00)
+    packet_bytes = bytes(packet_bytes_array)
+    return packet_bytes
+
+
+def decode_packet(packet_bytes):
+    packet_type = packet_bytes[0]
+    packet_checksum = packet_bytes[1:33]
+    packet_dest = packet_bytes[33:37]
+    packet_data = packet_bytes[37:]
+
+    if (
+        _calc_checksum(bytes(packet_type), bytes(packet_dest), bytes(packet_data))
+        != packet_checksum
+    ):
+        raise DecodeErrorChecksum(packet_bytes)
+    else:
+        packet = Packet(packet_type, packet_dest, packet_data.decode())
+        return packet
+
+
+def _calc_checksum(packet_type: bytes, packet_dest: bytes, packet_data: bytes):
+    checksum = hashlib.sha256()
+    type_bytes = packet_type
+    dest_bytes = packet_dest
+    data_bytes = packet_data
+
+    checksum.update(type_bytes)
+    checksum.update(dest_bytes)
+    checksum.update(data_bytes)
+
+    return checksum.digest()
 
 
 class Packet:
@@ -27,11 +79,13 @@ class Packet:
     _p_dest = None
     _p_data = None
 
-    def __init__(self, m_type="heart", m_dest="127.0.0.1", m_data=""):
-        self.p_type = m_type
-        self.p_dest = m_dest
-        self.p_data = m_data
-        self._set_checksum()
+    def __init__(self, p_type="heart", p_dest="127.0.0.1", p_data=""):
+        self.p_type = p_type
+        self.p_dest = p_dest
+        self.p_data = p_data
+        self.p_checksum = _calc_checksum(
+            bytes(self.p_type), self.p_dest.packed, self.p_data.encode()
+        )
 
     @property
     def p_type(self):
@@ -55,21 +109,9 @@ class Packet:
     def p_checksum(self):
         return self._p_checksum
 
-    # ---
-    # Checksum should not be set from the outside,
-    # it should be calculated based internal values
-    # ---
-    def _set_checksum(self):
-        checksum = hashlib.sha256()
-        type_bytes = bytes(self.p_type)
-        dest_bytes = self.p_dest.packed  # TODO
-        data_bytes = bytes(self.p_data.encode())
-
-        checksum.update(type_bytes)
-        checksum.update(dest_bytes)
-        checksum.update(data_bytes)
-
-        self._p_checksum = checksum.digest()
+    @p_checksum.setter
+    def p_checksum(self, checksum: bytes):
+        self._p_checksum = checksum
 
     @property
     def p_dest(self):
