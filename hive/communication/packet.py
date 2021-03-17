@@ -3,15 +3,14 @@ import ipaddress
 from ..exceptions.packet_exceptions import *
 
 
-def encode_packet(packet):
-    """Encodes the supplied packet into a bytes object
+def encode_packet(packet: Packet):
+    """Encode the packet object into bytes.
 
-    Arguments:
-      - packet (Packet):
-              The packet to be encoded
+    :param packet:
+    :type packet: Packet
+    :returns: bytes
 
-    Returns:
-      - packet_bytes (bytes)"""
+    """
     if type(packet) is not Packet:
         raise EncodeErrorPacket(packet, f"Argument is not of type: {type(Packet())} ")
 
@@ -25,7 +24,14 @@ def encode_packet(packet):
     return packet_bytes
 
 
-def decode_packet(packet_bytes):
+def decode_packet(packet_bytes: bytes):
+    """Decodes bytes and tries to convert them into a packet
+
+    :param packet_bytes:
+    :type packet_bytes:
+    :returns: Packet
+
+    """
     packet_type = packet_bytes[0]
     packet_checksum = packet_bytes[1:33]
     packet_dest = packet_bytes[33:37]
@@ -42,6 +48,17 @@ def decode_packet(packet_bytes):
 
 
 def _calc_checksum(packet_type: bytes, packet_dest: bytes, packet_data: bytes):
+    """Calculates the checksum for a Packet
+
+    :param packet_type:
+    :type packet_type: bytes
+    :param packet_dest:
+    :type packet_dest: bytes
+    :param packet_data:
+    :type packet_data: bytes
+    :returns: bytes
+
+    """
     checksum = hashlib.sha256()
     type_bytes = packet_type
     dest_bytes = packet_dest
@@ -103,7 +120,7 @@ class Packet:
         elif type(p_type) is int and p_type in [0, 1, 2, 3]:
             self._p_type = p_type
         else:
-            pass
+            raise PacketTypeException
 
     @property
     def p_checksum(self):
@@ -119,7 +136,13 @@ class Packet:
 
     @p_dest.setter
     def p_dest(self, p_dest):
-        self._p_dest = ipaddress.IPv4Address(p_dest)
+        try:
+            self._p_dest = ipaddress.IPv4Address(p_dest)
+        except:
+            print(
+                f"""Something is wrong with destination address. Please make sure it is correct:
+{p_dest}"""
+            )
 
     @property
     def p_data(self):
