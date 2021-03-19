@@ -1,10 +1,24 @@
-from main import ScreenWidth, ScreenHeight
+#from main import ScreenSize, ScreenWidth, ScreenHeight
+#from MyGame import Game
+from Global_Constants import ScreenSize, ScreenWidth, ScreenHeight
 from math import sqrt
 import pygame
 
+#ScreenWidth = 1080
+#ScreenHeight = 640
+#Game.Game.ScreenWidth
 
 Pos = Pos_x, Pos_y = [ScreenWidth/2, ScreenHeight/2]
 Offset = Offset_x, Offset_y = [Pos_x - ScreenWidth/2, Pos_y - ScreenHeight/2]
+
+#Pos = Pos_x, Pos_y = [MainGame.ScreenWidth/2, MainGame.ScreenHeight/2]
+#Offset = Offset_x, Offset_y = [Pos_x - MainGame.ScreenWidth/2, Pos_y - MainGame.ScreenHeight/2]
+
+print(f'Width is: {ScreenWidth}')
+print(f'Height is: {ScreenHeight}')
+
+#Pos = Pos_x, Pos_y = [Game.ScreenWidth/2, Game.ScreenHeight/2]
+#Offset = Offset_x, Offset_y = [Pos_x - Game.ScreenWidth/2, Pos_y - Game.ScreenHeight/2]
 
 
 Move_Left = False
