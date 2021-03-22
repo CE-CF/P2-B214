@@ -1,51 +1,33 @@
-import mysql.connector
+from .tableHandler import TableHandler
+from .databaseHandler import DatabaseHandler
 
-#Function to insert string into middle of another string, used for checking file path
-def insert_string_middle_video(str, word):
-    return str[:31] + word + str[31:]
+class Poi(TableHandler, DatabaseHandler):
 
-def insert_string_middle_snapshot(str, word):
-    return str[:34] + word + str[34:]
-
-
-#Insert new poi into table
-def new(drone, latitude, longitude):
-    try:
-        connection = mysql.connector.connect(user='root', password='password', # Opretter forbindelse til MySQL databasen
-                                            host='localhost',
-                                            database='hive')
-        
-        cursor = connection.cursor()
-
-        mySql_new_check_query = """SELECT video, COUNT(*) FROM hive.poi WHERE video = %s GROUP BY video"""
-
-        converted_i = ''
-
-        for i in range(6):
-            converted_i = '{}'.format(i)
-            video = (insert_string_middle_video('C:/Users/user/POI/Videos/Video_.mp4', converted_i),)
-            cursor.execute(mySql_new_check_query, video)
-            results = cursor.fetchall()
-            row_count = cursor.rowcount
-            print("number of affected rows: {}".format(row_count))
-            if row_count == 0: break
-        
-        video = insert_string_middle_video('C:/Users/user/POI/Videos/Video_.mp4', converted_i)
-        snapshot = insert_string_middle_snapshot('C:/Users/user/POI/Videos/Snapshot_.jpg', converted_i)
-        
-        print("%s does not exist"% video)
-        
-        mySql_new_query = """INSERT INTO hive.poi (drone, latitude, longitude, video, picture, spotted) 
-                            VALUES (%s, %s, %s, %s, %s, CURRENT_TIME) """
-        poi_data = (drone, latitude, longitude, video, snapshot)
-        cursor.execute(mySql_new_query, poi_data)
-        connection.commit()
-
-    except mysql.connector.Error as error:
-        print("Failed to insert new POI to table: {}".format(error))
+    def __init__(self, DroneName, latitude, longitude):
+        self.DroneName = DroneName
+        self.latitude = latitude
+        self.longitude = longitude
+        super().__init__('poi')
     
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("MySQL connection is closed")
+    #Function to insert string into middle of another string, used for checking file path
+    def insert_string_middle_video(str, word):
+        return str[:31] + word + str[31:]
+
+    def insert_string_middle_snapshot(str, word):
+        return str[:34] + word + str[34:]
+
+    def insert(self):
+        #for i in range(100):
+        #    converted_i = '{}'.format(i)
+        #    videoTaken = (self.insert_string_middle_video('C:/Users/user/POI/Videos/Video_.mp4', converted_i),)
+        #    mySql_check_query = super().check_query(video)
+        #    print(mysql_check_query)
+        
+        #videoTaken = self.insert_string_middle_video('C:/Users/user/POI/Videos/Video_.mp4', converted_i)
+        #snapshotTaken = self.insert_string_middle_snapshot('C:/Users/user/POI/Videos/Snapshot_.jpg', converted_i)
+        videoTaken = 'C:/Users/user/POI/Videos/Video_1.mp4'
+        snapshotTaken ='C:/Users/user/POI/Videos/Snapshot_1.jpg'
+
+        mySql_insert_query = super().insert_query(drone = self.DroneName, latitude = self.latitude, longitude = self.longitude, video = videoTaken, snapshot = snapshotTaken)
+        drone_data = (self.DroneName,self.latitude,self.longitude,videoTaken,snapshotTaken)
+        print(mySql_insert_query+"| inserted values are {}".format(drone_data))
