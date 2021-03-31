@@ -4,39 +4,51 @@ import pygame
 from math import sqrt
 
 class Drone():
-    def __init__(self, Start_x, Start_y, Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT, Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP):
+    # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
+    def __init__(self, Start_x, Start_y, Speed = 1,
+                 Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT, Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP):
         self.Pos = self.Pos_x, self.Pos_y = [Start_x, Start_y]
+        # Drone's rectangle object. Used as the place to draw the drone, and as it's collision box.
+        # The arguments are it's position and it's size
         self.Rect = pygame.Rect(Start_x - Camera.Offset_x, Start_y - Camera.Offset_y, 64, 64)
         #self.Rect = pygame.Rect(Start_x - OLD_Camera.Camera.Offset_x, Start_y - OLD_Camera.Camera.Offset_y, 64, 64)
+        # Load the image of the drone
         self.Image = pygame.image.load("Drone_Icon.png")
+        # Set movement keys
         self.Key_Left = Key_Left
         self.Key_Right = Key_Right
         self.Key_Down = Key_Down
         self.Key_Up = Key_Up
+        # Set the booleans that activate with the movement keys
         self.Move_Left = False
         self.Move_Right = False
         self.Move_Down = False
         self.Move_Up = False
+        # x and y speed of drone. Used to move the drone's position
         self.Speed_x = 0
         self.Speed_y = 0
-        self.Colided_Left = False
-        self.Colided_Right = False
-        self.Colided_Down = False
-        self.Colided_Up = False
+        # I think these are not used anymore. Remenants of the old collision algorithsm
+        #self.Colided_Left = False
+        #self.Colided_Right = False
+        #self.Colided_Down = False
+        #self.Colided_Up = False
+        # The length of the speed vector. Will be max speed when controller is implemented
+        self.Speed = Speed
 
-
-    def Movement_Handler(self, Speed):
-        self.Speed_x = ( self.Move_Right*(Speed - (self.Move_Up   | self.Move_Down)*Speed*((sqrt(2)-1)/sqrt(2)))
-                       - self.Move_Left *(Speed - (self.Move_Up   | self.Move_Down)*Speed*((sqrt(2)-1)/sqrt(2))))
-        self.Speed_y = ( self.Move_Down *(Speed - (self.Move_Right| self.Move_Left)*Speed*((sqrt(2)-1)/sqrt(2)))
-                       - self.Move_Up   *(Speed - (self.Move_Right| self.Move_Left)*Speed*((sqrt(2)-1)/sqrt(2))))
+    # This function handles the movement of the drones by changing their position according to their speed
+    # It checks the direction the drone is going and assigns the x and y speeds accordingly
+    def Movement_Handler(self):
+        self.Speed_x = ( self.Move_Right*(self.Speed - (self.Move_Up   | self.Move_Down)*self.Speed*((sqrt(2)-1)/sqrt(2)))
+                       - self.Move_Left *(self.Speed - (self.Move_Up   | self.Move_Down)*self.Speed*((sqrt(2)-1)/sqrt(2))))
+        self.Speed_y = ( self.Move_Down *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2)))
+                       - self.Move_Up   *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2))))
         self.Pos_x += self.Speed_x
         self.Pos_y += self.Speed_y
-
+    # This function updates the rectangle's position to match the drone's position
     def Update_Rect(self):
         self.Rect.topleft = self.Pos_x - Camera.Offset_x, self.Pos_y - Camera.Offset_y
         #self.Rect.topleft = self.Pos_x - OLD_Camera.Camera.Offset_x, self.Pos_y - OLD_Camera.Camera.Offset_y
-
+    # This function takes the list of keys pressed by the keyboard and assigns them to their corresponding move booleans
     def Keyhold(self, keyPressList):
         self.Move_Left = keyPressList[self.Key_Left]
         self.Move_Right = keyPressList[self.Key_Right]
@@ -44,6 +56,7 @@ class Drone():
         self.Move_Up = keyPressList[self.Key_Up]
 
     '''
+    # Old bad collision algorithms
     def Check_Collision(self, Rect):
         self.Pos_x += (self.Move_Left  and ((Rect.collidepoint(self.Rect.topleft)
                                                  | Rect.collidepoint(self.Rect.midleft)
@@ -114,19 +127,19 @@ class Drone():
         self.Colided_Down = Collide_Down
         self.Colided_Up = Collide_Up
     '''
-
+    # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):
-
-        self.Update_Rect()
-        Collision = self.Rect.colliderect(Rect)
-        self.Pos_x -= self.Speed_x * Collision
-
-        self.Update_Rect()
-        Collision = self.Rect.colliderect(Rect)
-        self.Pos_x += self.Speed_x * Collision
-        self.Pos_y -= self.Speed_y * Collision
-
-        self.Update_Rect()
-        Collision = self.Rect.colliderect(Rect)
-        self.Pos_x -= self.Speed_x * Collision
+        # Checks if the rectangles collided horizontally
+        self.Update_Rect()                          # Update this drone's rectangle position
+        Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
+        self.Pos_x -= self.Speed_x * Collision      # Go back to the previous position horizontally if collided
+        # Checks if the rectangles collided vertically
+        self.Update_Rect()                          # Update this drone's rectangle to the new position
+        Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
+        self.Pos_x += self.Speed_x * Collision      # Negate the horizontal back movemenet if collided
+        self.Pos_y -= self.Speed_y * Collision      # Go back to the previous position vertically if collided
+        # Checks if the rectangles collided both horizontally and vertically
+        self.Update_Rect()                          # Update this drone's rectangle to the new position
+        Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
+        self.Pos_x -= self.Speed_x * Collision      # Go back to the previous position horizontally again if collided
 

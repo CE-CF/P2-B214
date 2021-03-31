@@ -7,7 +7,10 @@ class DistanceInMeters:
     the haversine formula is being used.
     The haversine formula calculates the great-circle distance between two points, in a straight line
     ignoring any hills etc.
+    So this class is called to calculate the distance between each point in the quadrilateral
+    and also the lengths of the diagonals.
     '''
+
     # Lon = x and lat = y, og koordinaterne er (y,x)
     first_point = num.array([])
     second_point = num.array([])

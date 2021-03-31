@@ -1,7 +1,7 @@
 import mysql.connector
 
 class DatabaseHandler:
-    
+
     def __init__(self):
         self.connection = self.connecter()
         self.cursor = self.getCursor()
