@@ -30,14 +30,10 @@ class LinearFunction:
                 self.calculate_difference()[1])
 
     # This method calculates the intersection between the slope and the local y-axis
-    def calculate_intersection(self):
-        return (self.first_point[0]
-                - (self.calculate_slope() * self.first_point[1]))
+    def calculate_intersection(self, origo):
+        return (self.first_point[0] - (self.calculate_slope() * self.first_point[1]))
 
     ''' The intersection formula:
         b = y1 - a * x1 '''
-
-    ''' Vi skal lave nogle metoder til at finde arealet af firkanten, så vi 
-    kan dele det op til n antal droner'''
 
 
