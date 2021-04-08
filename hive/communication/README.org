@@ -46,35 +46,55 @@ No need for data
           --
           Attributes:
           ..
-          -p_checksum
-          +p_type
-          +p_dest
-          +p_data
+          -_p_type : Integer
+          -_p_checksum : Bytes
+          -_p_dest : IPAddress
+          -_p_data : String
           --
           Methods:
-          ..
-          -set_checksum()
+          ..static..
+          +{static}encode_packet() : Bytes
+          +{static}decode_packet() : Packet
+          +{static}calc_checksum() : Bytes
+          ..setters..
+          +p_type(p_type : (String | Integer)) : void
+          +p_checksum(checksum : Bytes) : void
+          +p_dest(dest : String) : void
+          +p_data(data : String) : void
+          ..getters..
+          +p_type() : Integer
+          +p_checksum() : Bytes
+          +p_dest() : IPAddress
+          +p_data() : String
+          ..Misc..
+          +dump() : void
   }
 
   abstract class Server{
           Description
           ..
           This is the base class for our
-          server classes. It also acts as a
-          template for the client class
+          server classes. 
           --
           Attributes:
           ..
-          -server_port_udp : Integer
-          -server_port_tcp : Integer
-          -packet : Packet
+          -_srv_port_tcp : Integer
+          -_srv_port_udp : Integer
+          -_srv_socket : socket
           __
           Methods
-          ..
-          +encode_packet()
-          +decode_packet()
-          ..Abstract methods..
-          +{abstract} run()
+          ..setters..
+          +srv_port_tcp(port: Integer) : void
+          +srv_port_udp(port: Integer) : void
+          +srv_socket(sock : socket) : void
+          ..getters..
+          +srv_port_tcp() : Integer
+          +srv_port_udp() : Integer
+          +srv_socket() : socket
+          ..other..
+          +{abstract} run() : void
+          -_accept() : (conn: socket, addr: Address)
+          +reply_heart(conn : socket) : void
   }
 
   class DMSServer{
@@ -94,17 +114,36 @@ No need for data
   }
 
   class Client{
+          Description
+          ..
+          This is the Client base class, it connects to the server and manages the heart beat automatically.
+          --
           Attributes:
           ..
-          -server_port
-          -server_ip
-          -server_hostname
+          -_srv_port_tcp : Integer
+          -_srv_port_udp : Integer
+          -_srv_ip
+          -_client_sock
+          -_pulse : bool
           --
           Methods
-          ..
-          +encode_packet()
-          +decode_packet()
-
+          ..setters..
+          +srv_port_tcp(port : Integer) : void
+          +srv_port_udp(port : Integer) : void
+          +srv_ip(ip) : void
+          +client_sock(sock : socket) : void
+          +pulse(pulse : bool) : void
+          ..getters..
+          +srv_port_tcp() : Integer
+          +srv_port_udp() : Integer
+          +srv_ip() : String
+          +client_sock() : socket
+          +pulse() : bool
+          ..other..
+          +connect(mode : bool) : void
+          +send_message(mtype : (String | Integer), mdest : String, mdata : String) : void
+          +send_heartbeat() : void
+          +{abstract}run(packet : Packet) : void
   }
 
   class DMSClient{
@@ -135,7 +174,6 @@ No need for data
   Client o-- RBClient
   Client o-- DMSClient
 
-  class Client extends Server
 
   Server o-- DMSServer 
   Server o-- RBServer  
