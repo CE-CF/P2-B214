@@ -34,6 +34,7 @@ Corresponding data format example
 **** Heart beat
 Value: 0b11
 No need for data
+But commands for controlling 
 * Class diagrams
 #+begin_src plantuml :file classdiagram.png
   title Class diagram for communications module
@@ -184,3 +185,123 @@ No need for data
 
 #+RESULTS:
 [[file:classdiagram.png]]
+* Sequence diagrams
+#+begin_src plantuml :file sequence1.png
+  title Sequence for pre-defined route
+  skinparam backgroundColor #FFFFFF
+  actor Operator
+  participant OperatorPC
+  participant DMS
+  actor FirstResponder
+  participant RelayBox
+  participant Drones
+
+  Operator->OperatorPC: Start
+  activate OperatorPC
+          OperatorPC->DMS: Create connection
+          activate DMS
+                  DMS-->OperatorPC: Accept connection
+                  Operator->OperatorPC: Create wayp/boundary
+                  OperatorPC->DMS: Send created wayp/boundary
+                  DMS->DMS: Calculate route
+                  activate DMS
+                          DMS->OperatorPC: Send calculated route
+                  deactivate DMS
+                  OperatorPC->Operator: Get confirmation for route
+                  Operator-->OperatorPC: Confirm
+                  OperatorPC->DMS: Send confirmation
+
+
+  FirstResponder->RelayBox: Start
+  activate RelayBox
+  FirstResponder->Drones: Start
+                  activate Drones
+                          Drones->RelayBox: Connect to hotspot
+                  deactivate Drones
+                  RelayBox->DMS: Create connection
+                          DMS-->RelayBox: Accept connection
+                          RelayBox->DMS: Send connected drones
+                          DMS->RelayBox: Send confirmed route
+                          loop while cmds in data
+                                  RelayBox->Drones: Send commands
+                                  activate Drones
+                                          Drones-->RelayBox: Send response
+                                          Drones->Drones: Do cmd
+                                          Drones->RelayBox: Send data string
+                                  deactivate Drones
+                                  RelayBox->DMS: Forward data string
+                          deactivate RelayBox
+                          DMS->OperatorPC: Update drone position on UI
+                  end
+                  loop while drone is active
+                          Drones->RelayBox: Send Videofeed
+                          activate Drones
+                          deactivate Drones
+                          activate RelayBox
+                                  RelayBox->DMS: Forward Videofeed
+                                  deactivate RelayBox
+                          DMS->OperatorPC: Forward Videofeed
+                  end
+          deactivate DMS
+  deactivate OperatorPC
+
+
+
+#+end_src
+
+#+RESULTS:
+[[file:sequence1.png]]
+
+
+#+begin_src plantuml :file sequence2.png
+  title Sequence diagram for Joystick controls
+  skinparam backgroundColor #FFFFFF
+  actor Operator
+  participant OperatorPC
+  participant DMS
+  actor FirstResponder
+  participant RelayBox
+  participant Drones
+
+  Operator->OperatorPC: Start
+  activate OperatorPC
+          OperatorPC->DMS: Create connection
+          activate DMS
+                  DMS-->OperatorPC: Accept connection
+
+
+
+  FirstResponder->RelayBox: Start
+  activate RelayBox
+  FirstResponder->Drones: Start
+                  activate Drones
+                          Drones->RelayBox: Connect to hotspot
+                  deactivate Drones
+                  RelayBox->DMS: Create connection
+                          DMS-->RelayBox: Accept connection
+                  loop while drone is active
+                          Drones->RelayBox: Send Videofeed
+                          activate Drones
+                          deactivate Drones
+                          RelayBox->DMS: Forward Videofeed
+                          DMS->OperatorPC: Forward Videofeed
+                  end
+                          Operator->OperatorPC: Use joystick
+                          OperatorPC->DMS: Send RC commands
+                          DMS->RelayBox: Forward RC commands
+                                  RelayBox->Drones: Forward RC commands
+                                  activate Drones
+                                          Drones-->RelayBox: Send response
+                                          Drones->Drones: Do cmd
+                                          Drones->RelayBox: Send data string
+                                  deactivate Drones
+                                  RelayBox->DMS: Forward data string
+                          deactivate RelayBox
+                  DMS->OperatorPC: Update drone position on UI
+
+          deactivate DMS
+  deactivate OperatorPC
+#+end_src
+
+#+RESULTS:
+[[file:sequence2.png]]
