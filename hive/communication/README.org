@@ -183,8 +183,8 @@ But commands for controlling
   Packet - Client : > send/receive 
 #+end_src
 
-#+RESULTS:
 [[file:classdiagram.png]]
+
 * Sequence diagrams
 #+begin_src plantuml :file sequence1.png
   title Sequence for pre-defined route
