@@ -39,10 +39,10 @@ class GlobalToLocalPoints:
         if the two points has the same longitude
         then it's the index value of the point with
         """
-
+        
         temp_origo = 0
         for i in range(1, 4):
-            if self.point_array[temp_origo][1] < self.point_array[i][1]:
+            if self.point_array[temp_origo][1] <= self.point_array[i][1]:
                 continue
             elif self.point_array[temp_origo][1] > self.point_array[i][1]:
                 temp_origo = i
