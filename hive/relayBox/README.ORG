@@ -22,4 +22,4 @@ FirstResponder->Drones: Start
         deactivate DMS
 @enduml
 
-[[file:Message Sequence for relay-box initiation.png]]
+[[file:Sequence.png]]
