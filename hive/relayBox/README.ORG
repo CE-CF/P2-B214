@@ -16,9 +16,12 @@ FirstResponder->Drones: Start
                 activate Drones
                         Drones->RelayBox: Connect to hotspot
                 deactivate Drones
+                
                 RelayBox->DMS: Create connection
+                activate DMS
                         DMS-->RelayBox: Accept connection
                         RelayBox->DMS: Send connected drones
         deactivate DMS
 #+end_src
+
 [[file:Sequence.png]]
