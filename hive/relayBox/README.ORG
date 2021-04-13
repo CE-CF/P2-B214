@@ -1,7 +1,7 @@
 #+title: README for relay-box initiation module
 #+author: Christian Faurholt
 
-@startuml
+#+begin_src plantuml :file Sequence.png
 title Message Sequence for relay-box initiation
 skinparam backgroundColor #FFFFFF
 
@@ -20,6 +20,5 @@ FirstResponder->Drones: Start
                         DMS-->RelayBox: Accept connection
                         RelayBox->DMS: Send connected drones
         deactivate DMS
-@enduml
-
+#+end_src
 [[file:Sequence.png]]
