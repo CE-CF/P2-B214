@@ -1,0 +1,25 @@
+#+title: README for relay-box initiation module
+#+author: Christian Faurholt
+
+@startuml
+title Message Sequence for relay-box initiation
+skinparam backgroundColor #FFFFFF
+
+participant DMS
+actor FirstResponder
+participant RelayBox
+participant Drones
+
+FirstResponder->RelayBox: Start
+activate RelayBox
+FirstResponder->Drones: Start
+                activate Drones
+                        Drones->RelayBox: Connect to hotspot
+                deactivate Drones
+                RelayBox->DMS: Create connection
+                        DMS-->RelayBox: Accept connection
+                        RelayBox->DMS: Send connected drones
+        deactivate DMS
+@enduml
+
+[[file:Message Sequence for relay-box initiation.png]]
