@@ -186,7 +186,7 @@ But commands for controlling
 #+RESULTS:
 [[file:classdiagram.png]]
 * Sequence diagrams
-#+begin_src plantuml :file sequence1.png 
+#+begin_src plantuml :file sequence1.png
   title Sequence for pre-defined route
   skinparam backgroundColor #FFFFFF
   actor Operator
