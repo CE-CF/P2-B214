@@ -16,18 +16,16 @@ class DistanceInMeters:
     second_point = num.array([])
     r = 6371000  # Radius of the earth
 
-    def __init__(self, first_p, second_p):
-        self.first_point = first_p
-        self.second_point = second_p
-
-    def calculate_distance(self):
+    def calculate_distance(self, first_p, second_p):
+        self.first_point =first_p
+        self.second_point=second_p
         """
         ɸ = latitude
         λ = longitude
         Δ = difference
         hav = haversine = sin^2(ɸ/2)
         """
-        ɸ1 = self.first_point[0] * num.pi / 180 #convert to radians
+        ɸ1 = self.first_point[0] * num.pi / 180 # convert to radians
         ɸ2 = self.second_point[0] * num.pi / 180 # convert to radians
 
         Δɸ = (self.second_point[0] - self.first_point[0]) * num.pi / 180

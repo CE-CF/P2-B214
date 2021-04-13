@@ -46,7 +46,7 @@ The streaming variable is ('DroneName')
 #videoV1.stream('PythonTest')
 
 ###########################################################
-"""
+
 PythonDrone = drone.Drone('PythonDrone', 87.654321, 12.345678)
 print("drone table handler")
 PythonDrone.insert()
@@ -69,4 +69,3 @@ print("\n")
 print("video table handler")
 PythonDrone = video.Video('PythonDrone')
 PythonDrone.insert()
-"""
