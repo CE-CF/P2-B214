@@ -5,8 +5,10 @@ from math import sqrt
 
 class Drone():
     # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
-    def __init__(self, Start_x, Start_y, Speed = 1,
-                 Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT, Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP):
+    def __init__(self, Start_x, Start_y, Speed = 1, Control_Type = 0,
+                 Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT,
+                 Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP,
+                 Joystick_xAxis = "Axis 0", Joystick_yAxis = "Axis 1"):
         self.Pos = self.Pos_x, self.Pos_y = [Start_x, Start_y]
         # Drone's rectangle object. Used as the place to draw the drone, and as it's collision box.
         # The arguments are it's position and it's size
@@ -19,11 +21,17 @@ class Drone():
         self.Key_Right = Key_Right
         self.Key_Down = Key_Down
         self.Key_Up = Key_Up
+        self.Control_Type = Control_Type
+        self.Joystick_xAxis = Joystick_xAxis
+        self.Joystick_yAxis = Joystick_yAxis
         # Set the booleans that activate with the movement keys
         self.Move_Left = False
         self.Move_Right = False
         self.Move_Down = False
         self.Move_Up = False
+
+        self.Move_x = 0.0
+        self.Move_y = 0.0
         # x and y speed of drone. Used to move the drone's position
         self.Speed_x = 0
         self.Speed_y = 0
@@ -38,10 +46,14 @@ class Drone():
     # This function handles the movement of the drones by changing their position according to their speed
     # It checks the direction the drone is going and assigns the x and y speeds accordingly
     def Movement_Handler(self):
-        self.Speed_x = ( self.Move_Right*(self.Speed - (self.Move_Up   | self.Move_Down)*self.Speed*((sqrt(2)-1)/sqrt(2)))
-                       - self.Move_Left *(self.Speed - (self.Move_Up   | self.Move_Down)*self.Speed*((sqrt(2)-1)/sqrt(2))))
-        self.Speed_y = ( self.Move_Down *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2)))
-                       - self.Move_Up   *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2))))
+        if self.Control_Type == 1:
+            self.Speed_x = self.Move_x*self.Speed
+            self.Speed_y = self.Move_y*self.Speed
+        else:
+            self.Speed_x = ( self.Move_Right*(self.Speed - (self.Move_Up   | self.Move_Down)*self.Speed*((sqrt(2)-1)/sqrt(2)))
+                           - self.Move_Left *(self.Speed - (self.Move_Up   | self.Move_Down)*self.Speed*((sqrt(2)-1)/sqrt(2))))
+            self.Speed_y = ( self.Move_Down *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2)))
+                           - self.Move_Up   *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2))))
         self.Pos_x += self.Speed_x
         self.Pos_y += self.Speed_y
     # This function updates the rectangle's position to match the drone's position
@@ -49,11 +61,22 @@ class Drone():
         self.Rect.topleft = self.Pos_x - Camera.Offset_x, self.Pos_y - Camera.Offset_y
         #self.Rect.topleft = self.Pos_x - OLD_Camera.Camera.Offset_x, self.Pos_y - OLD_Camera.Camera.Offset_y
     # This function takes the list of keys pressed by the keyboard and assigns them to their corresponding move booleans
-    def Keyhold(self, keyPressList):
-        self.Move_Left = keyPressList[self.Key_Left]
-        self.Move_Right = keyPressList[self.Key_Right]
-        self.Move_Down = keyPressList[self.Key_Down]
-        self.Move_Up = keyPressList[self.Key_Up]
+    def Keyhold(self, keyPressList, Joystick_InputDict = {}):
+        if self.Control_Type == 0:
+            self.Move_Left = keyPressList[self.Key_Left]
+            self.Move_Right = keyPressList[self.Key_Right]
+            self.Move_Down = keyPressList[self.Key_Down]
+            self.Move_Up = keyPressList[self.Key_Up]
+        elif self.Control_Type == 1:
+            self.Move_x = Joystick_InputDict.get(self.Joystick_xAxis)
+            self.Move_x = self.Move_x*(not (-0.1<self.Move_x<0.1))
+            self.Move_y = Joystick_InputDict.get(self.Joystick_yAxis)
+            self.Move_y = self.Move_y*(not (-0.1<self.Move_y<0.1))
+        elif self.Control_Type == 2:
+            self.Move_Left = Joystick_InputDict.get(self.Key_Left)
+            self.Move_Right = Joystick_InputDict.get(self.Key_Right)
+            self.Move_Down = Joystick_InputDict.get(self.Key_Down)
+            self.Move_Up = Joystick_InputDict.get(self.Key_Up)
 
     '''
     # Old bad collision algorithms
