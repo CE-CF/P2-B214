@@ -1,31 +1,6 @@
 #+title: README for relay-box initiation module
 #+author: Christian Faurholt
 
-#+begin_src plantuml :file Sequence.png
-title Message Sequence for relay-box initiation
-skinparam backgroundColor #FFFFFF
-
-participant DMS
-actor FirstResponder
-participant RelayBox
-participant Drones
-
-FirstResponder->RelayBox: Start
-activate RelayBox
-FirstResponder->Drones: Start
-                activate Drones
-                        Drones->RelayBox: Connect to hotspot
-                deactivate Drones
-                
-                RelayBox->DMS: Create connection
-                activate DMS
-                        DMS-->RelayBox: Accept connection
-                        RelayBox->DMS: Send connected drones
-        deactivate DMS
-#+end_src
-
-[[file:Sequence.png]]
-
 #+begin_src plantuml :file ClassDiagram.png
 title Class diagram for relay-box module
 
@@ -88,3 +63,28 @@ relayBox -|> Functions
 #+end_src
 
 [[file:ClassDiagram.png]]
+
+#+begin_src plantuml :file Sequence.png
+title Message Sequence for relay-box initiation
+skinparam backgroundColor #FFFFFF
+
+participant DMS
+actor FirstResponder
+participant RelayBox
+participant Drones
+
+FirstResponder->RelayBox: Start
+activate RelayBox
+FirstResponder->Drones: Start
+                activate Drones
+                        Drones->RelayBox: Connect to hotspot
+                deactivate Drones
+                
+                RelayBox->DMS: Create connection
+                activate DMS
+                        DMS-->RelayBox: Accept connection
+                        RelayBox->DMS: Send connected drones
+        deactivate DMS
+#+end_src
+
+[[file:Sequence.png]]
