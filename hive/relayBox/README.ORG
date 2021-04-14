@@ -25,3 +25,66 @@ FirstResponder->Drones: Start
 #+end_src
 
 [[file:Sequence.png]]
+
+#+begin_src plantuml :file ClassDiagram.png
+title Class diagram for relay-box module
+
+class Functions<extends Threading>{
+        Description
+        ..
+        This is the class for our
+        relay-box functions.
+        --
+        Methods:
+        ..
+        +ping(host: String) : void
+        +send(message: String, delay: Integer) : void
+        +receive() : void
+}
+
+class relayBox<extends Threading>{
+        Description
+        ..
+        This is the base class for our
+        relay-box. 
+        --
+        Attributes:
+        ..
+        +tello1_address : Tuple
+        +tello1_address : Tuple
+        +local1_address : Tuple
+        +local2_address : Tuple
+        +sock1 : Socket
+        +sock2 : Socket
+        __
+        Methods
+        ..
+        +bind(sock: local_address) : void
+        +receiveThread(target=receive) : void
+        +close(sock : socket) : void
+        
+}
+
+class DMSServer{
+        Description
+        ..
+        This class will be used by
+        the relay-box to send messages
+        from Drones to DMSClient
+}
+
+class Drones{
+        Description
+        ..
+        This class wil be used by
+        the relay-box to send
+        messages from the DMSClient to the Drones
+}
+
+relayBox o-- DMSServer 
+relayBox o-- Drones  
+
+relayBox -|> Functions 
+#+end_src
+
+[[file:ClassDiagram.png]]
