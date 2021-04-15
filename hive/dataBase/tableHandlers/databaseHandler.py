@@ -8,7 +8,7 @@ class DatabaseHandler:
 
     def connector(self):
         connection = mysql.connector.connect(user='root', password='password', host='localhost', database='hive')
-        return self.connection
+        return connection
     
     def getCursor(self):
         return self.connection.cursor()
