@@ -78,12 +78,24 @@ class TCPClientHandler(threading.Thread):
         conn.send(msg_bytes)
 
     def log_info(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
         log_format = (
             f"[ THREAD {self.thread_id} | TIME {datetime.now()} ]: {msg}"
         )
         logging.info(log_format)
 
     def log_warning(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
         log_format = (
             f"[ THREAD {self.thread_id} | TIME {datetime.now()} ]: {msg}"
         )
@@ -135,18 +147,29 @@ class TCPClientHandler(threading.Thread):
 
         thread_server.listen(1)
         conn, addr = thread_server.accept()
-        connected = True
-        self.log_info("TRANSFER done!")
+
+        msg = self.recvall(conn)
+        packet = Packet.decode_packet(msg)
+        if packet.p_data == "OK":
+            self.log_info("TRANSFER done!")
+            connected = True
+        else:
+            self.log_warning("TRANSFER failed")
+            connected = False
+
         # Start new thread server loop
         while connected:
             # Packet handling
             try:
                 msg = self.recvall(conn)
                 recv_packet = Packet.decode_packet(msg)
-                if recv_packet.p_type == 3:
-                    self.reply_heart(conn)
+                if type(recv_packet) is Packet:
+                    if recv_packet.p_type == 3:
+                        self.reply_heart(conn)
+                    else:
+                        self.target(recv_packet)
                 else:
-                    self.target(recv_packet)
+                    connected = False
 
             except ConnectionResetError:
                 conn.shutdown(SHUT_RDWR)

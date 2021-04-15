@@ -77,10 +77,22 @@ class Client(ABC):
     #     self._heartbeat_int = interval
 
     def log_info(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
         log_format = f"[ TIME {datetime.now()} ]: {msg}"
         logging.info(log_format)
 
     def log_warning(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
         log_format = f"[ TIME {datetime.now()} ]: {msg}"
         logging.warning(log_format)
 
