@@ -105,9 +105,12 @@ class Game():
             else:
                 i.Keyhold(KeyPressList)
     # Function that goes through all drones in the list and runs their movement handler
-    def Drones_Movement_Handler(self):
+    def Drones_Movement_Handler(self, EventList):
         for i in self.Drones:
-            i.Movement_Handler()
+            if i.__class__ == New_Drone.TelloDrone:
+                i.Command_Handler(EventList)
+            else:
+                i.Movement_Handler()
     # Function that runs the collision algorithm for all drones in the list
     # This function will also pass obstacles and such as rect arguments when they are implemented
     def Drones_Collision_Handler(self):
@@ -141,7 +144,7 @@ class Game():
             #Game.MainCamera.Movement_Handler(1)
             #self.Drones[0].Movement_Handler(1)
             #self.Drones[1].Movement_Handler(1)
-            self.Drones_Movement_Handler()
+            self.Drones_Movement_Handler(eventsList)
             #Update_Rects()
             self.Drones_Collision_Handler()
             self.Update_Rects()
