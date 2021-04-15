@@ -1,5 +1,6 @@
 import numpy as np
 import coordinates as co
+
 from routing import Routing
 
 big_array = np.array([[57.02848118809145, 9.948913866684594],
@@ -10,7 +11,7 @@ big_array = np.array([[57.02848118809145, 9.948913866684594],
 
 def run():
     sohn = Routing(big_array)
-    sohn.get_local_coordinates()
+    coor = sohn.get_local_coordinates()
     sohn.analyze_coordinates()
 
 

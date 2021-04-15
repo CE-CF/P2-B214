@@ -1,0 +1,173 @@
+#+title: README for database module
+#+author: Christian Faurholt
+
+#+begin_src plantuml :file ClassDiagram.png
+title Class diagram for database module
+
+class databaseHandler<mysql.connector>{
+        Description
+        ..
+        this class handles connection 
+        to the database. 
+        --
+        Attributes:
+        ..
+        +connection = None
+        +cursor = None
+        __
+        Methods
+        ..setters..
+        +connector() : connection
+        +closeConnection() : connection.close()
+        ..getters..
+        +getCursor() : cursor
+        ..others..
+        +commit(query: String, data=None) : commit
+
+        
+        
+}
+
+class tableHandler{
+        Description
+        ..
+        This class will be used generate
+        queries for the database.
+        --
+        Attributes:
+        ..
+        +table = String
+        __
+        Methods
+        ..setters..
+        +insert_query(*route: Tuple, **insert: Dictionary): mySql_insert_query
+        +check_query(video: String): mySql_check_query
+        +update_query(**insert: Dictionary) : mySql_check_query
+        +delete_query(**insert: Dictionary) : mySql_delete_query
+        ..others..
+        insert_string_lat(str: String, word: String) : String
+        insert_string_long(str: String, word: String) : String
+
+}
+
+class drone{
+        Description
+        ..
+        This class will handle every action 
+        related to the hive.drone table
+}
+
+class poi{
+        Description
+        ..
+        This class will handle every action 
+        related to the hive.poi table
+}
+
+class route{
+        Description
+        ..
+        This class will handle every action 
+        related to the hive.route table
+}
+class video{
+        Description
+        ..
+        This class will handle every action 
+        related to the hive.video table
+}
+class Database{
+        Description
+        ..
+        This is the base class for our
+        Database.
+        --
+}
+class DatabaseClient{
+        Description
+        ..
+        This class wil be used by
+        the Database to send
+        queries from database to DMSClient
+}
+class DMSServer{
+        Description
+        ..
+        This class wil be used by
+        the Database to receive UDP packets
+        from the DMSServer and convert these to
+        queries for database inserts.
+}
+
+
+drone -up-|> tableHandler
+drone -up-|> databaseHandler
+poi -up-|> tableHandler
+poi -up-|> databaseHandler
+route -up-|> tableHandler
+route -up-|> databaseHandler
+video -up-|> tableHandler
+video -up-|> databaseHandler
+Database -up-.. drone : "<<Create>>"
+Database -up-.. poi : "<<Create>>"
+Database -up-.. route : "<<Create>>"
+Database -up-.. video : "<<Create>>"
+Database o-left- DatabaseClient 
+Database o-down- DMSServer  
+#+end_src
+
+[[file:ClassDiagram.png]]
+
+#+begin_src plantuml :file Sequence1.png
+title Message Sequence for database insert
+skinparam backgroundColor #FFFFFF
+
+participant DMS
+participant Database
+participant DatabaseClient
+
+DMS->Database: send data packet (TCP/UDP)
+activate Database
+        Database ->Database: decode packet
+        Database ->Database: create check_query
+        Database ->DatabaseClient: connector
+        activate DatabaseClient
+                Database ->DatabaseClient: commit check_query
+                DatabaseClient->Database: table information
+                Database ->DatabaseClient: closeConnection
+                deactivate DatabaseClient
+        Database ->Database: create insert_query
+        Database ->DatabaseClient: connector
+                activate DatabaseClient
+                        Database ->DatabaseClient: commit insert_query
+                        DatabaseClient->Database: confirmation
+                        Database ->DatabaseClient: closeConnection
+                deactivate DatabaseClient
+                
+                Database->DMS: forward confirmation
+#+end_src
+
+[[file:Sequence1.png]]
+
+#+begin_src plantuml :file Sequence2.png
+title Message Sequence for database update/delete
+skinparam backgroundColor #FFFFFF
+
+participant DMS
+participant Database
+participant DatabaseClient
+
+DMS->Database: send data packet (TCP/UDP)
+activate Database
+        Database ->Database: decode packet
+        Database ->Database: create update/delete_query
+        Database ->DatabaseClient: connector
+        activate DatabaseClient
+                Database ->DatabaseClient: commit update/delete_query
+                DatabaseClient->Database: confirmation
+                Database ->DatabaseClient: closeConnection
+                deactivate DatabaseClient
+        Database->DMS: forward confirmation
+#+end_src
+
+[[file:Sequence2.png]]

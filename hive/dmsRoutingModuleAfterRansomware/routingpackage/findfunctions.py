@@ -26,6 +26,7 @@ def find_functions(local_c):
         temp_arr = [calculate_slope(), calculate_intersection()]
         function_arr[i] = temp_arr
 
+    # Function of the x-axis
     return np.array([function_arr[0],
                      function_arr[1],
                      function_arr[2],
