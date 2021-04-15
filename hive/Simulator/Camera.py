@@ -28,15 +28,21 @@ Move_Left = False
 Move_Right = False
 Move_Down = False
 Move_Up = False
+Move_xAxis = 0.0
+Move_yAxis = 0.0
 
 # Move the camera by a certain speed. Exast same as drone movement handler
 def Offset_Handler(Speed):
     global Offset_x
     global Offset_y
-    xIncrease = ( Move_Right*(Speed - (Move_Up    | Move_Down)*Speed*((sqrt(2)-1)/sqrt(2)))
-                - Move_Left *(Speed - (Move_Up    | Move_Down)*Speed*((sqrt(2)-1)/sqrt(2))))
-    yIncrease = ( Move_Down *(Speed - (Move_Right | Move_Left)*Speed*((sqrt(2)-1)/sqrt(2)))
-                - Move_Up   *(Speed - (Move_Right | Move_Left)*Speed*((sqrt(2)-1)/sqrt(2))))
+    if -0.1<Move_xAxis<0.1 and -0.1<Move_yAxis<0.1:
+        xIncrease = ( Move_Right*(Speed - (Move_Up    | Move_Down)*Speed*((sqrt(2)-1)/sqrt(2)))
+                    - Move_Left *(Speed - (Move_Up    | Move_Down)*Speed*((sqrt(2)-1)/sqrt(2))))
+        yIncrease = ( Move_Down *(Speed - (Move_Right | Move_Left)*Speed*((sqrt(2)-1)/sqrt(2)))
+                    - Move_Up   *(Speed - (Move_Right | Move_Left)*Speed*((sqrt(2)-1)/sqrt(2))))
+    else:
+        xIncrease = Move_xAxis*Speed
+        yIncrease = Move_yAxis*Speed
     Offset_x += xIncrease
     Offset_y += yIncrease
     #print(f'New Camera x offset is {Offset_x}')
@@ -45,9 +51,11 @@ def Offset_Handler(Speed):
     #print(f'y offset speed is {yIncrease}')
 
 # Check if the movement keys are held
-def Keyhold(keyPressList):
-    global Move_Left, Move_Right, Move_Down, Move_Up
+def Keyhold(keyPressList, Joystick_InputDict = {}):
+    global Move_Left, Move_Right, Move_Down, Move_Up, Move_xAxis, Move_yAxis
     Move_Left = keyPressList[pygame.K_a]
     Move_Right = keyPressList[pygame.K_d]
     Move_Down = keyPressList[pygame.K_s]
     Move_Up = keyPressList[pygame.K_w]
+    Move_xAxis = Joystick_InputDict.get("Axis2")
+    Move_yAxis = Joystick_InputDict.get("Axis3")
