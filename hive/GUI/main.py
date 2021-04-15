@@ -64,6 +64,7 @@ def deleteLatestPoint():
         showinfo("Error", "No points to delete")
     else:
         canvas.delete(Points[-1].Point)
+        canvas.delete(Points[-1].text)
         del Points[-1]
 
 
