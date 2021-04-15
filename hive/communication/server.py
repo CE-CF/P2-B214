@@ -1,5 +1,9 @@
+# Full imports
 import logging
 import threading
+
+# Partial imports
+from typing import List
 from abc import ABC, abstractmethod
 from datetime import datetime
 from socket import (
@@ -12,15 +16,20 @@ from socket import (
     SHUT_RDWR,
 )
 
+# Hive imports
 from hive.communication import BUFFER_SIZE
 from hive.exceptions.packet_exceptions import DecodeErrorChecksum
 
+# Communication imports
 from .packet import Packet
 
-# =====================
+# ====================
 # LOGGING RELATED
 # Change logging level when done
 logging.basicConfig(filename="server.log", level=logging.DEBUG)
+
+# ====================
+# Global variabels
 
 
 # ========================================================
@@ -51,6 +60,7 @@ class TCPClientHandler(threading.Thread):
         client_conn: socket,
         client_addr,
         target,
+        max_conns,
     ):
         super().__init__()
         self.thread_id = thread_id
@@ -207,13 +217,21 @@ class Server(ABC):
     """
 
     # Attributes
-    _srv_port_tcp = None
+    # ===
+    # UDP
+    # ---
     _srv_port_udp = None
-    _srv_socket_tcp = None
     _srv_socket_udp = None
 
+    # TCP
+    # ---
+    _srv_port_tcp = None
+    _srv_socket_tcp = None
+    _max_clients_tcp = 2
+    _conns_counter_tcp = 0
+
     # Constructor
-    def __init__(self, tcp_port, udp_port=None):
+    def __init__(self, tcp_port=1337, udp_port=None):
         self.srv_port_tcp = tcp_port
         self.srv_socket_tcp = socket(AF_INET, SOCK_STREAM)
         self.srv_socket_tcp.bind(("", self.srv_port_tcp))
@@ -259,11 +277,20 @@ class Server(ABC):
                 conn_tcp, addr_tcp = self._accept_tcp()
                 # ---
 
-                tcpthread = TCPClientHandler(1, conn_tcp, addr_tcp, self.run)
+                # Begin multithreading TCP
+                # ---
+                self.conns_counter_tcp += 1
+                tcpthread = TCPClientHandler(
+                    self.conns_counter_tcp,
+                    conn_tcp,
+                    addr_tcp,
+                    self.run,
+                    self.max_clients_tcp,
+                )
 
-                tcpthread.setDaemon(True)
                 tcpthread.start()
 
+                # ---
                 # recv_data = conn.recv(4096)  # receive data
                 # packet = Packet.decode_packet(recv_data)  # decode into packet object
                 # if packet.p_type != 3:  # check if heartbeat
@@ -281,6 +308,22 @@ class Server(ABC):
             self.srv_socket_tcp.close()
         except DecodeErrorChecksum:
             pass
+
+    @property
+    def max_clients_tcp(self):
+        return self._max_clients_tcp
+
+    @max_clients_tcp.setter
+    def max_clients_tcp(self, cmax: int = 2):
+        self._max_clients_tcp = cmax
+
+    @property
+    def conns_counter_tcp(self):
+        return self._conns_counter_tcp
+
+    @conns_counter_tcp.setter
+    def conns_counter_tcp(self, i: int):
+        self._conns_counter_tcp = i
 
     @property
     def srv_socket_tcp(self):
