@@ -11,10 +11,6 @@ PointDenominator = ["A", "B", "C", "D"]
 def limitPoint(event):
     if len(Points) >= 4:
         showinfo("Error", "Can't have more than 4 points")
-        canvas.create_line(Points[0].x2-8, Points[0].y2-8, Points[1].x2-8, Points[1].y2-8, width=2) # Create AB
-        canvas.create_line(Points[1].x2-8, Points[1].y2-8, Points[2].x2-8, Points[2].y2-8, width=2) # Create BC
-        canvas.create_line(Points[2].x2-8, Points[2].y2-8, Points[3].x2-8, Points[3].y2-8, width=2) # Create CD
-        canvas.create_line(Points[3].x2-8, Points[3].y2-8, Points[0].x2-8, Points[0].y2-8, width=2) # Create DA
     else:
         Points.append(SearchArea.LimitPoint(PointDenominator[len(Points)], (event.x - 8), (event.x + 8), (event.y - 8), (event.y + 8)))
         Points[len(Points)-1].drawPoint(canvas)
