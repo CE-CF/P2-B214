@@ -34,7 +34,18 @@ Corresponding data format example
 **** Heart beat
 Value: 0b11
 No need for data
-But commands for controlling 
+But commands for managing client and server interaction can be added into the data segment of the protocol.
+***** Commands
+Commands should be written in the following format.
+: CMD:MIGRATE;P:3333;
+
+Like a dictionary of sorts, where the key ~CMD~ defines which commands should be run.
+All ~key:value~ pair following should be seen as arguments to the command.
+
+*Commands:*
+ - MIGRATE :: Used for migrating clients to another server thread
+   - P :: Port number for the new server
+
 * Class diagrams
 #+begin_src plantuml :file classdiagram.png
   title Class diagram for communications module
