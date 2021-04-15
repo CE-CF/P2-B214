@@ -1,6 +1,11 @@
 import hashlib
 import ipaddress
-from ..exceptions.packet_exceptions import *
+
+from hive.exceptions.packet_exceptions import (
+    DecodeErrorChecksum,
+    EncodeErrorPacket,
+    PacketTypeError,
+)
 
 
 class Packet:
@@ -13,11 +18,14 @@ class Packet:
     Attributes:
      p_type (int): (default: \"heart\")
            The packet type, can be assigned by either 0,1,2,3
-           or by writing one of the strings \"wayp\", \"bound\", \"drone\" or \"heart\"
+           or by writing one of the strings \"wayp\", \"bound\", \"drone\" or
+           \"heart\"
      p_checksum (bytes object):
-           This attributes is calculated based on packet type, destination and data.
+           This attributes is calculated based on packet type, destination and
+           data.
      p_dest (string): (default: '127.0.0.1')
-           This is the packet destination, should only be used when communicating directly with a drone.
+           This is the packet destination, should only be used when
+           communicating directly with a drone.
      p_data (string):
            This attribute holds the data that should be sent over the protocol
 
@@ -25,7 +33,8 @@ class Packet:
      dump() :: dumps packet information to console
     === static ===
      encode_packet(packet) :: Encode the packet into bytes
-     decode_packet(packet_bytes: bytes) :: Decodes received data into a Packet object
+     decode_packet(packet_bytes: bytes) :: Decodes received data into a Packet
+                                           object.
      calc_checksum(packet_type: bytes, packet_dest: bytes, packet_data: bytes)
          :: Calculates the packets checksum, useful for error checking
     """
@@ -69,7 +78,7 @@ class Packet:
         elif type(p_type) is int and p_type in [0, 1, 2, 3]:
             self._p_type = p_type
         else:
-            raise PacketTypeException
+            raise PacketTypeError
 
     @property
     def p_checksum(self):
@@ -90,7 +99,7 @@ class Packet:
         except:
             print(
                 f"""Something is wrong with destination address. Please make sure it is correct:
-{p_dest}"""
+{self.p_dest}"""
             )
 
     @property
@@ -102,9 +111,9 @@ class Packet:
         self._p_data = data
 
     def dump(self):
-        """ Dumps packet information to terminal
+        """Dumps packet information to terminal
 
-        :returns: 
+        :returns:
 
         """
         print("=====================================")
@@ -116,6 +125,27 @@ class Packet:
         print(f"[DATA]: {self.p_data}")
         print("=====================================")
 
+    def data_parser(self):
+        """Parse incoming packet data for easier manipulation
+
+        :param data:
+        :type data: str
+        :returns: Dictionary containing data
+
+        """
+        d = {}
+        delim1 = ";"
+        delim2 = ":"
+        element = ""
+        for _, v in enumerate(self.p_data):
+            if v is not delim1:
+                element += v
+            else:
+                arr = element.split(delim2)
+                d[arr[0]] = arr[1]
+                element = ""
+        return d
+
     @staticmethod
     def encode_packet(packet):
         """Encode the packet object into bytes.
@@ -125,7 +155,7 @@ class Packet:
         :returns: bytes
 
         """
-        if type(packet) is not Packet: # Make sure argument is of type Packet
+        if type(packet) is not Packet:  # Make sure argument is of type Packet
             raise EncodeErrorPacket(
                 packet, f"Argument is not of type: {type(Packet())} "
             )
@@ -136,43 +166,50 @@ class Packet:
         packet_bytes_array += bytearray(packet.p_checksum)
         packet_bytes_array += bytearray(packet.p_dest.packed)
         packet_bytes_array += packet.p_data.encode()
-        packet_bytes_array += bytearray(0x00) # Add null terminator not used atm but will be used to know when data is done
+        packet_bytes_array += bytearray(0x00)
+        # Add null terminator not used atm but will be used to know when data is done
 
         # Return as bytes object ready for send off
         return bytes(packet_bytes_array)
-        
 
     # @explain
     @staticmethod
     def decode_packet(packet_bytes: bytes):
         """Decodes bytes and tries to convert them into a packet
 
+        In case of IndexError returns False
+
         :param packet_bytes:
         :type packet_bytes:
         :returns: Packet
 
         """
-        # Since the packet is designed to be more or less static(except for data segment)
-        # Each packet attribute can be assigned through indexing bytes object :)
-        packet_type = packet_bytes[0]
-        packet_checksum = packet_bytes[1:33]
-        packet_dest = packet_bytes[33:37]
-        packet_data = packet_bytes[37:]
+        # Since the packet is designed to be more or less static
+        # (except for data segment)
+        # Each packet attribute can be assigned through indexing bytes object
+        try:
+            packet_type = packet_bytes[0]
+            packet_checksum = packet_bytes[1:33]
+            packet_dest = packet_bytes[33:37]
+            packet_data = packet_bytes[37:]
 
-        # Chech if any errors occured 
-        if (
-            self.calc_checksum(
-                bytes(packet_type), bytes(packet_dest), bytes(packet_data)
-            )
-            != packet_checksum
-        ):
-            raise DecodeErrorChecksum(packet_bytes)
-        else:
-            return Packet(packet_type, packet_dest, packet_data.decode())
-             
+            # Check if any errors occured
+            if (
+                Packet.calc_checksum(
+                    bytes(packet_type), bytes(packet_dest), bytes(packet_data)
+                )
+                != packet_checksum
+            ):
+                raise DecodeErrorChecksum(packet_bytes)
+            else:
+                return Packet(packet_type, packet_dest, packet_data.decode())
+        except IndexError:
+            return False
 
     @staticmethod
-    def calc_checksum(packet_type: bytes, packet_dest: bytes, packet_data: bytes):
+    def calc_checksum(
+        packet_type: bytes, packet_dest: bytes, packet_data: bytes
+    ):
         """Calculates the checksum for a Packet
 
         :param packet_type:
