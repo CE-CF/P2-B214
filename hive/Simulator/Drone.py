@@ -5,7 +5,7 @@ from math import sqrt
 
 class Drone():
     # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
-    def __init__(self, Start_x, Start_y, Speed = 1, Control_Type = 0,
+    def __init__(self, Start_x, Start_y, Speed = 30, Control_Type = 0,
                  Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT,
                  Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP,
                  Joystick_xAxis = "Axis 0", Joystick_yAxis = "Axis 1"):
@@ -13,9 +13,11 @@ class Drone():
         # Drone's rectangle object. Used as the place to draw the drone, and as it's collision box.
         # The arguments are it's position and it's size
         self.Rect = pygame.Rect(Start_x - Camera.Offset_x, Start_y - Camera.Offset_y, 64, 64)
+        self.Yaw = 0
         #self.Rect = pygame.Rect(Start_x - OLD_Camera.Camera.Offset_x, Start_y - OLD_Camera.Camera.Offset_y, 64, 64)
         # Load the image of the drone
-        self.Image = pygame.image.load("Drone_Icon.png")
+        self.Init_Image = pygame.image.load("Drone_Icon.png")
+        self.Image = self.Init_Image
         # Set movement keys
         self.Key_Left = Key_Left
         self.Key_Right = Key_Right
