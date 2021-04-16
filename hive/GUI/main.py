@@ -3,6 +3,7 @@ from tkinter.messagebox import showinfo
 from PIL import ImageTk, Image
 from math import acos, sqrt, radians, degrees
 import SearchArea
+import mapHandler
 
 
 # Object Lists
@@ -28,6 +29,8 @@ def estimate():
                 canvas.create_line(Points[c].trueX, Points[c].trueY, Points[c + 1].trueX, Points[c + 1].trueY, width=2)
     else:
         showinfo("Error", "Please make sure you have entered 4 points before estimation.")
+
+
 
 
 def AngleChecker():
@@ -80,6 +83,16 @@ def deleteLatestPoint():
         canvas.delete(Points[-1].text)
         del Points[-1]
 
+def update():
+    global img
+    img = ImageTk.PhotoImage(file="map.png")
+    canvas.itemconfig(image_container)
+    clearCanvas()
+
+def requestMap():
+    obj = mapHandler.Map()
+    obj.requestMap()
+    update()
 
 root = tk.Tk()
 root.state("zoomed")
@@ -87,12 +100,13 @@ root.state("zoomed")
 img = ImageTk.PhotoImage(Image.open("map.png"))
 
 canvas = tk.Canvas(root, height=800, width=800)
-canvas.create_image(400, 400, image=img)
+image_container = canvas.create_image(400, 400, image=img)
 canvas.pack(side="top", anchor="nw")
 canvas.bind("<Button-1>", limitPoint)
 
 tk.Button(root, text="Clear", command=clearCanvas).pack(side="left", anchor="nw")
 tk.Button(root, text="Delete last point", command=deleteLatestPoint).pack(side="left", anchor="nw")
 tk.Button(root, text="Estimate", command=estimate).pack(side="left", anchor="nw")
+tk.Button(root, text="NOT FREE", command=requestMap, bg="red").pack(side="left", anchor="nw")
 
 root.mainloop()
