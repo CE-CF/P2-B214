@@ -5,7 +5,6 @@ from math import acos, sqrt, radians, degrees
 import SearchArea
 import mapHandler
 
-
 # Object Lists
 Points = []
 PointDenominator = ["A", "B", "C", "D"]
@@ -29,8 +28,6 @@ def estimate():
                 canvas.create_line(Points[c].trueX, Points[c].trueY, Points[c + 1].trueX, Points[c + 1].trueY, width=2)
     else:
         showinfo("Error", "Please make sure you have entered 4 points before estimation.")
-
-
 
 
 def AngleChecker():
@@ -57,17 +54,18 @@ def AngleChecker():
 
     else:
         angleA = degrees(acos((AB ** 2 + DA ** 2 - BD ** 2) / (2 * AB * DA)))
-        angleB = degrees(acos((AB ** 2 + BD ** 2 - DA ** 2) / (2 * AB * BD))) + degrees(acos((BC ** 2 + BD ** 2 - CD ** 2) / (2 * BC * BD)))
+        angleB = degrees(acos((AB ** 2 + BD ** 2 - DA ** 2) / (2 * AB * BD))) + degrees(
+            acos((BC ** 2 + BD ** 2 - CD ** 2) / (2 * BC * BD)))
         angleC = degrees(acos((BC ** 2 + CD ** 2 - BD ** 2) / (2 * BC * CD)))
         angleD = degrees(acos((DA ** 2 + BD ** 2 - AB ** 2) / (2 * DA * BD))) + degrees(
             acos((CD ** 2 + BD ** 2 - BC ** 2) / (2 * CD * BD)))
-
 
     if angleA >= 180 or angleB >= 180 or angleC >= 180 or angleD >= 180:
         deleteLatestPoint()
         showinfo("Error", "Sorry, one or more angles are greater than 180 degrees")
     else:
         return True
+
 
 def clearCanvas():
     canvas.delete("all")
@@ -83,16 +81,19 @@ def deleteLatestPoint():
         canvas.delete(Points[-1].text)
         del Points[-1]
 
+
 def update():
     global img
     img = ImageTk.PhotoImage(file="map.png")
     canvas.itemconfig(image_container)
     clearCanvas()
 
+
 def requestMap():
     obj = mapHandler.Map()
     obj.requestMap()
     update()
+
 
 root = tk.Tk()
 root.state("zoomed")
@@ -100,7 +101,7 @@ root.state("zoomed")
 img = ImageTk.PhotoImage(Image.open("map.png"))
 
 canvas = tk.Canvas(root, height=800, width=800)
-image_container = canvas.create_image(400, 400, image=img)
+image_container = canvas.create_image(800, 800, anchor="nw", image=img)
 canvas.pack(side="top", anchor="nw")
 canvas.bind("<Button-1>", limitPoint)
 

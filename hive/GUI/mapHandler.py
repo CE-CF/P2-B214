@@ -5,7 +5,7 @@ class Map:
     size = 800
     long = 12.019524
     lat = 55.669703
-    zoom = 15
+    zoom = 13
     key = config.SECRET
 
     def getCoordinates(self):
