@@ -9,9 +9,9 @@ from time import time, sleep
 
 # Every 65 pixel = 10 cm
 
-class NewDrone():
+class TelloDrone():
     # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
-    def __init__(self, Start_x, Start_y, MaxSpeed = 65, Online_Mode = False, ip_Address = "0.0.0.0"):
+    def __init__(self, Start_x, Start_y, MaxSpeed = 65, Online_Mode = False, IP_Address = "0.0.0.0"):
         self.Pos = self.Pos_x, self.Pos_y, self.Pos_z = [Start_x, Start_y, 0]
         self.Last_Pos = self.Last_Pos_x, self.Last_Pos_y, self.Last_Pos_z = self.Pos
         self.Speed = self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
@@ -21,6 +21,7 @@ class NewDrone():
         self.Current_Speed = MaxSpeed
         self.Start_Time = time()
         #self.Command_Center = TC.Tello_Communication(self)
+        self.IP_Address = IP_Address
 
         self.Executing_Command = False
         self.Landed = True
@@ -281,148 +282,7 @@ class NewDrone():
     The receive command
     """
 
-    def Receive_Command(self, Command: str):
-        Command_Array = Command.split(" ")
-        if len(Command_Array) == 0:
-            return "error"
-        elif Command_Array[0] == "command":
-            # If it ever happens make this the thing that activates the drone
-            return "ok"
-        elif Command_Array[0] == "takeoff":
-            Result = self.Landed_State(False)
-            return (Result*"ok" + (not Result)*"error")
-        elif Command_Array[0] == "land":
-            Result = self.Landed_State(True)
-            return (Result*"ok" + (not Result)*"error")
-        elif Command_Array[0] == "streamon":
-            Result = self.Stream_OnOff(True)
-            return (Result*"ok" + (not Result)*"error")
-        elif Command_Array[0] == "streamoff":
-            Result = self.Stream_OnOff(False)
-            return (Result*"ok" + (not Result)*"error")
-        elif Command_Array[0] == "emergency":
-            self.Emergency()
-            return "ok"
-        elif Command_Array[0] == "up":
-            print("Got up command")
-            try:
-                print("Up command no error")
-                print(f'Command array is: {Command_Array}')
-                Distance = float(Command_Array[1])
-                Result = self.Moveto(Amount_z = Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                print("Up command error")
-                return "error"
-        elif Command_Array[0] == "down":
-            try:
-                Distance = float(Command_Array[1])
-                Result = self.Moveto(Amount_z = -Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "left":
-            try:
-                print("Left command no error")
-                print(f'Command array is: {Command_Array}')
-                Distance = float(Command_Array[1])
-                #Result = self.Moveto(Amount_x = -Distance)
-                Result = self.Moveto(Amount_RL = -Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "right":
-            try:
-                Distance = float(Command_Array[1])
-                #Result = self.Moveto(Amount_x = Distance)
-                Result = self.Moveto(Amount_RL = Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "forward":
-            try:
-                Distance = float(Command_Array[1])
-                #Result = self.Moveto(Amount_y = -Distance)
-                Result = self.Moveto(Amount_FB = Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "back":
-            try:
-                Distance = float(Command_Array[1])
-                #Result = self.Moveto(Amount_y = Distance)
-                Result = self.Moveto(Amount_FB = -Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "cw":
-            try:
-                Rotation = float(Command_Array[1])
-                Result = self.Rotate_Yaw(Rotation)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "ccw":
-            try:
-                Rotation = float(Command_Array[1])
-                Result = self.Rotate_Yaw(-Rotation)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError):
-                return "error"
-        elif Command_Array[0] == "flip":
-            return "ok"
-        elif Command_Array[0] == "go":
-            if len(Command_Array) > 5:
-                return "error"
-            else:
-                try:
-                    Distance_x = float(Command_Array[1])
-                    Distance_y = float(Command_Array[2])
-                    Distance_z = float(Command_Array[3])
-                    Speed = float(Command_Array[4])
-                    Result = self.Moveto(Distance_x,Distance_y,Distance_z,Speed)
-                    return (Result*"ok" + (not Result)*"error")
-                except(TypeError):
-                    return "error"
-        elif Command_Array[0] == "stop":
-            self.Stop_Command()
-            return "ok"
-        elif Command_Array[0] == "curve":
-            return "error"
-        elif Command_Array[0] == "jump":
-            return "error"
-
-        elif Command_Array[0] == "speed":
-            Speed = Command_Array[1]
-            self.Set_Speed(Speed)
-        elif Command_Array[0] == "rc":
-            pass
-        elif Command_Array[0] == "wifi":
-            pass
-        elif Command_Array[0] == "mon":
-            return "error"
-        elif Command_Array[0] == "moff":
-            return "error"
-        elif Command_Array[0] == "mdirection":
-            return "error"
-        elif Command_Array[0] == "ap":
-            pass
-
-        elif Command_Array[0] == "speed?":
-            return self.Read_Speed()
-        elif Command_Array[0] == "battery?":
-            return self.Read_Battery()
-        elif Command_Array[0] == "time?":
-            return self.Read_Time
-        elif Command_Array[0] == "wifi?":
-            pass
-        elif Command_Array[0] == "sdk?":
-            return "sdk 2.0"
-        elif Command_Array[0] == "sn?":
-            return self.Serial_Number()
-
-        else:
-            return "error"
+    # Inside the Tello_Communication object
 
 
     def Get_State(self):
@@ -437,45 +297,8 @@ class NewDrone():
             if e.type == pygame.KEYDOWN:
                 print("Keydown get")
                 #print(e.key)
-                if e.key == pygame.K_UP:
-                    print("KeyUp get")
-                    UpThread = threading.Thread(target=self.Receive_Command, name="ForwardThread", args=("forward 100",))
-                    UpThread.start()
-                if e.key == pygame.K_DOWN:
-                    print("KeyDown get")
-                    LeftThread = threading.Thread(target=self.Receive_Command, name="BackThread", args=("back 100",))
-                    LeftThread.start()
-                if e.key == pygame.K_LEFT:
-                    print("KeyLeft get")
-                    LeftThread = threading.Thread(target=self.Receive_Command, name="LeftThread", args=("left 100",))
-                    LeftThread.start()
-                if e.key == pygame.K_RIGHT:
-                    print("KeyRight get")
-                    LeftThread = threading.Thread(target=self.Receive_Command, name="RightThread", args=("right 100",))
-                    LeftThread.start()
-                if e.key == pygame.K_SPACE:
-                    if self.Landed:
-                        TakeOffThread = threading.Thread(target=self.Receive_Command, name="TakeOffThread", args=("takeoff",))
-                        TakeOffThread.start()
-                    else:
-                        LandThread = threading.Thread(target=self.Receive_Command, name="LandThread", args=("land",))
-                        LandThread.start()
-                if e.key == pygame.K_l:
-                    CWThread = threading.Thread(target=self.Receive_Command, name="CWThread", args=("cw 45",))
-                    CWThread.start()
-                if e.key == pygame.K_j:
-                    CCWThread = threading.Thread(target=self.Receive_Command, name="CCWThread", args=("ccw 45",))
-                    CCWThread.start()
                 if e.key == pygame.K_z:
                     print(self.Get_State())
-                if e.key == pygame.K_q:
-                    UserInput = input("Input command")
-                    InputThread = threading.Thread(target=self.Receive_Command, name="InputThread", args=(UserInput,))
-                    InputThread.start()
-                if e.key == pygame.K_DELETE:
-                    print("Key Delete get")
-                    StopThread = threading.Thread(target=self.Receive_Command, name="StopThread", args=("stop",))
-                    StopThread.start()
 
 
     # This function handles the movement of the drones by changing their position according to their speed

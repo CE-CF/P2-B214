@@ -56,7 +56,7 @@ class StartMenu():
         # Tkinter widgets use tkinter objects that have to be created
         # These following line create the objects for each of the widgets and sets them
         Resolution = tkinter.StringVar(Main_Frame)
-        Resolution.set(self.Resolution_List[0])
+        Resolution.set(self.Resolution_List[1])
         self.FullScreen_Bool = tkinter.BooleanVar()
         self.FullScreen_Bool.set(False)
         self.Speed = tkinter.DoubleVar()

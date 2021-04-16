@@ -3,7 +3,10 @@ import Camera
 import Global_Constants as GC
 #import OLD_Camera
 import Drone
-import New_Drone
+#import New_Drone as ND
+
+import Tello_Drone as TD
+import Tello_Communication as TC
 
 class Game():
 
@@ -18,6 +21,9 @@ class Game():
         self.Screen = pygame.display.set_mode(self.ScreenSize, flags= pygame.FULLSCREEN * FullScreen)
         self.Run = Run
         self.Joystick_Handler_Ran = 0
+        self.clock = pygame.time.Clock()
+        self.TC = TC.Tello_Communication()
+        self.TC.start()
     # This function was used for making a static object. It is not used right now.
     '''def init(self, ScreenHeight = 1080, ScreenWidth = 640, FullScreen = False, Run = True):
         pygame.init()
@@ -41,8 +47,15 @@ class Game():
                            Drone.Drone(500, 300, GC.Uniform_Drones_Speed, 2,
                                        "Button13", "Button14", "Button12", "Button11")]
                                        """
-        #Drones = [Drone.Drone(200,300), Drone.Drone(820,300), Drone.Drone(510, 100, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i),Drone.Drone(510, 500, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i)]
-        self.Drones = [New_Drone.TelloDrone(200,300,2)]
+        #self.Drones = [Drone.Drone(200,300), Drone.Drone(820,300), Drone.Drone(510, 100, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i),Drone.Drone(510, 500, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i)]
+        self.Drones = [TD.TelloDrone(200,300), TD.TelloDrone(400,300,IP_Address="0.0.0.1")]
+        #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
+        for i in self.Drones:
+            if i.__class__ == TD.TelloDrone:
+                self.TC.Add_Drone(i)
+            else:
+                continue
+
 
     def Joystick_Setup(self):
         self.Joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
@@ -83,6 +96,7 @@ class Game():
             return
     # Function that uninitializes the pygame module
     def close(self):
+        self.TC.close()
         pygame.display.quit()
         pygame.quit()
     # Function that updates the rectangles of all displayed objects
@@ -98,7 +112,7 @@ class Game():
         #Game.MainCamera.Keyhold(KeyPressList)
         for i in self.Drones:
             #print(f'{i} is being updated for Keyholds')
-            if i.__class__ == New_Drone.TelloDrone:
+            if i.__class__ != Drone.Drone:
                 return
             elif i.Control_Type == 2 or i.Control_Type == 1:
                 i.Keyhold(KeyPressList, self.JoysticksInput[0])
@@ -107,7 +121,7 @@ class Game():
     # Function that goes through all drones in the list and runs their movement handler
     def Drones_Movement_Handler(self, EventList):
         for i in self.Drones:
-            if i.__class__ == New_Drone.TelloDrone:
+            if i.__class__ == TD.TelloDrone:
                 i.Command_Handler(EventList)
             else:
                 i.Movement_Handler()
@@ -123,7 +137,18 @@ class Game():
     # Function that draws the sprites for all displayed objects
     def Draw_Sprites(self):
         for i in self.Drones:
+            pygame.draw.rect(self.Screen, (0,0,0),i.Rect,2)
             self.Screen.blit(i.Image, i.Rect)
+
+    def Temp_Rot_Drone(self, Drone, angle):
+        Drone.Yaw += angle
+        Drone.Image = pygame.transform.rotate(Drone.Init_Image, Drone.Yaw)
+        Drone.Rect = Drone.Image.get_rect(center=Drone.Rect.center)
+
+    def Drone_Update_Rot(self):
+        for i in self.Drones:
+            i.Image = pygame.transform.rotate(i.Init_Image, -i.Yaw)
+            i.Rect.size = i.Image.get_size()
 
     # The main game loop
     def Game_Loop(self):
@@ -132,6 +157,7 @@ class Game():
         global Drones
         # The while loop. Might also just be a while True
         while self.Run:
+            self.clock.tick(GC.FPS)
             eventsList = pygame.event.get()             # Get the list of all events
             keyPressList = pygame.key.get_pressed()     # Get the list of all keyboard key's held
             self.Joystick_Handler(0)
@@ -140,13 +166,14 @@ class Game():
                 #print(self.JoysticksInput[0])
                 #print("Button 0 is pressed")
             self.Screen.fill((255,255,255))             # Fill screen with white to refresh
-            Camera.Offset_Handler(1)
+            Camera.Offset_Handler(30)
             #Game.MainCamera.Movement_Handler(1)
             #self.Drones[0].Movement_Handler(1)
             #self.Drones[1].Movement_Handler(1)
             self.Drones_Movement_Handler(eventsList)
             #Update_Rects()
             self.Drones_Collision_Handler()
+            self.Drone_Update_Rot()
             self.Update_Rects()
 
             #if len(eventsList) != 0:
@@ -166,10 +193,17 @@ class Game():
                 #if e.type == pygame.JOYBUTTONUP:
                 #    print("Joystick button released.")
                 if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_o:
+                        self.Temp_Rot_Drone(self.Drones[0], 36)
+                    if e.key == pygame.K_u:
+                        self.Temp_Rot_Drone(self.Drones[0], -36)
                     if e.key == pygame.K_ESCAPE:
                         self.close()
                         #sys.exit()
                         return
+            FPS = self.clock.get_fps()
+            FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), 0, (0,0,0))
+            self.Screen.blit(FPS_Text, (0,0))
 
             self.Draw_Sprites()
             pygame.display.flip()           # Update the pygame display
