@@ -44,6 +44,7 @@ class Packet:
     _p_checksum = None
     _p_dest = None
     _p_data = None
+    _src = None
 
     def __init__(self, p_type="heart", p_dest="127.0.0.1", p_data=""):
         self.p_type = p_type
@@ -54,6 +55,14 @@ class Packet:
         self.p_checksum = self.calc_checksum(
             bytes(self.p_type), self.p_dest.packed, self.p_data.encode()
         )
+
+    @property
+    def src(self):
+        return self._src
+
+    @src.setter
+    def src(self, nsrc):
+        self._src = nsrc
 
     @property
     def p_type(self):
@@ -98,8 +107,8 @@ class Packet:
             self._p_dest = ipaddress.IPv4Address(dest)
         except:
             print(
-                f"""Something is wrong with destination address. Please make sure it is correct:
-{self.p_dest}"""
+                "Something is wrong with destination address."
+                + f" Please make sure it is correct: {self.p_dest}"
             )
 
     @property
@@ -110,20 +119,31 @@ class Packet:
     def p_data(self, data: str):
         self._p_data = data
 
-    def dump(self):
+    def dump(self, log=True, to_stdout=True):
         """Dumps packet information to terminal
 
         :returns:
 
         """
-        print("=====================================")
-        print("|          Packet content           |")
-        print("=====================================")
-        print(f"[TYPE]: {self.p_type}")
-        print(f"[CHECKSUM]: {self.p_checksum}")
-        print(f"[DESTINATION]: {self.p_dest}")
-        print(f"[DATA]: {self.p_data}")
-        print("=====================================")
+        dump_data = {
+            "type": self.p_type,
+            "checksum": self.p_checksum,
+            "dest": self.p_dest,
+            "data": self.p_data,
+        }
+
+        if self.src is not None:
+            dump_data["src"] = self.src
+
+        if to_stdout:
+            print("=====================================")
+            print("|          Packet content           |")
+            print("=====================================")
+            for k in dump_data:
+                print(f"[{k.upper()}]: {dump_data[k]}")
+            print("=====================================")
+        if log:
+            return dump_data
 
     def data_parser(self):
         """Parse incoming packet data for easier manipulation

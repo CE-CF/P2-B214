@@ -13,6 +13,7 @@ The delete variables are ('DroneName')
 """
 #EXAMPLES FOR drone_old.insert/update/delete
 #drone_old.insert('PythonTest', 'inserting', 12.345678, 12.345678)
+#drone_old.insert('PythonTest2', 'inserting', 87.654321, 87.654321)
 #drone_old.update('PythonTest', 'updating', 87.654321, 87.654321)
 #drone_old.delete('PythonTest')
 #All point of interest related commands
@@ -45,8 +46,10 @@ The streaming variable is ('DroneName')
 #EXAMPLE FOR video_old.stream()
 #videoV1.stream('PythonTest')
 
-###########################################################
 
+
+###########################################################
+"""
 PythonDrone = drone.Drone('PythonDrone', 87.654321, 12.345678)
 print("drone table handler")
 PythonDrone.insert()
@@ -69,3 +72,9 @@ print("\n")
 print("video table handler")
 PythonDrone = video.Video('PythonDrone')
 PythonDrone.insert()
+"""
+
+
+
+
+getTable.fetchall('hive.poi')
