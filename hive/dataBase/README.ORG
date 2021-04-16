@@ -2,6 +2,7 @@
 #+author: Christian Faurholt
 
 #+begin_src plantuml :file ClassDiagram.png
+@startuml
 title Class diagram for database module
 
 class databaseHandler<mysql.connector>{
@@ -44,6 +45,7 @@ class tableHandler{
         +check_query(video: String): mySql_check_query
         +update_query(**insert: Dictionary) : mySql_check_query
         +delete_query(**insert: Dictionary) : mySql_delete_query
+        +fetchall(table: String) : table[]
         ..others..
         insert_string_lat(str: String, word: String) : String
         insert_string_long(str: String, word: String) : String
@@ -114,6 +116,7 @@ Database -up-.. route : "<<Create>>"
 Database -up-.. video : "<<Create>>"
 Database o-left- DatabaseClient 
 Database o-down- DMSServer  
+@enduml
 #+end_src
 
 [[file:ClassDiagram.png]]

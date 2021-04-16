@@ -77,4 +77,14 @@ PythonDrone.insert()
 
 
 
-getTable.fetchall('hive.poi')
+test = getTable.fetchall('hive.drone')
+
+for x in range(len(test)):    
+    print(test[x])
+
+for i in test:
+    print(i['drone'])
+    print("-------------")
+    print(i['latitude'])
+    print(i['longitude'])
+    print("\n")
