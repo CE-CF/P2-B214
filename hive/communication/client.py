@@ -13,6 +13,8 @@ from hive.utils.decorators import setInterval
 from .packet import Packet
 
 CON_TYPE_TCP = True
+CON_TYPE_UDP = False
+
 
 # =====================
 # LOGGING RELATED
@@ -266,10 +268,9 @@ class Client(ABC):
             mig_packet = Packet.decode_packet(mig_msg)
             mig_data = mig_packet.data_parser()
 
-            print(mig_msg)
-            mig_packet.dump()
-            print(mig_data)
-
+            # print(mig_msg)
+            # mig_packet.dump()
+            # print(mig_data)
             if mig_data["CMD"] is not None:
                 port = mig_data["P"]
                 self.log_info(f"Received migration info: {port}")
@@ -295,7 +296,22 @@ class Client(ABC):
                 # Receive msg
                 msg = self.recvall()
                 packet = Packet.decode_packet(msg)
+
+                # Log client info
+                # ---
+                p_dump = packet.dump(to_stdout=False)
+                log_string = ""
+                for k in p_dump:
+                    log_string += f"[{k.upper()}]: {p_dump[k]}"
+                    log_string += "\n\t\t\t\t\t\t\t"
+
+                self.log_info(
+                    "Packet received content:"
+                    + "\n\t\t\t\t\t\t\t"
+                    + log_string
+                )
                 self.log_info(f"PULSE: {self.pulse}")
+                # ---
                 self.run(packet)
 
         # "Catch" some exceptions
