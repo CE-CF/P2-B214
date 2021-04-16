@@ -1,7 +1,9 @@
 #import OLD_Camera
 import Camera
 import pygame
-from math import sqrt
+import threading
+import Tello_Communication
+from math import sqrt, cos, sin, pi
 from time import time, sleep
 
 # Every 65 pixel = 10 cm
@@ -17,6 +19,7 @@ class TelloDrone():
         self.Yaw = 0
         self.Current_Speed = MaxSpeed
         self.Start_Time = time()
+        #self.Command_Center = Tello_Communication(self)
 
         self.Executing_Command = False
         self.Landed = True
@@ -68,6 +71,7 @@ class TelloDrone():
             # Makes the altitude 0 if the drone is supposed to land
             self.Pos_z = self.Pos_z*(not State)
             self.Landed = State
+            self.Executing_Command = False
             return True
 
 
@@ -86,58 +90,138 @@ class TelloDrone():
         # To avoid this the drone goes into landing and it just stops in its place
         self.Emergency_Stop = True
         self.Pos_z = 0
-        self.Speed = [0,0,0]
+        self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
         self.Landed = True
+        sleep(1)
+        self.Emergency_Stop = False
 
     def Stop_Command(self):
         self.Emergency_Stop = True
-        self.Speed = [0,0,0]
-
-    def Moveto(self, Amount_x = 0, Amount_y = 0, Amount_z = 0, Speed_Ratio = 0):
+        self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
+        sleep(1)
+        self.Emergency_Stop = False
+    """
+    def Moveto(self, Amount_x = 0, Amount_y = 0, Amount_z = 0, Speed_Ratio = 10):
         # This function works for both the one directional command and the go command
-        Amount_Sum = Amount_x+Amount_y+Amount_z
-        if (self.Executing_Command
+        print("Go command started")
+        print(f"Amount to move is: {Amount_x}, {Amount_y}, {Amount_z}")
+        Amount_Sum = abs(Amount_x) + abs(Amount_y) + abs(Amount_z)
+        if (self.Executing_Command or self.Landed
             or ((not(20<=abs(Amount_x)<=500)) and (Amount_x!=0))
-            or ((not(20<=abs(Amount_y)<=500)) and (Amount_x!=0))
-            or ((not(20<=abs(Amount_z)<=500)) and (Amount_x!=0))
+            or ((not(20<=abs(Amount_y)<=500)) and (Amount_y!=0))
+            or ((not(20<=abs(Amount_z)<=500)) and (Amount_z!=0))
             or ((not(10<=Speed_Ratio<=100)) and (Speed_Ratio!=0))
             or Amount_Sum == 0):
+            print("go command out of range")
             return False
         else:
             # Moves by the certain amount between 20 and 500 in 3 directions
-            Initial_Pos = self.Pos
-            Speed = self.MaxSpeed*Speed_Ratio + self.Current_Speed*(Speed_Ratio==0)
-            self.Speed_x = sqrt(Amount_x/Amount_Sum)*Speed
-            self.Speed_y = sqrt(Amount_y/Amount_Sum)*Speed
-            self.Speed_z = sqrt(Amount_z/Amount_Sum)*Speed
-            """
-            while ((self.Pos_x - Initial_Pos[0]) < Amount_x):
-                self.Pos_x = Speed*(-1*(Amount_x < 0))
-            while ((self.Pos_y - Initial_Pos[1]) < Amount_y):
-                self.Pos_y = Speed*(-1*(Amount_y < 0))
-            while ((self.Pos_z - Initial_Pos[2]) < Amount_z):
-                self.Pos_z = Speed*(-1*(Amount_z < 0))
-            """
-            while ((((self.Pos_x - Initial_Pos[0]) < Amount_x) or
-                    ((self.Pos_y - Initial_Pos[1]) < Amount_y) or
-                    ((self.Pos_z - Initial_Pos[2]) < Amount_z)) and (not self.Emergency_Stop)):
-                self.Pos_x = self.Speed_x*(-1*(Amount_x < 0))*((self.Pos_x - Initial_Pos[0]) < Amount_x)
-                self.Pos_y = self.Speed_y*(-1*(Amount_y < 0))*((self.Pos_y - Initial_Pos[1]) < Amount_y)
-                self.Pos_z = self.Speed_z*(-1*(Amount_z < 0))*((self.Pos_z - Initial_Pos[2]) < Amount_z)
-
+            print("Go command not out of range")
+            self.Executing_Command = True
+            Initial_Pos = [self.Pos_x, self.Pos_y, self.Pos_z]
+            Speed = 0.001
+            #Speed = self.MaxSpeed*(Speed_Ratio/100) + self.Current_Speed*(Speed_Ratio==0)
+            self.Speed_x = sqrt(abs(Amount_x)/Amount_Sum)*Speed*(1-2*(Amount_x<0))
+            self.Speed_y = sqrt(abs(Amount_y)/Amount_Sum)*Speed*(1-2*(Amount_y<0))
+            self.Speed_z = sqrt(abs(Amount_z)/Amount_Sum)*Speed*(1-2*(Amount_z<0))
+            print("go command starting while loop")
+            while (((abs(self.Pos_x - Initial_Pos[0]) < abs(Amount_x)) or
+                    (abs(self.Pos_y - Initial_Pos[1]) < abs(Amount_y)) or
+                    (abs(self.Pos_z - Initial_Pos[2]) < abs(Amount_z)))):
+                #print(self.Speed)
+                print(f'{self.Speed_x}, {self.Speed_y}, {self.Speed_z}')
+                if self.Emergency_Stop:
+                    self.Executing_Command = False
+                    return False
+                else:
+                    self.Pos_x += self.Speed_x*(abs(self.Pos_x - Initial_Pos[0]) < abs(Amount_x))
+                    self.Pos_y += self.Speed_y*(abs(self.Pos_y - Initial_Pos[1]) < abs(Amount_y))
+                    self.Pos_z += self.Speed_z*(abs(self.Pos_z - Initial_Pos[2]) < abs(Amount_z))
+            print("Go command exit while loop")
             self.Pos_x = Initial_Pos[0] + Amount_x
             self.Pos_y = Initial_Pos[1] + Amount_y
             self.Pos_z = Initial_Pos[2] + Amount_z
+            self.Executing_Command = False
+            return True
+    """
+
+    def Moveto(self, Amount_RL = 0, Amount_FB = 0, Amount_z = 0, Speed_Ratio = 10):
+        # This function works for both the one directional command and the go command
+        Amount_Sum = abs(Amount_RL) + abs(Amount_FB) + abs(Amount_z)
+        if (self.Executing_Command or self.Landed
+            or ((not(20<=abs(Amount_RL)<=500)) and (Amount_RL!=0))
+            or ((not(20<=abs(Amount_FB)<=500)) and (Amount_FB!=0))
+            or ((not(20<=abs(Amount_z)<=500)) and (Amount_z!=0))
+            or ((not(10<=Speed_Ratio<=100)) and (Speed_Ratio!=0))
+            or Amount_Sum == 0):
+            print("go command out of range")
+            return False
+        else:
+            # Moves by the certain amount between 20 and 500 in 3 directions
+            self.Executing_Command = True
+            Initial_Pos = [self.Pos_x, self.Pos_y, self.Pos_z]
+            Speed = 0.001*(Speed_Ratio/100) + 0.01*(Speed_Ratio==0)
+            #Speed = self.MaxSpeed*(Speed_Ratio/100) + self.Current_Speed*(Speed_Ratio==0)
+            """
+            Speed_Neutralizer = (Amount_RL+Amount_FB)*(cos(self.Yaw)**2)+(Amount_RL-Amount_FB)*(sin(self.Yaw)**2)+Amount_z
+            self.Speed_x = (sqrt(abs(Amount_RL)/Speed_Neutralizer)*Speed*(1-2*(Amount_RL<0))*cos(self.Yaw*(pi/180))-
+                            sqrt(abs(Amount_FB)/Speed_Neutralizer)*Speed*(1-2*(Amount_FB>0))*sin(self.Yaw*(pi/180)))
+            self.Speed_x *= abs(self.Speed_x)>0.0000001
+            self.Speed_y = (sqrt(abs(Amount_FB)/Speed_Neutralizer)*Speed*(1-2*(Amount_FB>0))*cos(self.Yaw*(pi/180))+
+                            sqrt(abs(Amount_RL)/Speed_Neutralizer)*Speed*(1-2*(Amount_RL<0))*sin(self.Yaw*(pi/180)))
+            self.Speed_y *= abs(self.Speed_y)>0.0000001
+            self.Speed_z = sqrt(abs(Amount_z)/Speed_Neutralizer)*Speed*(1-2*(Amount_z<0))
+            Target_x = Amount_FB*sin(self.Yaw*(pi/180)) + Amount_RL*cos(self.Yaw*(pi/180))
+            Target_x *= abs(Target_x)>0.0000001
+            Target_y = -(Amount_FB*cos(self.Yaw*(pi/180))) + Amount_RL*sin(self.Yaw*(pi/180))
+            Target_y *= abs(Target_y)>0.0000001
+            """
+            Target_x = Amount_FB*sin(self.Yaw*(pi/180)) + Amount_RL*cos(self.Yaw*(pi/180))
+            Target_x *= abs(Target_x)>0.0000001
+            Target_y = -(Amount_FB*cos(self.Yaw*(pi/180))) + Amount_RL*sin(self.Yaw*(pi/180))
+            Target_y *= abs(Target_y)>0.0000001
+            New_Sum = abs(Target_x) + abs(Target_y) + abs(Amount_z)
+            Unit_Vector_Converter = sqrt((Target_x**2 + Target_y**2 + Amount_z**2))/New_Sum
+            Speed_Neutralizer = New_Sum*Unit_Vector_Converter
+            self.Speed_x = (abs(Target_x)/Speed_Neutralizer)*Speed*(1-2*(Target_x<0))
+            self.Speed_y = (abs(Target_y)/Speed_Neutralizer)*Speed*(1-2*(Target_y<0))
+            self.Speed_z = (abs(Amount_z)/Speed_Neutralizer)*Speed*(1-2*(Amount_z<0))
+            print(f'{self.Speed_x}, {self.Speed_y}, {self.Speed_z}')
+            while (((abs(self.Pos_x - Initial_Pos[0]) < abs(Target_x)) or
+                    (abs(self.Pos_y - Initial_Pos[1]) < abs(Target_y)) or
+                    (abs(self.Pos_z - Initial_Pos[2]) < abs(Amount_z)))):
+                #print(self.Speed)
+                #print(f'{self.Speed_x}, {self.Speed_y}, {self.Speed_z}')
+                if self.Emergency_Stop:
+                    self.Executing_Command = False
+                    return False
+                else:
+                    self.Pos_x += self.Speed_x*(abs(self.Pos_x - Initial_Pos[0]) < abs(Target_x))
+                    self.Pos_y += self.Speed_y*(abs(self.Pos_y - Initial_Pos[1]) < abs(Target_y))
+                    self.Pos_z += self.Speed_z*(abs(self.Pos_z - Initial_Pos[2]) < abs(Amount_z))
+            print("Go command exit while loop")
+            print(f'Target x is: {Target_x}')
+            self.Pos_x = Initial_Pos[0] + Target_x
+            print(f'Target y is: {Target_y}')
+            self.Pos_y = Initial_Pos[1] + Target_y
+            self.Pos_z = Initial_Pos[2] + Amount_z
+            self.Executing_Command = False
             return True
 
     def Rotate_Yaw(self, Rotation, Speed = 1):
-        if((not (1<=abs(Rotation)<=360)) and self.Executing_Command):
+        if((not (1<=abs(Rotation)<=360)) and (self.Executing_Command or self.Landed)):
             return False
         else:
+            self.Executing_Command = True
             Init_Yaw = self.Yaw
-            while ((self.Yaw - Init_Yaw) < Rotation) and (not self.Emergency_Stop):
+            while ((self.Yaw - Init_Yaw) < Rotation):
+                if self.Emergency_Stop:
+                    self.Executing_Command = False
+                    return False
                 self.Yaw += Speed*(Rotation>0) - Speed*(Rotation<0)
             self.Yaw = (Init_Yaw + Rotation) % 360
+            self.Executing_Command = False
+            return True
 
     def Curveto(self, Amount_x, Amount_y, Amount_z, Speed_Ratio):
         # This is so complex, will take so much time to make yey
@@ -172,6 +256,9 @@ class TelloDrone():
     def Read_Battery(self):
         return "55"
 
+    def Read_Time(self):
+        return str(time() - self.Start_Time)
+
     def Serial_Number(self):
         return str(self)
 
@@ -204,11 +291,15 @@ class TelloDrone():
             self.Emergency()
             return "ok"
         elif Command_Array[0] == "up":
+            print("Got up command")
             try:
+                print("Up command no error")
+                print(f'Command array is: {Command_Array}')
                 Distance = float(Command_Array[1])
                 Result = self.Moveto(Amount_z = Distance)
                 return (Result*"ok" + (not Result)*"error")
             except(TypeError):
+                print("Up command error")
                 return "error"
         elif Command_Array[0] == "down":
             try:
@@ -219,29 +310,35 @@ class TelloDrone():
                 return "error"
         elif Command_Array[0] == "left":
             try:
+                print("Left command no error")
+                print(f'Command array is: {Command_Array}')
                 Distance = float(Command_Array[1])
-                Result = self.Moveto(Amount_x = -Distance)
+                #Result = self.Moveto(Amount_x = -Distance)
+                Result = self.Moveto(Amount_RL = -Distance)
                 return (Result*"ok" + (not Result)*"error")
             except(TypeError):
                 return "error"
         elif Command_Array[0] == "right":
             try:
                 Distance = float(Command_Array[1])
-                Result = self.Moveto(Amount_x = Distance)
+                #Result = self.Moveto(Amount_x = Distance)
+                Result = self.Moveto(Amount_RL = Distance)
                 return (Result*"ok" + (not Result)*"error")
             except(TypeError):
                 return "error"
         elif Command_Array[0] == "forward":
             try:
                 Distance = float(Command_Array[1])
-                Result = self.Moveto(Amount_y = -Distance)
+                #Result = self.Moveto(Amount_y = -Distance)
+                Result = self.Moveto(Amount_FB = Distance)
                 return (Result*"ok" + (not Result)*"error")
             except(TypeError):
                 return "error"
         elif Command_Array[0] == "back":
             try:
                 Distance = float(Command_Array[1])
-                Result = self.Moveto(Amount_y = Distance)
+                #Result = self.Moveto(Amount_y = Distance)
+                Result = self.Moveto(Amount_FB = -Distance)
                 return (Result*"ok" + (not Result)*"error")
             except(TypeError):
                 return "error"
@@ -303,7 +400,7 @@ class TelloDrone():
         elif Command_Array[0] == "battery?":
             return self.Read_Battery()
         elif Command_Array[0] == "time?":
-            return str(time() - self.Start_Time)
+            return self.Read_Time
         elif Command_Array[0] == "wifi?":
             pass
         elif Command_Array[0] == "sdk?":
@@ -314,11 +411,59 @@ class TelloDrone():
         else:
             return "error"
 
+
     def Get_State(self):
         Dist = sqrt(self.Tot_Dist_x**2 + self.Tot_Dist_y**2 + self.Tot_Dist_z**2)
         Run_Time = time() - self.Start_Time
         State = f"pitch:0;roll:0;yaw:{self.Yaw};vgx:{self.Speed_x};vgy:{self.Speed_y};vgz:{self.Speed_z};templ:12.2;temph:14.2;tof:{Dist};h:{self.Pos_z};bat:55;baro:22;time:{Run_Time};agx:0;agy:0;agz:0;\r\n"
         return State
+
+    def Command_Handler(self, Events):
+        #print("Command Handler working")
+        for e in Events:
+            if e.type == pygame.KEYDOWN:
+                print("Keydown get")
+                #print(e.key)
+                if e.key == pygame.K_UP:
+                    print("KeyUp get")
+                    UpThread = threading.Thread(target=self.Receive_Command, name="ForwardThread", args=("forward 25",))
+                    UpThread.start()
+                if e.key == pygame.K_DOWN:
+                    print("KeyDown get")
+                    LeftThread = threading.Thread(target=self.Receive_Command, name="BackThread", args=("back 25",))
+                    LeftThread.start()
+                if e.key == pygame.K_LEFT:
+                    print("KeyLeft get")
+                    LeftThread = threading.Thread(target=self.Receive_Command, name="LeftThread", args=("left 25",))
+                    LeftThread.start()
+                if e.key == pygame.K_RIGHT:
+                    print("KeyRight get")
+                    LeftThread = threading.Thread(target=self.Receive_Command, name="RightThread", args=("right 25",))
+                    LeftThread.start()
+                if e.key == pygame.K_SPACE:
+                    if self.Landed:
+                        TakeOffThread = threading.Thread(target=self.Receive_Command, name="TakeOffThread", args=("takeoff",))
+                        TakeOffThread.start()
+                    else:
+                        LandThread = threading.Thread(target=self.Receive_Command, name="LandThread", args=("land",))
+                        LandThread.start()
+                if e.key == pygame.K_l:
+                    CWThread = threading.Thread(target=self.Receive_Command, name="CWThread", args=("cw 45",))
+                    CWThread.start()
+                if e.key == pygame.K_j:
+                    CCWThread = threading.Thread(target=self.Receive_Command, name="CCWThread", args=("ccw 45",))
+                    CCWThread.start()
+                if e.key == pygame.K_z:
+                    print(self.Get_State())
+                if e.key == pygame.K_q:
+                    UserInput = input("Input command")
+                    InputThread = threading.Thread(target=self.Receive_Command, name="InputThread", args=(UserInput,))
+                    InputThread.start()
+                if e.key == pygame.K_DELETE:
+                    print("Key Delete get")
+                    StopThread = threading.Thread(target=self.Receive_Command, name="StopThread", args=("stop",))
+                    StopThread.start()
+
 
     # This function handles the movement of the drones by changing their position according to their speed
     # It checks the direction the drone is going and assigns the x and y speeds accordingly

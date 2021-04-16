@@ -6,17 +6,20 @@ class Coordinates:
     local_c = np.empty((0, 2), float)
 
     def __init__(self, coordinates):
-        self.global_c = coordinates
+        self.global_c = np.array([[coordinates[0][1], coordinates[0][0]],
+                                  [coordinates[1][1], coordinates[1][0]],
+                                  [coordinates[2][1], coordinates[2][0]],
+                                  [coordinates[3][1], coordinates[3][0]]])
 
     def find_origo(self):
         temp_origo = 0
         for i in range(1, 4):
-            if self.global_c[temp_origo][1] <= self.global_c[i][1]:
+            if self.global_c[temp_origo][0] <= self.global_c[i][0]:
                 continue
-            elif self.global_c[temp_origo][1] > self.global_c[i][1]:
+            elif self.global_c[temp_origo][0] > self.global_c[i][0]:
                 temp_origo = i
             else:
-                if self.global_c[temp_origo][0] <= self.global_c[i][0]:
+                if self.global_c[temp_origo][1] <= self.global_c[i][1]:
                     continue
                 else:
                     temp_origo = i

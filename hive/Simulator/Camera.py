@@ -53,9 +53,12 @@ def Offset_Handler(Speed):
 # Check if the movement keys are held
 def Keyhold(keyPressList, Joystick_InputDict = {}):
     global Move_Left, Move_Right, Move_Down, Move_Up, Move_xAxis, Move_yAxis
-    Move_Left = keyPressList[pygame.K_a]
-    Move_Right = keyPressList[pygame.K_d]
-    Move_Down = keyPressList[pygame.K_s]
-    Move_Up = keyPressList[pygame.K_w]
-    Move_xAxis = Joystick_InputDict.get("Axis2")
-    Move_yAxis = Joystick_InputDict.get("Axis3")
+    if (Joystick_InputDict.get("Axis2") != None) and (Joystick_InputDict.get("Axis3") != None):
+        Move_xAxis = Joystick_InputDict.get("Axis2")
+        Move_yAxis = Joystick_InputDict.get("Axis3")
+    else:
+        Move_Left = keyPressList[pygame.K_a]
+        Move_Right = keyPressList[pygame.K_d]
+        Move_Down = keyPressList[pygame.K_s]
+        Move_Up = keyPressList[pygame.K_w]
+
