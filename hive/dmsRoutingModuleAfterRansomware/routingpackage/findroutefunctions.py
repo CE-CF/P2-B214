@@ -20,7 +20,7 @@ from .distanceinmeters import DistanceInMeters
 from sympy import *
 import numpy as np
 
-perp = None
+perp = []
 drone_FOV = float(26)
 
 
@@ -41,12 +41,12 @@ def find_longest_line(global_c):
     return longest_line_index
 
 
-def setPlot(p):
+def set_plot(p):
     global perp
-    perp = p
+    perp.append(p)
 
 
-def getPlot():
+def get_plots():
     return perp
 
 
@@ -74,7 +74,6 @@ def point_furthest_away(local_c, func, index, origo_c):
         solution = (solve(perp_func_slope * x + perp_intersection - func[index][0] * x - func[index][1], x))
         intersect_x = float(solution[0])
 
-
         # Find the y-coordinate of that point
         y_of_intersect_x = perp_func_slope * intersect_x + perp_intersection
 
@@ -85,7 +84,9 @@ def point_furthest_away(local_c, func, index, origo_c):
 
         dist = DistanceInMeters.calculate_distance(global_local_c, global_intersect_c)
 
-        setPlot(Plot(0, [[perp_func_slope, perp_intersection]]))
+        # Finding ratio between y-axis intersections in coordinates and meters
+
+        set_plot(Plot(0, [perp_func_slope, perp_intersection], 'b'))
 
         # find the longest projection of one of the points to the longest line and the points index
         if dist > longest_dist:
@@ -106,22 +107,41 @@ def find_path_width(longest_dist):
 # The path width isn't enough for us to make the function
 # We need the new y-axis intersections of the path functions
 # We find this using sine, arctan, path_width and slope
-def find_intersection_corresponding_path_width(path_width, paths, func):
+def find_intersection_corresponding_path_width(path_width, paths, func, y_ratio):
     arr = []
+    path_border_intersection = (path_width * y_ratio)/(math.sin(math.radians(90 - math.degrees(math.atan(func[0])))))
+    # print((path_width * y_ratio) / math.degrees(math.sin(90 - math.degrees(math.atan(func[0])))))
+    path_intersection = path_border_intersection / 2
     for i in range(paths):
-        print(drone_FOV/(math.degrees(math.atan(func[0]))))
-        # print(drone_FOV/(math.sin(90-math.atan(func[0]))))
-        #arr.append(path_width)
+        arr.append((path_border_intersection * i) + path_intersection + func[1])
     return arr
 
 
-def run(global_c, local_c, func, origo_c):
+def complete_path_functions(path_intersections_arr, longest_line):
+    arr = []
+    for i in range(len(path_intersections_arr)):
+        arr.append([longest_line[0], path_intersections_arr[i]])
+        set_plot(Plot(0, arr[i], 'g'))
+    return arr
 
+
+def run(global_c, local_c, func, origo_c, y_ratio):
+    # Find longest line - returns index of the function in the array
     longest_line_index = find_longest_line(global_c)
 
+    # Find point furthest away - returns points index in array and shortest distance from point to function
     longest_dist_index, longest_dist = point_furthest_away(local_c, func, longest_line_index, origo_c)
 
+    # Find width of path - returns width of the path and the total number of paths
     path_width, number_of_paths = find_path_width(longest_dist)
-    find_intersection_corresponding_path_width(path_width, number_of_paths, func[longest_line_index])
+
+    # Find the path functions intersection with the y-axis - returns array of intersections
+    path_intersection_arr \
+        = find_intersection_corresponding_path_width(path_width, number_of_paths, func[longest_line_index], y_ratio)
+
+    # Put together the functions - returns an array of all the path functions
+    path_functions_arr = complete_path_functions(path_intersection_arr, func[longest_line_index])
+
+    return path_functions_arr
 
     # in the end return the drone fov(meters)
