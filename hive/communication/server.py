@@ -174,6 +174,18 @@ class TCPClientHandler(threading.Thread):
                 msg = self.recvall(conn)
                 recv_packet = Packet.decode_packet(msg)
                 if type(recv_packet) is Packet:
+                    recv_packet.src = addr
+                    p_dump = recv_packet.dump()
+                    log_string = ""
+                    for k in p_dump:
+                        log_string += f"[{k.upper()}]: {p_dump[k]}"
+                        log_string += "\n\t\t\t\t\t\t\t"
+
+                    self.log_info(
+                        "Packet received content:"
+                        + "\n\t\t\t\t\t\t\t"
+                        + log_string
+                    )
                     if recv_packet.p_type == 3:
                         self.reply_heart(conn)
                     else:
@@ -302,9 +314,11 @@ class Server(ABC):
         # "Catch" exceptions
         except IndexError:
             print("Stopping server")
+            self.srv_socket_tcp.shutdown(SHUT_RDWR)
             self.srv_socket_tcp.close()
         except KeyboardInterrupt:
             print("Stopping server")
+            self.srv_socket_tcp.shutdown(SHUT_RDWR)
             self.srv_socket_tcp.close()
         except DecodeErrorChecksum:
             pass

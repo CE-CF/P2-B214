@@ -2,10 +2,10 @@
 #+author: Simon Christensen
 * Protocol specification
 ** Protocol fields
-+-----------+-----------------+-------------+-----------------+
-| Data Type | Checksum(SHA2)  | Destination | Data            |
-| 2 bits    | 256 bits        | 4 bytes     | variable length |
-+-----------+-----------------+-------------+-----------------+
++-----------+---------------------+-------------+-----------------+
+| Data Type | Checksum(SHA2)      | Destination | Data            |
+| 2 bits    | 256 bits (32 bytes) | 4 bytes     | variable length |
++-----------+---------------------+-------------+-----------------+
 *** Destinations
  - Operator PC
  - Data management system
