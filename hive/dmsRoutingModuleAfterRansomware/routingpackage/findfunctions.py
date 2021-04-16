@@ -1,8 +1,12 @@
 import numpy as np
 
+''' This class can calculate the slope between two local coordinates
+    and find the intersection between this slope and the local y-axis '''
+
 two_coordinates = np.empty((2, 2), float)
 
 
+# This method calculates the difference between two coordinates
 def calculate_difference():
     return np.array([two_coordinates[0][1] - two_coordinates[1][1],
                      two_coordinates[0][0] - two_coordinates[1][0]])

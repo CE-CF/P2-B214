@@ -60,10 +60,10 @@ print("f(x)=" + str(round(func4.calculate_slope(), 2)) + "x+" + str(
 dist = DistanceInMeters()
 AD = dist.calculate_distance(low_left, low_right)
 AB = dist.calculate_distance(low_left, up_left)
-CD = dist.calculate_distance(low_right, up_right)
 BC = dist.calculate_distance(up_left, up_right)
+CD = dist.calculate_distance(low_right, up_right)
 # The different distances are being sorted to find the longest
-distList = [AD, AB, CD, BC]
+distList = [AD, AB, BC, CD]
 distList.sort()
 print("The longest side is: ", distList[-1], "m")
 # Which is the longest?
