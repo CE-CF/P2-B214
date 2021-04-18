@@ -16,7 +16,7 @@ thick_arr = np.array([[57.061873611380946, 9.874398700298244],
 
 
 def run():
-    sohn = Routing(big_array, 0.00002)
+    sohn = Routing(thick_arr, 0.00002)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
     bob = DistanceInMeters
