@@ -47,8 +47,6 @@ def find_limits(points, pad):
 def plot_points(local_c, limits, padding):
     global x_limit_1, x_limit_2, y_limit_1, y_limit_2
 
-    print(local_c)
-
     if limits:
         x_limit_1, x_limit_2, y_limit_1, y_limit_2 = find_limits(local_c, padding)
 

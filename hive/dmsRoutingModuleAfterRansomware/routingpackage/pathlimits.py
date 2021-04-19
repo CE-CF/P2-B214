@@ -1,5 +1,4 @@
 from sympy import *
-from scipy.optimize import fsolve
 import numpy as np
 from plots import Plot
 
@@ -11,11 +10,11 @@ class PathLimits:
     plot_array = []
     longest_line_index = None
 
-    def __init__(self, path_funcs, b_funcs, l_l_index, local_c):
-        self.path_functions = path_funcs
-        self.border_functions = b_funcs
-        self.local_c = local_c
-        self.longest_line_index = l_l_index
+    def __init__(s, path_funcs, b_funcs, l_l_index, local_c):
+        s.path_functions = path_funcs
+        s.border_functions = b_funcs
+        s.local_c = local_c
+        s.longest_line_index = l_l_index
 
     # when a plot is created it's put as a parameter to this function
     # it then appends this plot to the array perp (for perpendicular)
