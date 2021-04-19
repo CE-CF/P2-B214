@@ -32,6 +32,10 @@ class StartMenu():
             print(f'ScreenSize is: {GC.ScreenSize}')
             print(f'ScreenWidth is: {GC.ScreenWidth}')
             print(f'ScreenHeight is: {GC.ScreenHeight}')
+    #
+    def Change_TelloMode(self):
+        GC.TelloMode = self.TelloMode_Bool.get()
+        print(f'Tello mode is: {GC.TelloMode}')
     # Changes the full screen boolean according the full screen tick box
     def Change_FullScreen(self):
         GC.FullScreen = self.FullScreen_Bool.get()
@@ -39,7 +43,7 @@ class StartMenu():
     # Changes the speed according to the spinbox.
     # Initiated only when up or down arrow are used in the spinbox
     def Change_Speed(self):
-        GC.Uniform_Drones_Speed = float(self.Speed_Spinbox.get())
+        GC.Uniform_Drones_Speed = float(self.Speed_Spinbox.get())*10
         print(f'Speed is: {GC.Uniform_Drones_Speed}')
     # Sets the boolean that tells the main function to run the game
     # Called when the run button is pressed. It destroys the start menu
@@ -57,12 +61,16 @@ class StartMenu():
         # These following line create the objects for each of the widgets and sets them
         Resolution = tkinter.StringVar(Main_Frame)
         Resolution.set(self.Resolution_List[1])
+        self.TelloMode_Bool = tkinter.BooleanVar()
+        self.TelloMode_Bool.set(False)
         self.FullScreen_Bool = tkinter.BooleanVar()
         self.FullScreen_Bool.set(False)
         self.Speed = tkinter.DoubleVar()
         self.Speed.set(1)
         self.Run_Bool = False
 
+        TelloMode_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Tello Mode", variable = self.TelloMode_Bool,
+                                                 offvalue = False, onvalue = True, command = self.Change_TelloMode)
         FullScreen_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Full Screen", variable = self.FullScreen_Bool,
                                                   offvalue = False, onvalue = True, command = self.Change_FullScreen)
         Resolution_Option = tkinter.OptionMenu(Main_Frame, Resolution, *self.Resolution_List,
@@ -77,6 +85,7 @@ class StartMenu():
         Speed_Label.pack(side=tkinter.LEFT)
         self.Speed_Spinbox.pack(side=tkinter.RIGHT)
         Resolution_Option.pack()
+        TelloMode_Checkbox.pack()
         FullScreen_Checkbox.pack()
         Run_Button.pack()
         print("Entering menu main loop")

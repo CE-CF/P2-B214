@@ -69,12 +69,12 @@ class Drone():
             self.Move_Right = keyPressList[self.Key_Right]
             self.Move_Down = keyPressList[self.Key_Down]
             self.Move_Up = keyPressList[self.Key_Up]
-        elif self.Control_Type == 1:
+        elif self.Control_Type == 1 and Joystick_InputDict != {}:
             self.Move_x = Joystick_InputDict.get(self.Joystick_xAxis)
             self.Move_x = self.Move_x*(not (-0.1<self.Move_x<0.1))
             self.Move_y = Joystick_InputDict.get(self.Joystick_yAxis)
             self.Move_y = self.Move_y*(not (-0.1<self.Move_y<0.1))
-        elif self.Control_Type == 2:
+        elif self.Control_Type == 2 and Joystick_InputDict != {}:
             self.Move_Left = Joystick_InputDict.get(self.Key_Left)
             self.Move_Right = Joystick_InputDict.get(self.Key_Right)
             self.Move_Down = Joystick_InputDict.get(self.Key_Down)
