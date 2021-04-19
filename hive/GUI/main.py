@@ -8,6 +8,7 @@ import mapHandler
 # Object Lists
 Points = []
 PointDenominator = ["A", "B", "C", "D"]
+Map = []
 
 
 def limitPoint(event):
@@ -35,6 +36,8 @@ def AngleChecker():
     Using Law of Cosines to calculate angles in triangel ABC and CDA
     anc checking that theese angles are not >= 180
     """
+    treshold = 160
+
     AB = sqrt((Points[1].trueX - Points[0].trueX) ** 2 + (Points[1].trueY - Points[0].trueY) ** 2)
     BC = sqrt((Points[2].trueX - Points[1].trueX) ** 2 + (Points[2].trueY - Points[1].trueY) ** 2)
     CD = sqrt((Points[3].trueX - Points[2].trueX) ** 2 + (Points[3].trueY - Points[2].trueY) ** 2)
@@ -60,9 +63,9 @@ def AngleChecker():
         angleD = degrees(acos((DA ** 2 + BD ** 2 - AB ** 2) / (2 * DA * BD))) + degrees(
             acos((CD ** 2 + BD ** 2 - BC ** 2) / (2 * CD * BD)))
 
-    if angleA >= 180 or angleB >= 180 or angleC >= 180 or angleD >= 180:
+    if angleA >= treshold or angleB >= treshold or angleC >= treshold or angleD >= treshold:
         deleteLatestPoint()
-        showinfo("Error", "Sorry, one or more angles are greater than 180 degrees")
+        showinfo("Error", "Sorry, one or more angles are greater than " + str(treshold) +  " degrees")
     else:
         return True
 
@@ -90,9 +93,30 @@ def update():
 
 
 def requestMap():
-    obj = mapHandler.Map()
-    obj.requestMap()
+    Map.append(mapHandler.Map())
+    Map[0].requestMap()
     update()
+
+def zoomIn():
+    if len(Map) == 0:
+        Map.append(mapHandler.Map())
+        Map[0].requestMap()
+        update()
+    else:
+        Map[0].zoom += 1
+        Map[0].requestMap()
+        update()
+
+def zoomOut():
+    if len(Map) == 0:
+        Map.append(mapHandler.Map())
+        Map[0].requestMap()
+        update()
+    else:
+        Map[0].zoom -= 1
+        Map[0].requestMap()
+        update()
+
 
 
 root = tk.Tk()
@@ -100,14 +124,17 @@ root.state("zoomed")
 
 img = ImageTk.PhotoImage(Image.open("map.png"))
 
-canvas = tk.Canvas(root, height=800, width=800)
-image_container = canvas.create_image(800, 800, anchor="nw", image=img)
+canvas = tk.Canvas(root, height=640, width=640)
+image_container = canvas.create_image(640, 640, image=img)
 canvas.pack(side="top", anchor="nw")
 canvas.bind("<Button-1>", limitPoint)
+
 
 tk.Button(root, text="Clear", command=clearCanvas).pack(side="left", anchor="nw")
 tk.Button(root, text="Delete last point", command=deleteLatestPoint).pack(side="left", anchor="nw")
 tk.Button(root, text="Estimate", command=estimate).pack(side="left", anchor="nw")
 tk.Button(root, text="NOT FREE", command=requestMap, bg="red").pack(side="left", anchor="nw")
+tk.Button(root, text="+", command=zoomIn).pack(side="left", anchor="nw")
+tk.Button(root, text="-", command=zoomOut).pack(side="left", anchor="nw")
 
 root.mainloop()
