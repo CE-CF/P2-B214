@@ -1,7 +1,8 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter.messagebox import showinfo
 from PIL import ImageTk, Image
-from math import acos, sqrt, radians, degrees
+from math import acos, sqrt, degrees, pow, cos, pi
 import SearchArea
 import mapHandler
 
@@ -11,6 +12,14 @@ PointDenominator = ["A", "B", "C", "D"]
 Map = []
 
 
+def getCornerPoints(x,y):
+    pixel_degree_x = 360 / 2**(Map[0].zoom + 8)
+    pixel_degree_y = 360 / 2**(Map[0].zoom + 8) * cos(Map[0].lat * pi / 180)
+    point_lat = Map[0].lat - pixel_degree_y * (y - Map[0].size / 2)
+    point_long = Map[0].long + pixel_degree_x * (x - Map[0].size / 2)
+
+    return point_lat, point_long
+
 def limitPoint(event):
     """Adds a point to the map, which limits the search area"""
     if len(Points) >= 4:
@@ -19,6 +28,7 @@ def limitPoint(event):
         Points.append(SearchArea.LimitPoint(PointDenominator[len(Points)], (event.x - 8), (event.x + 8), (event.y - 8),
                                             (event.y + 8)))
         Points[len(Points) - 1].drawPoint(canvas)
+        print(str(getCornerPoints(event.x, event.y)))
 
 
 def estimate():
@@ -36,7 +46,7 @@ def AngleChecker():
     Using Law of Cosines to calculate angles in triangel ABC and CDA
     anc checking that theese angles are not >= 180
     """
-    treshold = 160
+    threshold = 160
 
     AB = sqrt((Points[1].trueX - Points[0].trueX) ** 2 + (Points[1].trueY - Points[0].trueY) ** 2)
     BC = sqrt((Points[2].trueX - Points[1].trueX) ** 2 + (Points[2].trueY - Points[1].trueY) ** 2)
@@ -63,16 +73,16 @@ def AngleChecker():
         angleD = degrees(acos((DA ** 2 + BD ** 2 - AB ** 2) / (2 * DA * BD))) + degrees(
             acos((CD ** 2 + BD ** 2 - BC ** 2) / (2 * CD * BD)))
 
-    if angleA >= treshold or angleB >= treshold or angleC >= treshold or angleD >= treshold:
+    if angleA >= threshold or angleB >= threshold or angleC >= threshold or angleD >= threshold:
         deleteLatestPoint()
-        showinfo("Error", "Sorry, one or more angles are greater than " + str(treshold) +  " degrees")
+        showinfo("Error", "Sorry, one or more angles are greater than " + str(threshold) +  " degrees")
     else:
         return True
 
 
 def clearCanvas():
     canvas.delete("all")
-    canvas.create_image(400, 400, image=img)
+    canvas.create_image(300, 300, image=img)
     Points.clear()
 
 
@@ -91,11 +101,28 @@ def update():
     canvas.itemconfig(image_container)
     clearCanvas()
 
+    # print("CE: " + str(Map[0].lat) + ", " + str(Map[0].long))
+    # print("NE: " + str(getCornerPoints(Map[0].size, 0)))
+    # print("SW: " + str(getCornerPoints(0, Map[0].size)))
+    # print("NW: " + str(getCornerPoints(0, 0)))
+    # print("SE: " + str(getCornerPoints(Map[0].size, Map[0].size)))s
+
 
 def requestMap():
-    Map.append(mapHandler.Map())
+    if len(Map) == 0:
+        Map.append(mapHandler.Map())
+    if lat.get() != "Lattitude" and long.get() != "Longtitude":
+        try:
+            Map[0].setCoordinates(float(lat.get()), float(long.get()))
+        except ValueError:
+            print("Error")
+    if zoomValue.get != "zoom":
+        Map[0].zoom = int(zoomValue.get())
+
     Map[0].requestMap()
     update()
+
+
 
 def zoomIn():
     if len(Map) == 0:
@@ -117,19 +144,34 @@ def zoomOut():
         Map[0].requestMap()
         update()
 
-
-
 root = tk.Tk()
 root.state("zoomed")
 
+# REQUEST MAP
+zoomValue = ttk.Spinbox(root, from_=11, to=16)
+zoomValue.pack(padx=5, pady=5)
+
+lat = ttk.Entry(root, width = 20)
+lat.insert(0, "Lattitude")
+lat.pack(padx = 5, pady = 5)
+
+long = ttk.Entry(root, width = 20)
+long.insert(0, "Longtitude")
+long.pack(padx = 5, pady = 5)
+
+
+tk.Button(root, text="Request Map", command=requestMap).pack(padx=5, pady=5)
+tk.Button(root, text="UPDATE ME", command=update).pack(padx=5, pady=5)
+# CANVAS
 img = ImageTk.PhotoImage(Image.open("map.png"))
 
-canvas = tk.Canvas(root, height=640, width=640)
-image_container = canvas.create_image(640, 640, image=img)
+canvas = tk.Canvas(root, height=620, width=620)
+image_container = canvas.create_image(300, 300, image=img)
 canvas.pack(side="top", anchor="nw")
 canvas.bind("<Button-1>", limitPoint)
 
 
+# CANVAS CONTROLS
 tk.Button(root, text="Clear", command=clearCanvas).pack(side="left", anchor="nw")
 tk.Button(root, text="Delete last point", command=deleteLatestPoint).pack(side="left", anchor="nw")
 tk.Button(root, text="Estimate", command=estimate).pack(side="left", anchor="nw")
