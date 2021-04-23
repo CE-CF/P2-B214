@@ -18,6 +18,16 @@ def deleteLatestPoint():
 def estimate():
     pass
 
+def requestMap():
+    pass
+
+def zoomIn():
+    pass
+
+def zoomOut():
+    pass
+
+
 
 class App(ttk.Frame):
     def __init__(self, container):
@@ -41,3 +51,6 @@ class App(ttk.Frame):
         tk.Button(self, text="Clear", command=clearCanvas).grid(column=0, row=1)
         tk.Button(self, text="Delete last point", command=deleteLatestPoint).grid(column=0, row=2)
         tk.Button(self, text="Estimate", command=estimate).grid(column=0, row=3)
+        tk.Button(self, text="NOT FREE", command=requestMap, bg="red").grid(column=1, row=1)
+        tk.Button(self, text="+", command=zoomIn).grid(column=1, row=2)
+        tk.Button(self, text="-", command=zoomOut).grid(column=1, row=3)
