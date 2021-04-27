@@ -5,27 +5,7 @@ from PIL import ImageTk, Image
 from math import acos, sqrt, degrees, cos, pi
 import mapHandler
 import SearchArea
-
-def limitPoint():
-    pass
-
-def clearCanvas():
-    pass
-
-def deleteLatestPoint():
-    pass
-
-def estimate():
-    pass
-
-def requestMap():
-    pass
-
-def zoomIn():
-    pass
-
-def zoomOut():
-    pass
+import GUI_functionality
 
 
 
