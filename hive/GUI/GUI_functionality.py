@@ -1,3 +1,5 @@
+import mapHandler
+import SearchArea
 from math import acos, sqrt, degrees, cos, pi
 
 
@@ -39,7 +41,7 @@ def estimate():
 def AngleChecker():
     """
     Using Law of Cosines to calculate angles in triangel ABC and CDA
-    anc checking that theese angles are not >= 180
+    and checking that theese angles are not >= treshold
     """
     threshold = 160
 
