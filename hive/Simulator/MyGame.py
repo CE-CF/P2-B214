@@ -41,7 +41,7 @@ class Game():
         else:
             if pygame.joystick.get_count() == 0:
                 self.Drones = [Drone.Drone(200, 300),
-                               Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 1,
+                               Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 0,
                                            pygame.K_j, pygame.K_l,pygame.K_k, pygame.K_i)]
             else:
                 self.Drones = [Drone.Drone(200, 300),
@@ -127,6 +127,7 @@ class Game():
         for i in self.Drones:
             if i.__class__ == TD.TelloDrone:
                 i.Command_Handler(EventList)
+                i.RC_Handler()
             else:
                 i.Movement_Handler()
     # Function that runs the collision algorithm for all drones in the list
@@ -141,7 +142,7 @@ class Game():
     # Function that draws the sprites for all displayed objects
     def Draw_Sprites(self):
         for i in self.Drones:
-            pygame.draw.rect(self.Screen, (0,0,0),i.Rect,2)
+            #pygame.draw.rect(self.Screen, (0,0,0),i.Rect,2)
             self.Screen.blit(i.Image, i.Rect)
 
     def Temp_Rot_Drone(self, Drone, angle):
