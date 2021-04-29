@@ -8,9 +8,87 @@ from hive.exceptions.packet_exceptions import (
 )
 
 
-class Packet:
+class HiveU:
     """
-    This is a class for the packets, in the Hive system, being sent between:
+    This is the class for the UDP based packets in the Hive system.
+    """
+
+    def __init__(self, ident: int, seq: int, data: bytes):
+        self.identifier = ident
+        self.seq = seq
+        self.data = data
+
+    # --------
+    # Properties
+    _identifier: int = 0
+    _seq: int = 0
+    _data: bytes = bytes()
+
+    # -------------------
+    # Getters and setters
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @identifier.setter
+    def identifier(self, ident: int):
+        self._identifier = ident
+
+    @property
+    def seq(self):
+        return self._seq
+
+    @seq.setter
+    def seq(self, seq: int):
+        self._seq = seq
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, data: bytes):
+        self._data = data
+
+    def dump(self, log=True, to_stdout=True):
+        dump_data = {
+            "identifier": self.identifier,
+            "seq": self.seq,
+            "data": self.data,
+        }
+        if to_stdout:
+            print("=====================================")
+            print("|          HiveU content            |")
+            print("=====================================")
+            for k in dump_data:
+                print(f"[{k.upper()}]: {dump_data[k]}")
+            print("=====================================")
+
+        if log:
+            return dump_data
+
+    def encode(self):
+        packet_bytearray = bytearray()
+        packet_bytearray.append(self.identifier)
+        packet_bytearray.append(self.seq)
+        packet_bytearray += bytearray(self.data)
+
+        return bytes(packet_bytearray)
+
+    # --------------
+    # Static methods
+    @staticmethod
+    def decode(msg):
+        ident = msg[0]
+        seq = msg[1]
+        data = msg[2:]
+        return HiveU(ident, seq, data)
+
+
+class HiveT:
+    """
+    This is the class for the TCP based packets in the Hive system, being sent
+    between:
       - Operator PC
       - Data Management System
       - Relay box
@@ -40,9 +118,9 @@ class Packet:
     """
 
     # Attributes
-    _p_type = None
     _p_checksum = None
     _p_dest = None
+    _p_type = None
     _p_data = None
     _src = None
 
@@ -137,7 +215,7 @@ class Packet:
 
         if to_stdout:
             print("=====================================")
-            print("|          Packet content           |")
+            print("|          HiveT content            |")
             print("=====================================")
             for k in dump_data:
                 print(f"[{k.upper()}]: {dump_data[k]}")
@@ -175,16 +253,16 @@ class Packet:
         :returns: bytes
 
         """
-        if type(packet) is not Packet:  # Make sure argument is of type Packet
+        if type(packet) is not HiveT:  # Make sure argument is of type Packet
             raise EncodeErrorPacket(
-                packet, f"Argument is not of type: {type(Packet())} "
+                packet, f"Argument is not of type: {type(HiveT())} "
             )
 
         # Put everything into a bytearray
         packet_bytes_array = bytearray()
-        packet_bytes_array.append(packet.p_type)
         packet_bytes_array += bytearray(packet.p_checksum)
         packet_bytes_array += bytearray(packet.p_dest.packed)
+        packet_bytes_array.append(packet.p_type)
         packet_bytes_array += packet.p_data.encode()
         packet_bytes_array += bytearray(0x00)
         # Add null terminator not used atm but will be used to know when data is done
@@ -201,28 +279,28 @@ class Packet:
 
         :param packet_bytes:
         :type packet_bytes:
-        :returns: Packet
+        :returns: HiveT
 
         """
         # Since the packet is designed to be more or less static
         # (except for data segment)
         # Each packet attribute can be assigned through indexing bytes object
         try:
-            packet_type = packet_bytes[0]
-            packet_checksum = packet_bytes[1:33]
-            packet_dest = packet_bytes[33:37]
+            packet_checksum = packet_bytes[0:32]
+            packet_dest = packet_bytes[32:36]
+            packet_type = packet_bytes[36]
             packet_data = packet_bytes[37:]
 
             # Check if any errors occured
             if (
-                Packet.calc_checksum(
+                HiveT.calc_checksum(
                     bytes(packet_type), bytes(packet_dest), bytes(packet_data)
                 )
                 != packet_checksum
             ):
                 raise DecodeErrorChecksum(packet_bytes)
             else:
-                return Packet(packet_type, packet_dest, packet_data.decode())
+                return HiveT(packet_type, packet_dest, packet_data.decode())
         except IndexError:
             return False
 

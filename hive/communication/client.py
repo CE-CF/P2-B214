@@ -1,8 +1,7 @@
-import threading
 import logging
-from datetime import datetime
-
+import threading
 from abc import ABC, abstractmethod
+from datetime import datetime
 from socket import AF_INET, SHUT_RDWR, SOCK_STREAM, socket
 from time import sleep
 
