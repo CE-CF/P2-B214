@@ -88,7 +88,7 @@ class DroneHandler:
                 for e in EventList:
                     if e.type == pygame.KEYDOWN:
                         print(f'Takeoff button state is: {KeyList[self.Control_Dict.get("takeoff")]}')
-                        # The takeoff button lands or takes off the drone (Depending on if the drone is flying or not)
+                        # The land button lands or takes off the drone (Depending on if the drone is flying or not)
                         if KeyList[self.Control_Dict.get("land")]:
                             if self.Drone.is_flying:
                                 self.Drone.land()
@@ -97,14 +97,14 @@ class DroneHandler:
                         #if KeyList[self.Control_Dict.get("takeoff")]:
                         #    if not self.Drone.is_flying:
                         #        self.Drone.takeoff()
-                        # The circle button switches RC_Mode on or off
+                        # The rc button switches RC_Mode on or off
                         elif KeyList[self.Control_Dict.get("rc")]:
                             self.RC_Mode = not self.RC_Mode
                             self.Drone.send_rc_control(0,0,0,0)
-                        # The square button sends the stop command that is supposed to let the drone hover in its place
+                        # The stop button sends the stop command that is supposed to let the drone hover in its place
                         elif KeyList[self.Control_Dict.get("stop")]:
                             self.Drone.send_control_command("stop")
-                        # The triangle button sends the emergency command that stops the propellers
+                        # The emergency button sends the emergency command that stops the propellers
                         elif KeyList[self.Control_Dict.get("emergency")]:
                             self.Drone.emergency()
                         """ Dangerous :P
