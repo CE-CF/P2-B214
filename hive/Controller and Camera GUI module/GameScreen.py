@@ -74,11 +74,11 @@ class Game:
         self.DH.Stop()
 
     # Function that updates the key holds for all objects that need updating them
-    def Update_Key_Holds(self, KeyPressList):
+    def Update_Key_Holds(self, KeyPressList, EventList):
         if pygame.joystick.get_count() == 0:
-            self.DH.ControlHandler(KeyPressList, {})
+            self.DH.ControlHandler(KeyPressList, EventList, {})
         else:
-            self.DH.ControlHandler(KeyPressList, self.JoysticksInput[0])
+            self.DH.ControlHandler(KeyPressList, EventList, self.JoysticksInput[0])
 
     # Function that draws the sprites for all displayed objects
     def Draw_Sprites(self):
@@ -95,21 +95,23 @@ class Game:
             eventsList = pygame.event.get()             # Get the list of all events
             keyPressList = pygame.key.get_pressed()     # Get the list of all keyboard key's held
             self.Joystick_Handler(0)                    # Run the joystick input handler (Only running for first joystick currnetly)
-            self.Update_Key_Holds(keyPressList)         # Run the keyhold function
+            self.Update_Key_Holds(keyPressList, eventsList)         # Run the keyhold function
             self.Screen.fill((255,255,255))             # Fill screen with white to refresh
             Frame = self.DH.GetFrame()                  # Get the video frame from the drone handler
             FrameWidth = 960                            # Set the video frame width
             FrameHeight = 720                           # Set the video frame height
+            #Image = pygame.image.frombuffer(Frame, (FrameWidth, FrameHeight), "BGR")
             # Check if the screen is smaller than the width of the frame and resize the frame accordingly
             if self.ScreenWidth < 960 or self.ScreenHeight < 720:
                 FrameRatio = min((self.ScreenWidth/920), (self.ScreenHeight/720))
                 FrameHeight =int(FrameHeight*FrameRatio)
                 FrameWidth = int(FrameWidth*FrameRatio)
+                #pygame.transform.scale(Image, (FrameWidth, FrameHeight))
                 Frame = cv2.resize(Frame,(FrameWidth,FrameHeight))
             # Create pygame image surface of the frame and draw it on the main surface
             Image = pygame.image.frombuffer(Frame, (FrameWidth, FrameHeight), "BGR")
             self.Screen.blit(Image, ((self.ScreenWidth - FrameWidth)/2,0))
-
+            #self.Screen.blit(Image, (0,0))
             for e in eventsList:
                 if e.type == pygame.QUIT:   # QUIT is the event of the X button on the top corner being pressed
                     self.close()
@@ -118,6 +120,11 @@ class Game:
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_c: # Pressing c will give drone control to the controller
                         self.DH.SetControllerMode(True)
+                    if e.key == pygame.K_x:
+                        self.DH.Controllable = not self.DH.Controllable
+                        print(self.DH.Controllable)
+                    if e.key == pygame.K_z:
+                        self.DH.Connect_Network("ssid", "pass")
                     if e.key == pygame.K_ESCAPE:    # Escape will also close the program
                         self.close()
                         return
