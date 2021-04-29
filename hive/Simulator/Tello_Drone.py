@@ -36,7 +36,7 @@ class TelloDrone():
 
         # Drone's rectangle object. Used as the place to draw the drone, and as it's collision box.
         # The arguments are it's position and it's size
-        self.Rect = pygame.Rect(Start_x - Camera.Offset_x, Start_y - Camera.Offset_y, 64, 64)
+        self.Rect = pygame.Rect(Start_x - Camera.Offset_x, Start_y - Camera.Offset_y, 16, 16)
         # Load the image of the drone
         self.Init_Image = pygame.image.load("Drone_Icon.png")
         self.Image = self.Init_Image
@@ -350,7 +350,7 @@ class TelloDrone():
     def Get_State(self):
         Dist = sqrt(self.Tot_Dist_x**2 + self.Tot_Dist_y**2 + self.Tot_Dist_z**2)
         Run_Time = time() - self.Start_Time
-        State = f"pitch:0;roll:0;yaw:{self.Yaw};vgx:{self.Speed_x};vgy:{self.Speed_y};vgz:{self.Speed_z};templ:12.2;temph:14.2;tof:{Dist};h:{self.Pos_z};bat:55;baro:22;time:{Run_Time};agx:0;agy:0;agz:0;\r\n"
+        State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{self.Yaw};vgx:{self.Speed_x};vgy:{self.Speed_y};vgz:{self.Speed_z};templ:12.2;temph:14.2;tof:{Dist};h:{self.Pos_z};bat:55;baro:22;time:{Run_Time};agx:0;agy:0;agz:0;\r\n"
         return State
 
     def Command_Handler(self, Events):

@@ -142,7 +142,7 @@ class Game():
     # Function that draws the sprites for all displayed objects
     def Draw_Sprites(self):
         for i in self.Drones:
-            #pygame.draw.rect(self.Screen, (0,0,0),i.Rect,2)
+            pygame.draw.rect(self.Screen, (0,0,0),i.Rect,2)
             self.Screen.blit(i.Image, i.Rect)
 
     def Temp_Rot_Drone(self, Drone, angle):
