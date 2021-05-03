@@ -49,13 +49,13 @@ The streaming variable is ('DroneName')
 
 
 ###########################################################
-"""
+
 PythonDrone = drone.Drone('PythonDrone', 87.654321, 12.345678)
 print("drone table handler")
 PythonDrone.insert()
 PythonDrone.update()
 PythonDrone.delete()
-print("\n")
+print("\n") 
 
 print("poi table handler")
 PythonDrone = poi.Poi('PythonDrone', 87.654321, 12.345678)
@@ -88,3 +88,4 @@ for i in test:
     print(i['latitude'])
     print(i['longitude'])
     print("\n")
+"""
