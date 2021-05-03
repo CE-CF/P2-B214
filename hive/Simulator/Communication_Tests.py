@@ -6,10 +6,11 @@ Run_Receive = True
 Server_IP = "127.0.0.1"
 #SERVER_IP = "192.168.56.1"
 Server_Port = 8889
-Bind_Port = 9999
+#Bind_Port = 9999
 Buffer_Size = 1024
 
 s = socket(AF_INET,SOCK_DGRAM)
+s.settimeout(5)
 #s.bind((Server_IP, Bind_Port))
 
 def Recieve():
@@ -18,7 +19,7 @@ def Recieve():
     #print(f's is: {s}')
     #s.sendto(b'',(Server_IP,Server_Port))
     while Run_Receive:
-        Data = s.recv(Buffer_Size)
+        Data = s.recvfrom(Buffer_Size)
         if Data == b'':
             continue
         print(f'Data recieved is: {Data}')
@@ -34,8 +35,12 @@ while True:
         break
     s.sendto(bytes(Input_String,'utf-8'),(Server_IP,Server_Port))
     print("Data sent.")
-    Data = s.recv(Buffer_Size)
-    print(f'Data recieved is: {Data}')
+    try:
+        Data = s.recv(Buffer_Size)
+        print(f'Data recieved is: {Data}')
+    except timeout:
+        print(f'Response timed out')
+        print(f'It is highly advised to just restart the client')
     #UTFData = str(Data, encoding="UTF-8")
     #print(f'Data recieved is: {UTFData}')
 

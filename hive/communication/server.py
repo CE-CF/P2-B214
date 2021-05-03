@@ -3,18 +3,19 @@ import logging
 import threading
 
 # Partial imports
-from typing import List
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import List
 from socket import (
     AF_INET,
+    SHUT_RDWR,
     SO_REUSEADDR,
     SOCK_DGRAM,
     SOCK_STREAM,
     SOL_SOCKET,
     socket,
-    SHUT_RDWR,
 )
+
 
 # Hive imports
 from hive.communication import BUFFER_SIZE
@@ -139,8 +140,6 @@ class TCPClientHandler(threading.Thread):
                 + " connection is there!"
             )
 
-        # self.reply_heart(self.client_conn)
-
         # Create new server
         thread_server = self.create_thread_server()
         new_port = thread_server.getsockname()[1]
@@ -175,7 +174,7 @@ class TCPClientHandler(threading.Thread):
                 recv_packet = Packet.decode_packet(msg)
                 if type(recv_packet) is Packet:
                     recv_packet.src = addr
-                    p_dump = recv_packet.dump()
+                    p_dump = recv_packet.dump(to_stdout=False)
                     log_string = ""
                     for k in p_dump:
                         log_string += f"[{k.upper()}]: {p_dump[k]}"

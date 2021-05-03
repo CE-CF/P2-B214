@@ -1,6 +1,8 @@
 import numpy as np
 
 
+# Coordinates is extended by Routing so that Routing can access all Coordinates' properties
+# it inherits global and local coordinates + it's methods find_origo() and get_local_coordinates()
 class Coordinates:
     global_c = np.empty((2, 4), float)
     local_c = np.empty((0, 2), float)
@@ -11,6 +13,7 @@ class Coordinates:
                                   [coordinates[2][1], coordinates[2][0]],
                                   [coordinates[3][1], coordinates[3][0]]])
 
+    # method returns index of origo in point array
     def find_origo(self):
         temp_origo = 0
         for i in range(1, 4):
@@ -25,6 +28,7 @@ class Coordinates:
                     temp_origo = i
         return temp_origo
 
+    # returns a 2D-array of local coordinates
     def get_local_coordinates(self):
         origo = self.find_origo()
 

@@ -16,93 +16,136 @@ class Tello_Communication(Thread):
 
     def Receive_Command(self, Command: str, Drone_ID):
         Command_Array = Command.split(" ")
+        Array_Len = len(Command_Array)
         if len(Command_Array) == 0:
             return "error"
         elif Command_Array[0] == "command":
             # If it ever happens make this the thing that activates the drone
-            return "ok"
+            if Array_Len != 1:
+                return "error"
+            else:
+                return "ok"
         elif Command_Array[0] == "takeoff":
-            Result = self.Tello[Drone_ID].Landed_State(False)
-            return (Result*"ok" + (not Result)*"error")
+            if Array_Len != 1:
+                return "error"
+            else:
+                Result = self.Tello[Drone_ID].Landed_State(False)
+                return (Result*"ok" + (not Result)*"error")
         elif Command_Array[0] == "land":
-            Result = self.Tello[Drone_ID].Landed_State(True)
-            return (Result*"ok" + (not Result)*"error")
+            if Array_Len != 1:
+                return "error"
+            else:
+                Result = self.Tello[Drone_ID].Landed_State(True)
+                return (Result*"ok" + (not Result)*"error")
         elif Command_Array[0] == "streamon":
-            Result = self.Tello[Drone_ID].Stream_OnOff(True)
-            return (Result*"ok" + (not Result)*"error")
+            if Array_Len != 1:
+                return "error"
+            else:
+                Result = self.Tello[Drone_ID].Stream_OnOff(True)
+                return (Result*"ok" + (not Result)*"error")
         elif Command_Array[0] == "streamoff":
-            Result = self.Tello[Drone_ID].Stream_OnOff(False)
-            return (Result*"ok" + (not Result)*"error")
+            if Array_Len != 1:
+                return "error"
+            else:
+                Result = self.Tello[Drone_ID].Stream_OnOff(False)
+                return (Result*"ok" + (not Result)*"error")
         elif Command_Array[0] == "emergency":
-            self.Tello[Drone_ID].Emergency()
-            return "ok"
+            if Array_Len != 1:
+                return "error"
+            else:
+                self.Tello[Drone_ID].Emergency()
+                return "ok"
         elif Command_Array[0] == "up":
-            print("Got up command")
-            try:
-                print("Up command no error")
-                print(f'Command array is: {Command_Array}')
-                Distance = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Moveto(Amount_z = Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
-                print("Up command error")
+            if Array_Len != 2:
                 return "error"
+            else:
+                print("Got up command")
+                try:
+                    print("Up command no error")
+                    print(f'Command array is: {Command_Array}')
+                    Distance = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Moveto(Amount_z = Distance, Speed_Ratio = 0)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    print("Up command error")
+                    return "error"
         elif Command_Array[0] == "down":
-            try:
-                Distance = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Moveto(Amount_z = -Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    Distance = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Moveto(Amount_z = -Distance, Speed_Ratio = 0)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "left":
-            try:
-                print("Left command no error")
-                print(f'Command array is: {Command_Array}')
-                Distance = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Moveto(Amount_RL = -Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    print("Left command no error")
+                    print(f'Command array is: {Command_Array}')
+                    Distance = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Moveto(Amount_RL = -Distance, Speed_Ratio = 0)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "right":
-            try:
-                Distance = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Moveto(Amount_RL = Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    Distance = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Moveto(Amount_RL = Distance, Speed_Ratio = 0)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "forward":
-            try:
-                Distance = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Moveto(Amount_FB = Distance)
-                print(f'Forward result is: {Result}')
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    Distance = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Moveto(Amount_FB = Distance, Speed_Ratio = 0)
+                    print(f'Forward result is: {Result}')
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "back":
-            try:
-                Distance = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Moveto(Amount_FB = -Distance)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    Distance = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Moveto(Amount_FB = -Distance, Speed_Ratio = 0)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "cw":
-            try:
-                Rotation = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Rotate_Yaw(Rotation)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    Rotation = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Rotate_Yaw(Rotation)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "ccw":
-            try:
-                Rotation = float(Command_Array[1])
-                Result = self.Tello[Drone_ID].Rotate_Yaw(-Rotation)
-                return (Result*"ok" + (not Result)*"error")
-            except(TypeError or ValueError):
+            if Array_Len != 2:
                 return "error"
+            else:
+                try:
+                    Rotation = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Rotate_Yaw(-Rotation)
+                    return (Result*"ok" + (not Result)*"error")
+                except(TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "flip":
             return "ok"
         elif Command_Array[0] == "go":
-            if len(Command_Array) != 5:
+            if Array_Len != 5:
                 return "error"
             else:
                 try:
@@ -115,18 +158,39 @@ class Tello_Communication(Thread):
                 except(TypeError or ValueError):
                     return "error"
         elif Command_Array[0] == "stop":
-            self.Tello[Drone_ID].Stop_Command()
-            return "ok"
+            if Array_Len != 1:
+                return "error"
+            else:
+                self.Tello[Drone_ID].Stop_Command()
+                return "ok"
         elif Command_Array[0] == "curve":
             return "error"
         elif Command_Array[0] == "jump":
             return "error"
 
         elif Command_Array[0] == "speed":
-            Speed = Command_Array[1]
-            self.Tello[Drone_ID].Set_Speed(Speed)
+            if Array_Len != 2:
+                return "error"
+            else:
+                try:
+                    Speed = float(Command_Array[1])
+                    Result = self.Tello[Drone_ID].Set_Speed(Speed)
+                    return (Result*"ok" + (not Result)*"error")
+                except (TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "rc":
-            pass
+            if Array_Len != 5:
+                return "error"
+            else:
+                try:
+                    Speed_x = float(Command_Array[1])
+                    Speed_y = float(Command_Array[2])
+                    Speed_z = float(Command_Array[3])
+                    Yaw = float(Command_Array[4])
+                    Result = self.Tello[Drone_ID].RC(Speed_x, Speed_y, Speed_z, Yaw)
+                    return (Result*"ok" + (not Result)*"error")
+                except (TypeError or ValueError):
+                    return "error"
         elif Command_Array[0] == "wifi":
             pass
         elif Command_Array[0] == "mon":
@@ -139,24 +203,39 @@ class Tello_Communication(Thread):
             pass
 
         elif Command_Array[0] == "speed?":
-            return self.Tello[Drone_ID].Read_Speed()
+            if Array_Len != 1:
+                return "error"
+            else:
+                return self.Tello[Drone_ID].Read_Speed()
         elif Command_Array[0] == "battery?":
-            return self.Tello[Drone_ID].Read_Battery()
+            if Array_Len != 1:
+                return "error"
+            else:
+                return self.Tello[Drone_ID].Read_Battery()
         elif Command_Array[0] == "time?":
-            return self.Tello[Drone_ID].Read_Time
+            if Array_Len != 1:
+                return "error"
+            else:
+                return self.Tello[Drone_ID].Read_Time
         elif Command_Array[0] == "wifi?":
             pass
         elif Command_Array[0] == "sdk?":
-            return "sdk 2.0"
+            if Array_Len != 1:
+                return "error"
+            else:
+                return "sdk 2.0"
         elif Command_Array[0] == "sn?":
-            return self.Tello[Drone_ID].Serial_Number()
+            if Array_Len != 1:
+                return "error"
+            else:
+                return self.Tello[Drone_ID].Serial_Number()
 
         else:
             return "error"
 
     def Add_Drone(self, Drone):
         self.Tello.append(Drone)
-
+    '''
     def Sort_Command(self, Command: str):
         Command_Array = Command.split(": ")
         Result = None
@@ -178,6 +257,27 @@ class Tello_Communication(Thread):
             return "error"
         else:
             return Result
+    '''
+    def Sort_Command(self, Command: str, Socket:socket, SendTo):
+        Command_Array = Command.split(": ")
+        Result = None
+        IP_Found = False
+        print(f'\tCommand Array is: {Command_Array}')
+        print(f'\tCommand Array 0 is: {Command_Array[0]}')
+        for i in range(len(self.Tello)):
+            print(f'\tTello IP is : {self.Tello[i].IP_Address}')
+            if self.Tello[i].IP_Address == Command_Array[0]:
+                print(f"\tfound a drone in {self.Tello[i].IP_Address}")
+                Result = self.Receive_Command(Command_Array[1], i)
+                IP_Found = True
+            else:
+                continue
+        print(f'Result is: {Result}')
+        if not IP_Found:
+            Result = "error ip not found"
+        elif Result == None:
+            Result = "error"
+        Socket.sendto(bytes(Result, 'UTF-8'), SendTo)
 
 
     def run(self):
@@ -209,9 +309,11 @@ class Tello_Communication(Thread):
             #UTFr = str(r, encoding = "UTF-8")
             #print(f'\tIncoming text: {UTFr}')
             print(f'\tIncoming text: {r_str}')
-            Result = self.Sort_Command(r_str)
-            Command_Socket.sendto(bytes(Result, 'UTF-8'), a)
-            print(f'\tReturned text: {Result}')
+            Sort_Thread = Thread(target=self.Sort_Command, args=(r_str, Command_Socket, a,))
+            Sort_Thread.start()
+            #Result = self.Sort_Command(r_str)
+            #Command_Socket.sendto(bytes(Result, 'UTF-8'), a)
+            #print(f'\tReturned text: {Result}')
 
             #s.sendto(bytes(f'General Kenobi. Please stop contacting me. I got your message from {a[0]}','UTF-8'), a)
         print(f'\tOut of while loop')

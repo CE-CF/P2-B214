@@ -35,21 +35,22 @@ class Game():
         #global Drones
         # Create a list of all drones
         # First drone has base speed of 1, second drone has speed set by start menu
-        """
-        if pygame.joystick.get_count() == 0:
-            self.Drones = [Drone.Drone(200, 300),
-                           Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 1,
-                                       pygame.K_j, pygame.K_l,pygame.K_k, pygame.K_i)]
+        if GC.TelloMode:
+            self.Drones = [TD.TelloDrone(200,300), TD.TelloDrone(400,300,IP_Address="0.0.0.1")]
+            #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
         else:
-            self.Drones = [Drone.Drone(200, 300),
-                           Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 1,
-                                       Joystick_xAxis="Axis0", Joystick_yAxis="Axis1"),
-                           Drone.Drone(500, 300, GC.Uniform_Drones_Speed, 2,
-                                       "Button13", "Button14", "Button12", "Button11")]
-                                       """
+            if pygame.joystick.get_count() == 0:
+                self.Drones = [Drone.Drone(200, 300),
+                               Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 0,
+                                           pygame.K_j, pygame.K_l,pygame.K_k, pygame.K_i)]
+            else:
+                self.Drones = [Drone.Drone(200, 300),
+                               Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 1,
+                                           Joystick_xAxis="Axis0", Joystick_yAxis="Axis1"),
+                               Drone.Drone(500, 300, GC.Uniform_Drones_Speed, 2,
+                                           "Button13", "Button14", "Button12", "Button11")]
+
         #self.Drones = [Drone.Drone(200,300), Drone.Drone(820,300), Drone.Drone(510, 100, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i),Drone.Drone(510, 500, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i)]
-        self.Drones = [TD.TelloDrone(200,300), TD.TelloDrone(400,300,IP_Address="0.0.0.1")]
-        #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
         for i in self.Drones:
             if i.__class__ == TD.TelloDrone:
                 self.TC.Add_Drone(i)
@@ -77,12 +78,15 @@ class Game():
             print(self.Joysticks)
             print(self.Joysticks[0].get_init())
             print(self.Joysticks[0].get_instance_id())
+            print(self.Joysticks[0].get_guid())
             print(self.Joysticks[0].get_name())
             print(self.Joysticks[0].get_numaxes())
             print(self.Joysticks[0].get_numbuttons())
             print(self.JoysticksInput[0])
         #self.Joystick_Handler_Ran = 1
     def Joystick_Handler(self, JoyNum):
+        if len(self.Joysticks) != pygame.joystick.get_count():
+            self.Joystick_Setup()
         if len(self.Joysticks) > 0:
             for i in range(self.Joysticks[JoyNum].get_numaxes()):
                 self.JoysticksInput[JoyNum].update({f'Axis{i}': self.Joysticks[JoyNum].get_axis(i)})
@@ -114,7 +118,7 @@ class Game():
             #print(f'{i} is being updated for Keyholds')
             if i.__class__ != Drone.Drone:
                 return
-            elif i.Control_Type == 2 or i.Control_Type == 1:
+            elif (i.Control_Type == 2 or i.Control_Type == 1) and pygame.joystick.get_count() > 0:
                 i.Keyhold(KeyPressList, self.JoysticksInput[0])
             else:
                 i.Keyhold(KeyPressList)
@@ -123,6 +127,7 @@ class Game():
         for i in self.Drones:
             if i.__class__ == TD.TelloDrone:
                 i.Command_Handler(EventList)
+                i.RC_Handler()
             else:
                 i.Movement_Handler()
     # Function that runs the collision algorithm for all drones in the list
@@ -197,6 +202,16 @@ class Game():
                         self.Temp_Rot_Drone(self.Drones[0], 36)
                     if e.key == pygame.K_u:
                         self.Temp_Rot_Drone(self.Drones[0], -36)
+                    if e.key == pygame.K_p:
+                        print(self.JoysticksInput)
+                        print(pygame.joystick.get_count())
+                        for i in range(pygame.joystick.get_count()):
+                            print(pygame.joystick.Joystick(i).get_init())
+                            print(self.Joysticks[0].get_init())
+                            print(pygame.joystick.Joystick(i).get_guid())
+                            print(self.Joysticks[0].get_guid())
+                            print(pygame.joystick.Joystick(i))
+                            print(self.Joysticks[0])
                     if e.key == pygame.K_ESCAPE:
                         self.close()
                         #sys.exit()

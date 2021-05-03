@@ -58,8 +58,8 @@ All ~key:value~ pair following should be seen as arguments to the command.
           --
           Attributes:
           ..
-          -_p_type : Integer
           -_p_checksum : Bytes
+          -_p_type : Integer
           -_p_dest : IPAddress
           -_p_data : String
           --
@@ -79,7 +79,8 @@ All ~key:value~ pair following should be seen as arguments to the command.
           +p_dest() : IPAddress
           +p_data() : String
           ..Misc..
-          +dump() : void
+          +dump(log : bool, to_stdout : bool) : void
+          +data_parser() : Dictionary
   }
 
   abstract class Server{
@@ -104,9 +105,24 @@ All ~key:value~ pair following should be seen as arguments to the command.
           +srv_port_udp() : Integer
           +srv_socket() : socket
           ..other..
+          +start() : void
           +{abstract} run() : void
-          -_accept() : (conn: socket, addr: Address)
+          -_accept_tcp() : (conn: socket, addr: Address)
           +reply_heart(conn : socket) : void
+  }
+
+  class TCPClientHandler extends Thread{
+          +thread_id : Integer
+          +client_conn : socket
+          +client_addr : Tuple
+          +target : Function
+
+          +log_info(msg : String) : void
+          +log_warning(msg : String) : void
+          +recvall(conn : socket) : bytes
+          +reply_heart(conn : socket) : void
+          +create_thread_server() : socket
+          +run() : void
   }
 
   class DMSServer{
@@ -152,7 +168,10 @@ All ~key:value~ pair following should be seen as arguments to the command.
           +client_sock() : socket
           +pulse() : bool
           ..other..
+          +log_info(msg : String) : void
+          +log_warning(msg : String) : void
           +connect(mode : bool) : void
+          +recvall() : bytes
           +send_message(mtype : (String | Integer), mdest : String, mdata : String) : void
           +send_heartbeat() : void
           +{abstract}run(packet : Packet) : void
@@ -182,6 +201,8 @@ All ~key:value~ pair following should be seen as arguments to the command.
           DMSServer
   }
 
+  Server *-- TCPClientHandler
+
   Client o-- OPCClient
   Client o-- RBClient
   Client o-- DMSClient
@@ -193,6 +214,9 @@ All ~key:value~ pair following should be seen as arguments to the command.
   Server - Packet : send/receive >
   Packet - Client : > send/receive 
 #+end_src
+
+#+RESULTS:
+[[file:classdiagram.png]]
 
 [[file:classdiagram.png]]
 
