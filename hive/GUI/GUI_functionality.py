@@ -1,12 +1,15 @@
 import mapHandler
 import SearchArea
 from math import acos, sqrt, degrees, cos, pi
+from PIL import ImageTk, Image
+from tkinter.messagebox import showinfo
 
 
 # Object Lists
 Points = []
 PointDenominator = ["A", "B", "C", "D"]
 Map = []
+
 
 
 def getCornerPoints(x,y):
@@ -17,7 +20,7 @@ def getCornerPoints(x,y):
 
     return point_lat, point_long
 
-def limitPoint(event):
+def limitPoint(event, canvas):
     """Adds a point to the map, which limits the search area"""
     if len(Points) >= 4:
         showinfo("Error", "Can't have more than 4 points")
@@ -28,17 +31,17 @@ def limitPoint(event):
         print(str(getCornerPoints(event.x, event.y)))
 
 
-def estimate():
+def estimate(canvas):
     """Draws an estimated search area on the GUI"""
     if len(Points) == 4:
-        if AngleChecker():
+        if AngleChecker(canvas):
             for c in range(-1, 3):
                 canvas.create_line(Points[c].trueX, Points[c].trueY, Points[c + 1].trueX, Points[c + 1].trueY, width=2)
     else:
         showinfo("Error", "Please make sure you have entered 4 points before estimation.")
 
 
-def AngleChecker():
+def AngleChecker(canvas):
     """
     Using Law of Cosines to calculate angles in triangel ABC and CDA
     and checking that theese angles are not >= treshold
@@ -71,13 +74,14 @@ def AngleChecker():
             acos((CD ** 2 + BD ** 2 - BC ** 2) / (2 * CD * BD)))
 
     if angleA >= threshold or angleB >= threshold or angleC >= threshold or angleD >= threshold:
-        deleteLatestPoint()
+        deleteLatestPoint(canvas)
         showinfo("Error", "Sorry, one or more angles are greater than " + str(threshold) +  " degrees")
     else:
         return True
 
 
 def clearCanvas(canvas):
+    img = ImageTk.PhotoImage(file="map.png")
     canvas.delete("all")
     canvas.create_image(300, 300, image=img)
     Points.clear()
