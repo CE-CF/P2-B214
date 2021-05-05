@@ -77,13 +77,13 @@ def AngleChecker():
         return True
 
 
-def clearCanvas():
+def clearCanvas(canvas):
     canvas.delete("all")
     canvas.create_image(300, 300, image=img)
     Points.clear()
 
 
-def deleteLatestPoint():
+def deleteLatestPoint(canvas):
     if len(Points) < 1:
         showinfo("Error", "No points to delete")
     else:
@@ -92,11 +92,11 @@ def deleteLatestPoint():
         del Points[-1]
 
 
-def update():
+def update(canvas):
     global img
     img = ImageTk.PhotoImage(file="map.png")
     canvas.itemconfig(image_container)
-    clearCanvas()
+    clearCanvas(canvas)
 
     # print("CE: " + str(Map[0].lat) + ", " + str(Map[0].long))
     # print("NE: " + str(getCornerPoints(Map[0].size, 0)))
@@ -105,7 +105,7 @@ def update():
     # print("SE: " + str(getCornerPoints(Map[0].size, Map[0].size)))s
 
 
-def requestMap():
+def requestMap(canvas):
     if len(Map) == 0:
         Map.append(mapHandler.Map())
     if lat.get() != "Lattitude" and long.get() != "Longtitude":
@@ -117,26 +117,26 @@ def requestMap():
         Map[0].zoom = int(zoomValue.get())
 
     Map[0].requestMap()
-    update()
+    update(canvas)
 
 
 
-def zoomIn():
+def zoomIn(canvas):
     if len(Map) == 0:
         Map.append(mapHandler.Map())
         Map[0].requestMap()
-        update()
+        update(canvas)
     else:
         Map[0].zoom += 1
         Map[0].requestMap()
-        update()
+        update(canvas)
 
 def zoomOut():
     if len(Map) == 0:
         Map.append(mapHandler.Map())
         Map[0].requestMap()
-        update()
+        update(canvas)
     else:
         Map[0].zoom -= 1
         Map[0].requestMap()
-        update()
+        update(canvas)
