@@ -15,16 +15,13 @@ class MainFrame(tk.Tk):
         self.title('DroneHive')
         self.state("zoomed")
 
-        # Layout
-        self.columnconfigure(0, weight=4)
-        self.columnconfigure(1, weight=1)
 
         self.__create_widgets()
 
     def __create_widgets(self):
         # Create input frame
         rando_frame = GUI_route.App(self)
-        rando_frame.grid(column=0, row=0)
+        rando_frame.pack()
 
 
 if __name__ == "__main__":

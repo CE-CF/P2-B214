@@ -2,11 +2,12 @@ import requests
 #import config
 
 class Map:
-    size = 640
-    lat = 55.669703
-    long = 12.019524
-    zoom = 13
-    #key = config.SECRET
+    def __init__(self):
+        size = 640
+        lat = 55.669703
+        long = 12.019524
+        zoom = 13
+        #key = config.SECRET
 
     def setCoordinates(self, lat, long):
         self.lat = lat

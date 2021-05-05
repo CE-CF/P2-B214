@@ -1,5 +1,6 @@
 import mapHandler
 import SearchArea
+import tkinter as tk
 from math import acos, sqrt, degrees, cos, pi
 from PIL import ImageTk, Image
 from tkinter.messagebox import showinfo
@@ -80,10 +81,11 @@ def AngleChecker(canvas):
         return True
 
 
-def clearCanvas(canvas):
-    img = ImageTk.PhotoImage(file="map.png")
+def clearCanvas(canvas, image_container):
     canvas.delete("all")
-    canvas.create_image(300, 300, image=img)
+    global img
+    img = ImageTk.PhotoImage(file="map.png")
+    canvas.itemconfig(image_container)
     Points.clear()
 
 
@@ -96,11 +98,11 @@ def deleteLatestPoint(canvas):
         del Points[-1]
 
 
-def update(canvas):
+def update(canvas, image_container):
     global img
     img = ImageTk.PhotoImage(file="map.png")
     canvas.itemconfig(image_container)
-    clearCanvas(canvas)
+    clearCanvas(canvas, image_container)
 
     # print("CE: " + str(Map[0].lat) + ", " + str(Map[0].long))
     # print("NE: " + str(getCornerPoints(Map[0].size, 0)))
@@ -109,7 +111,7 @@ def update(canvas):
     # print("SE: " + str(getCornerPoints(Map[0].size, Map[0].size)))s
 
 
-def requestMap(canvas):
+def requestMap(canvas, image_container):
     if len(Map) == 0:
         Map.append(mapHandler.Map())
     if lat.get() != "Lattitude" and long.get() != "Longtitude":
@@ -121,26 +123,26 @@ def requestMap(canvas):
         Map[0].zoom = int(zoomValue.get())
 
     Map[0].requestMap()
-    update(canvas)
+    update(canvas, image_container)
 
 
 
-def zoomIn(canvas):
+def zoomIn(canvas, image_container):
     if len(Map) == 0:
         Map.append(mapHandler.Map())
         Map[0].requestMap()
-        update(canvas)
+        update(canvas, image_container)
     else:
         Map[0].zoom += 1
         Map[0].requestMap()
-        update(canvas)
+        update(canvas, image_container)
 
-def zoomOut():
+def zoomOut(canvas, image_container):
     if len(Map) == 0:
         Map.append(mapHandler.Map())
         Map[0].requestMap()
-        update(canvas)
+        update(canvas, image_container)
     else:
         Map[0].zoom -= 1
         Map[0].requestMap()
-        update(canvas)
+        update(canvas, image_container)
