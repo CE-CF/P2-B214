@@ -1,24 +1,48 @@
+import mysql.connector
 from .tableHandler import TableHandler
 from .databaseHandler import DatabaseHandler
 
-class Drone(TableHandler, DatabaseHandler):
+class Drone(TableHandler):
 
-    def __init__(self, DroneName, latitude, longitude):
+    def __init__(self, DroneName, status, latitude, longitude):
         self.DroneName = DroneName
+        self.status = status
         self.latitude = latitude
         self.longitude = longitude
         super().__init__('drone')
     
     def insert(self):
-        mySql_insert_query = super().insert_query(drone = self.DroneName, lat = self.latitude, long = self.longitude)
-        drone_data = (self.DroneName,self.latitude,self.longitude)
-        print(mySql_insert_query+"| inserted values are {}".format(drone_data))
+        try:
+            super().connector()
+            super().getCursor()
+            mySql_insert_query = super().insert_query(drone = self.DroneName, state = self.status,  latitude = self.latitude, longitude = self.longitude)
+            drone_data = (self.DroneName, self.status, self.latitude, self.longitude)
+            super().commit(mySql_insert_query, drone_data)
+        except mysql.connector.Error as error:
+            print("Failed to insert into MySQL table {}".format(error))
+        finally:
+            
+            super().closeConnection()
 
     def update(self):
-        mySql_update_query = super().update_query(drone = self.DroneName, latitude = self.latitude, longitude = self.longitude)
-        print(mySql_update_query)
+        try: 
+            super().connector()
+            super().getCursor()
+            mySql_update_query = super().update_query(drone = self.DroneName, state = self.status, latitude = self.latitude, longitude = self.longitude)
+            super().commit(mySql_update_query)
+        except mysql.connector.Error as error:
+            print("Failed to insert into MySQL table {}".format(error))
+        finally:
+            super().closeConnection()
     
     def delete(self):
-        mySql_delete_query = super().delete_query(drone = self.DroneName)
-        print(mySql_delete_query)
+        try: 
+            super().connector()
+            super().getCursor()
+            mySql_delete_query = super().delete_query(drone = self.DroneName)
+            super().commit(mySql_delete_query)
+        except mysql.connector.Error as error:
+            print("Failed to insert into MySQL table {}".format(error))
+        finally:
+            super().closeConnection()
     
