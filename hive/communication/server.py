@@ -5,7 +5,6 @@ import threading
 # Partial imports
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List
 from socket import (
     AF_INET,
     SHUT_RDWR,
@@ -15,23 +14,19 @@ from socket import (
     SOL_SOCKET,
     socket,
 )
-
+from typing import List
 
 # Hive imports
-from hive.communication import BUFFER_SIZE
+from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.exceptions.packet_exceptions import DecodeErrorChecksum
 
 # Communication imports
-from .packet import Packet
+from .packet import HiveT, HiveU, Packet
 
 # ====================
 # LOGGING RELATED
 # Change logging level when done
 logging.basicConfig(filename="server.log", level=logging.DEBUG)
-
-# ====================
-# Global variabels
-
 
 # ========================================================
 # ========================================================
@@ -42,18 +37,68 @@ logging.basicConfig(filename="server.log", level=logging.DEBUG)
 #    ██    ██   ██ ██   ██ ███████ ██   ██ ██████  ███████
 # ========================================================
 # ========================================================
+class UDPPacketHandler(threading.Thread):
+    def __init__(
+        self,
+        thread_id: int,
+        target,
+        conn_sock,
+        conn_addr,
+    ):
+        super().__init__()
+        self.thread_id = thread_id
+        self.target = target
+        self.conn_sock = conn_sock
+        self.conn_addr = conn_addr
+
+    def log_info(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
+        log_format = (
+            f"[ THREAD-UDP {self.thread_id} | TIME {datetime.now()} ]: {msg}"
+        )
+        logging.info(log_format)
+
+    def log_warning(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
+        log_format = (
+            f"[ THREAD-UDP {self.thread_id} | TIME {datetime.now()} ]: {msg}"
+        )
+        logging.warning(log_format)
+
+    def recvall(self):
+        """Receive all of incoming packet
+
+        :returns: Message in bytes
+
+        """
+        msg = b""
+        while True:
+            data_part = self.conn_sock.recv(BUFFER_SIZE)
+            msg += data_part
+            if len(data_part) < BUFFER_SIZE:
+                break
+        return bytes(msg)
+
+    def run(self):
+        self.log_info("STARTED")
+        msg = self.recvall()
+        packet = HiveU.decode(msg)
+        self.target(packet, CONN_TYPE_UDP)
+        self.log_info("ENDED")
+
+
 class TCPClientHandler(threading.Thread):
     """Class used to handle TCP packets on another thread"""
-
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # !!!!!!!!!██     ██    ██    ██████ !!!!!!!!!
-    # !!!!!!!!!██     ██    ██    ██   ██!!!!!!!!!
-    # !!!!!!!!!██  █  ██    ██    ██████ !!!!!!!!!
-    # !!!!!!!!!██ ███ ██    ██    ██     !!!!!!!!!
-    # !!!!!!!!! ███ ███  ██ ██ ██ ██ ██  !!!!!!!!!
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     def __init__(
         self,
@@ -84,8 +129,8 @@ class TCPClientHandler(threading.Thread):
         return bytes(msg)
 
     def reply_heart(self, conn):
-        packet = Packet(p_data="OK")
-        msg_bytes = Packet.encode_packet(packet)
+        packet = HiveT(p_data="OK")
+        msg_bytes = HiveT.encode_packet(packet)
         conn.send(msg_bytes)
 
     def log_info(self, msg: str):
@@ -96,7 +141,7 @@ class TCPClientHandler(threading.Thread):
 
         """
         log_format = (
-            f"[ THREAD {self.thread_id} | TIME {datetime.now()} ]: {msg}"
+            f"[ THREAD-TCP {self.thread_id} | TIME {datetime.now()} ]: {msg}"
         )
         logging.info(log_format)
 
@@ -108,7 +153,7 @@ class TCPClientHandler(threading.Thread):
 
         """
         log_format = (
-            f"[ THREAD {self.thread_id} | TIME {datetime.now()} ]: {msg}"
+            f"[ THREAD-TCP {self.thread_id} | TIME {datetime.now()} ]: {msg}"
         )
         logging.warning(log_format)
 
@@ -130,7 +175,7 @@ class TCPClientHandler(threading.Thread):
 
         # Receive initial heartbeat
         message = self.recvall(self.client_conn)
-        packet = Packet.decode_packet(message)
+        packet = HiveT.decode_packet(message)
 
         if packet.p_type == 3:
             self.log_info("Received initial heartbeat")
@@ -146,8 +191,8 @@ class TCPClientHandler(threading.Thread):
 
         # Send thread server info for client migration
         mig_data_str = "CMD:MIGRATE;P:{port};".format(port=new_port)
-        mig_packet = Packet(p_dest=self.client_addr[0], p_data=mig_data_str)
-        self.client_conn.send(Packet.encode_packet(mig_packet))
+        mig_packet = HiveT(p_dest=self.client_addr[0], p_data=mig_data_str)
+        self.client_conn.send(HiveT.encode_packet(mig_packet))
 
         # Begin transfer
         self.client_conn.shutdown(SHUT_RDWR)
@@ -158,7 +203,7 @@ class TCPClientHandler(threading.Thread):
         conn, addr = thread_server.accept()
 
         msg = self.recvall(conn)
-        packet = Packet.decode_packet(msg)
+        packet = HiveT.decode_packet(msg)
         if packet.p_data == "OK":
             self.log_info("TRANSFER done!")
             connected = True
@@ -171,8 +216,8 @@ class TCPClientHandler(threading.Thread):
             # Packet handling
             try:
                 msg = self.recvall(conn)
-                recv_packet = Packet.decode_packet(msg)
-                if type(recv_packet) is Packet:
+                recv_packet = HiveT.decode_packet(msg)
+                if type(recv_packet) is HiveT:
                     recv_packet.src = addr
                     p_dump = recv_packet.dump(to_stdout=False)
                     log_string = ""
@@ -188,7 +233,7 @@ class TCPClientHandler(threading.Thread):
                     if recv_packet.p_type == 3:
                         self.reply_heart(conn)
                     else:
-                        self.target(recv_packet)
+                        self.target(recv_packet, mode=CONN_TYPE_TCP)
                 else:
                     connected = False
 
@@ -242,21 +287,21 @@ class Server(ABC):
     _conns_counter_tcp = 0
 
     # Constructor
-    def __init__(self, tcp_port=1337, udp_port=None):
+    def __init__(self, tcp_port=1337, udp_port=6969):
         self.srv_port_tcp = tcp_port
         self.srv_socket_tcp = socket(AF_INET, SOCK_STREAM)
         self.srv_socket_tcp.bind(("", self.srv_port_tcp))
 
-        # UDP under construcion
-        # !!!!!!!!!!!!!!!!!!!!!!
-        # self.srv_port_udp = udp_port
-        # self.srv_socket_udp = socket(AF_INET, SOCK_DGRAM)
-        # self.srv_socket_udp.bind(("", self.srv_port_udp))
-        # !!!!!!!!!!!!!!!!!!!!!!
+        self.srv_port_udp = udp_port
+        self.srv_socket_udp = socket(AF_INET, SOCK_DGRAM)
+        self.srv_socket_udp.bind(("", self.srv_port_udp))
 
     @abstractmethod
-    def run(self, packet: Packet):
-        """The \"loop\" function for the Server class. All necessary packet handling should be done in here.
+    def run(self, packet: Packet, mode: bool):
+        """The \"loop\" function for the Server class. All necessary packet
+        handling should be done in here.
+        *Note* A check should be implemented to differentiate between UDP based
+        and TCP based protocol packet.
 
         :param packet:
         :type packet: Packet
@@ -286,6 +331,8 @@ class Server(ABC):
                 print("Server started")
                 self.srv_socket_tcp.listen(1)
                 conn_tcp, addr_tcp = self._accept_tcp()
+                self.srv_socket_udp.listen(1)
+                conn_udp, addr_udp = self._accept_udp
                 # ---
 
                 # Begin multithreading TCP
@@ -298,27 +345,28 @@ class Server(ABC):
                     self.run,
                     self.max_clients_tcp,
                 )
-
                 tcpthread.start()
 
+                # Begin multithreading UDP
                 # ---
-                # recv_data = conn.recv(4096)  # receive data
-                # packet = Packet.decode_packet(recv_data)  # decode into packet object
-                # if packet.p_type != 3:  # check if heartbeat
-                #     self.run(packet)
-                # else:
-                #     print("HEART BEAT RECEIVED")
-                #     self.reply_heart(conn)
-
+                self.udp_thread_count += 1
+                udpthread = UDPPacketHandler(
+                    self.udp_thread_count, self.run, conn_udp, addr_udp
+                )
+                udpthread.start()
         # "Catch" exceptions
         except IndexError:
             print("Stopping server")
             self.srv_socket_tcp.shutdown(SHUT_RDWR)
             self.srv_socket_tcp.close()
+            self.srv_socket_udp.shutdown(SHUT_RDWR)
+            self.srv_socket_udp.close()
         except KeyboardInterrupt:
             print("Stopping server")
             self.srv_socket_tcp.shutdown(SHUT_RDWR)
             self.srv_socket_tcp.close()
+            self.srv_socket_udp.shutdown(SHUT_RDWR)
+            self.srv_socket_udp.close()
         except DecodeErrorChecksum:
             pass
 
@@ -352,7 +400,7 @@ class Server(ABC):
 
     @srv_socket_udp.setter
     def srv_socket_udp(self, socket: socket):
-        self._srv_port_udp = socket
+        self._srv_socket_udp = socket
 
     @property
     def srv_port_tcp(self):

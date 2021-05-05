@@ -8,7 +8,11 @@ from hive.exceptions.packet_exceptions import (
 )
 
 
-class HiveU:
+class Packet:
+    pass
+
+
+class HiveU(Packet):
     """
     This is the class for the UDP based packets in the Hive system.
     """
@@ -85,7 +89,7 @@ class HiveU:
         return HiveU(ident, seq, data)
 
 
-class HiveT:
+class HiveT(Packet):
     """
     This is the class for the TCP based packets in the Hive system, being sent
     between:
