@@ -1,6 +1,6 @@
 import hashlib
 import ipaddress
-
+from abc import ABC, abstractmethod
 from hive.exceptions.packet_exceptions import (
     DecodeErrorChecksum,
     EncodeErrorPacket,
@@ -8,8 +8,10 @@ from hive.exceptions.packet_exceptions import (
 )
 
 
-class Packet:
-    pass
+class Packet(ABC):
+    @abstractmethod
+    def dump(self):
+        pass
 
 
 class HiveU(Packet):

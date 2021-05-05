@@ -37,19 +37,19 @@ logging.basicConfig(filename="server.log", level=logging.DEBUG)
 #    ██    ██   ██ ██   ██ ███████ ██   ██ ██████  ███████
 # ========================================================
 # ========================================================
+
+
 class UDPPacketHandler(threading.Thread):
     def __init__(
         self,
         thread_id: int,
         target,
         conn_sock,
-        conn_addr,
     ):
         super().__init__()
         self.thread_id = thread_id
         self.target = target
         self.conn_sock = conn_sock
-        self.conn_addr = conn_addr
 
     def log_info(self, msg: str):
         """Logging helper
@@ -89,11 +89,30 @@ class UDPPacketHandler(threading.Thread):
                 break
         return bytes(msg)
 
+    def _accept_udp(self):
+        bytes_addr = self.conn_sock.recvfrom(BUFFER_SIZE)
+        return bytes_addr[0], bytes_addr[1]
+
     def run(self):
         self.log_info("STARTED")
-        msg = self.recvall()
-        packet = HiveU.decode(msg)
-        self.target(packet, CONN_TYPE_UDP)
+        # msg = self.recvall()
+        while True:
+            msg, addr = self._accept_udp()
+            packet = HiveU.decode(msg)
+            self.log_info(
+                f"""Connection Information:
+\t\t\t\t\t\t\t- Client Address: {addr}"""
+            )
+            p_dump = packet.dump(to_stdout=False)
+            log_string = ""
+            for k in p_dump:
+                log_string += f"[{k.upper()}]: {p_dump[k]}"
+                log_string += "\n\t\t\t\t\t\t\t"
+
+            self.log_info(
+                "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
+            )
+            self.target(packet, CONN_TYPE_UDP)
         self.log_info("ENDED")
 
 
@@ -313,8 +332,23 @@ class Server(ABC):
     def _accept_tcp(self):
         return self.srv_socket_tcp.accept()
 
-    def _accept_udp(self):
-        return self.srv_socket_udp.accept()
+    def start_tcp(self):
+        log_string = f"TCP Listener on port: {self.srv_port_tcp}"
+        print(log_string)
+        self.log_info(log_string)
+        self.srv_socket_tcp.listen(1)
+        conn_tcp, addr_tcp = self._accept_tcp()
+        # Begin multithreading TCP
+        # ---
+        self.conns_counter_tcp += 1
+        tcpthread = TCPClientHandler(
+            self.conns_counter_tcp,
+            conn_tcp,
+            addr_tcp,
+            self.run,
+            self.max_clients_tcp,
+        )
+        tcpthread.start()
 
     def start(self):
         """Starts the server and handles errors, executes the abstract run
@@ -325,35 +359,22 @@ class Server(ABC):
         """
 
         try:
-            while True:  # Server loop
-                # Boilerplate server code
-                # ---
-                print("Server started")
-                self.srv_socket_tcp.listen(1)
-                conn_tcp, addr_tcp = self._accept_tcp()
-                self.srv_socket_udp.listen(1)
-                conn_udp, addr_udp = self._accept_udp
-                # ---
+            # Boilerplate server code
+            # ---
+            print("Server started")
+            # Start tcp main thread
+            tcpmain = threading.Thread(target=self.start_tcp)
+            tcpmain.daemon = True
+            tcpmain.start()
 
-                # Begin multithreading TCP
-                # ---
-                self.conns_counter_tcp += 1
-                tcpthread = TCPClientHandler(
-                    self.conns_counter_tcp,
-                    conn_tcp,
-                    addr_tcp,
-                    self.run,
-                    self.max_clients_tcp,
-                )
-                tcpthread.start()
+            # Begin multithreading UDP
+            # ---
+            print(f"UDP Listener on port: {self.srv_port_udp}")
+            udpthread = UDPPacketHandler(1, self.run, self.srv_socket_udp)
+            udpthread.start()
 
-                # Begin multithreading UDP
-                # ---
-                self.udp_thread_count += 1
-                udpthread = UDPPacketHandler(
-                    self.udp_thread_count, self.run, conn_udp, addr_udp
-                )
-                udpthread.start()
+            tcpmain.join()
+            udpthread.join()
         # "Catch" exceptions
         except IndexError:
             print("Stopping server")

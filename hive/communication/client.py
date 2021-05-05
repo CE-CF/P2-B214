@@ -2,17 +2,14 @@ import logging
 import threading
 from abc import ABC, abstractmethod
 from datetime import datetime
-from socket import AF_INET, SHUT_RDWR, SOCK_STREAM, socket
+from socket import AF_INET, SHUT_RDWR, SOCK_STREAM, socket, SOCK_DGRAM
 from time import sleep
 
-from hive.communication import BUFFER_SIZE
+from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.exceptions.packet_exceptions import DecodeErrorChecksum
 from hive.utils.decorators import setInterval
 
-from .packet import Packet
-
-CON_TYPE_TCP = True
-CON_TYPE_UDP = False
+from .packet import HiveT, HiveU, Packet
 
 
 # =====================
@@ -47,9 +44,12 @@ class Client(ABC):
     _srv_ip = None
     _client_sock = None
     _pulse = False
+    _mode = None
 
     # Constructor
-    def __init__(self, srv_ip, tcp_port=None, udp_port=None):
+    def __init__(
+        self, srv_ip, mode=CONN_TYPE_TCP, tcp_port=None, udp_port=None
+    ):
         """Constructor for hive Client objects
 
         :param srv_ip:
@@ -62,20 +62,13 @@ class Client(ABC):
 
         """
         self.srv_ip = srv_ip
-        if tcp_port is not None:
+        self.mode = mode
+        if self.mode is CONN_TYPE_TCP:
             self.srv_port_tcp = tcp_port
-        if udp_port is not None:
+            self.client_sock = socket(AF_INET, SOCK_STREAM)
+        elif self.mode is CONN_TYPE_UDP:
             self.srv_port_udp = udp_port
-
-    # NOT USED
-    # @property
-    # def heartbeat_int(self):
-    #     return self._heartbeat_int
-
-    # NOT USED
-    # @heartbeat_int.setter
-    # def heartbeat_int(self, interval: float):
-    #     self._heartbeat_int = interval
+            self.client_sock = socket(AF_INET, SOCK_DGRAM)
 
     def log_info(self, msg: str):
         """Logging helper
@@ -96,6 +89,14 @@ class Client(ABC):
         """
         log_format = f"[ TIME {datetime.now()} ]: {msg}"
         logging.warning(log_format)
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, mode):
+        self._mode = mode
 
     @property
     def srv_port_tcp(self):
@@ -156,7 +157,7 @@ class Client(ABC):
         """
         self._pulse = pulse
 
-    def connect(self, mode=CON_TYPE_TCP):
+    def connect(self):
         """Connection wrapper function
 
         :param mode:
@@ -164,10 +165,14 @@ class Client(ABC):
         :returns:
 
         """
-        if mode:  # True == TCP | False == UDP
+        if self.mode is CONN_TYPE_TCP:  # True == TCP | False == UDP
             self.client_sock.connect((self.srv_ip, self.srv_port_tcp))
         else:
             self.client_sock.connect((self.srv_ip, self.srv_port_udp))
+
+    def send(self, data):
+        packet = HiveU(198, 0, data.encode())
+        self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
         """Create and send packet with data
@@ -181,8 +186,8 @@ class Client(ABC):
         :returns:
 
         """
-        packet = Packet(mtype, mdest, mdata)
-        msg_bytes = Packet.encode_packet(packet)
+        packet = HiveT(mtype, mdest, mdata)
+        msg_bytes = HiveT.encode_packet(packet)
         self.client_sock.send(msg_bytes)
 
     def recvall(self):
@@ -208,14 +213,16 @@ class Client(ABC):
         :returns:
 
         """
-        packet = Packet(p_data="Pulsecheck")
-        msg_bytes = Packet.encode_packet(packet)
+        packet = HiveT(p_data="Pulsecheck")
+        msg_bytes = HiveT.encode_packet(packet)
         self.client_sock.send(msg_bytes)
         print("==HEARTBEAT SENT==")
 
     @abstractmethod
     def run(self, packet: Packet):
-        """The \"loop\" function of the Client class. All necessary packet handling should be done in here. The function is run as long as there is a pulse.
+        """The \"loop\" function of the Client class. All necessary packet
+        handling should be done in here. The function is run as long as there
+        is a pulse.
 
         :param packet:
         :type packet: Packet
@@ -223,7 +230,7 @@ class Client(ABC):
         """
         pass
 
-    def _set_pulse(self, packet: Packet):
+    def _set_pulse(self, packet: HiveT):
         if packet.p_type == 3:
             self.pulse = True
 
@@ -243,6 +250,81 @@ class Client(ABC):
             self.client_sock = socket(AF_INET, SOCK_STREAM)
             self.client_sock.connect((self.srv_ip, new_port))
 
+    def tcp_flow(self):
+        self.pulse = False
+
+        # Start the heartbeat
+        self.log_info("Sending initial heartbeat")
+        self.send_heartbeat()
+
+        # Receive transfer info
+        mig_msg = self.client_sock.recv(BUFFER_SIZE)
+        mig_packet = HiveT.decode_packet(mig_msg)
+        mig_data = mig_packet.data_parser()
+
+        # print(mig_msg)
+        # mig_packet.dump()
+        # print(mig_data)
+        if mig_data["CMD"] is not None:
+            port = mig_data["P"]
+            self.log_info(f"Received migration info: {port}")
+            self.run_cmd(mig_data)
+
+        self.log_info("Sending heartbeat to new connection")
+        self.send_message("heart", "127.0.0.1", "OK")
+
+        # Receive msg
+        msg = self.recvall()
+        packet = HiveT.decode_packet(msg)
+
+        # Throw that packet into another thread and check pulse
+        heartbeat_handler = threading.Thread(
+            target=self._set_pulse, args=(packet,), daemon=True
+        )
+        if not heartbeat_handler.is_alive():
+            self.log_info("Starting heartbeat handler")
+            heartbeat_handler.start()
+
+        # If there is life (funny i know) execute run method
+        while self.pulse:
+            # Receive msg
+            msg = self.recvall()
+            packet = HiveT.decode_packet(msg)
+
+            # Log client info
+            # ---
+            p_dump = packet.dump(to_stdout=False)
+            log_string = ""
+            for k in p_dump:
+                log_string += f"[{k.upper()}]: {p_dump[k]}"
+                log_string += "\n\t\t\t\t\t\t\t"
+
+            self.log_info(
+                "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
+            )
+            self.log_info(f"PULSE: {self.pulse}")
+            # ---
+            self.run(packet)
+
+    def udp_flow(self):
+        while True:
+            # Receive msg
+            self.run(packet=None)
+            # msg = self.recvall()
+            # packet = HiveU.decode(msg)
+
+            # # Log client info
+            # # ---
+            # p_dump = packet.dump(to_stdout=False)
+            # log_string = ""
+            # for k in p_dump:
+            #     log_string += f"[{k.upper()}]: {p_dump[k]}"
+            #     log_string += "\n\t\t\t\t\t\t\t"
+
+            # self.log_info(
+            #     "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
+            # )
+
     def start(self):
         """Start the client and execute the abstract run method
 
@@ -250,69 +332,16 @@ class Client(ABC):
 
         """
         try:
-            self.pulse = False
-
             # Client boilerplate code
-            self.client_sock = socket(AF_INET, SOCK_STREAM)
             self.connect()
             print("Client started")
             self.log_info("STARTED")
-
-            # Start the heartbeat
-            self.log_info("Sending initial heartbeat")
-            self.send_heartbeat()
-
-            # Receive transfer info
-            mig_msg = self.client_sock.recv(BUFFER_SIZE)
-            mig_packet = Packet.decode_packet(mig_msg)
-            mig_data = mig_packet.data_parser()
-
-            # print(mig_msg)
-            # mig_packet.dump()
-            # print(mig_data)
-            if mig_data["CMD"] is not None:
-                port = mig_data["P"]
-                self.log_info(f"Received migration info: {port}")
-                self.run_cmd(mig_data)
-
-            self.log_info("Sending heartbeat to new connection")
-            self.send_message("heart", "127.0.0.1", "OK")
-
-            # Receive msg
-            msg = self.recvall()
-            packet = Packet.decode_packet(msg)
-
-            # Throw that packet into another thread and check pulse
-            heartbeat_handler = threading.Thread(
-                target=self._set_pulse, args=(packet,), daemon=True
-            )
-            if not heartbeat_handler.is_alive():
-                self.log_info("Starting heartbeat handler")
-                heartbeat_handler.start()
-
-            # If there is life (funny i know) execute run method
-            while self.pulse:
-                # Receive msg
-                msg = self.recvall()
-                packet = Packet.decode_packet(msg)
-
-                # Log client info
-                # ---
-                p_dump = packet.dump(to_stdout=False)
-                log_string = ""
-                for k in p_dump:
-                    log_string += f"[{k.upper()}]: {p_dump[k]}"
-                    log_string += "\n\t\t\t\t\t\t\t"
-
-                self.log_info(
-                    "Packet received content:"
-                    + "\n\t\t\t\t\t\t\t"
-                    + log_string
-                )
-                self.log_info(f"PULSE: {self.pulse}")
-                # ---
-                self.run(packet)
-
+            if self.mode is CONN_TYPE_TCP:
+                print("MODE: TCP")
+                self.tcp_flow()
+            elif self.mode is CONN_TYPE_UDP:
+                print("MODE: UDP")
+                self.udp_flow()
         # "Catch" some exceptions
         except DecodeErrorChecksum:
             self.log_warning("CHECKSUM ERROR")
