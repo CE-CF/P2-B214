@@ -3,7 +3,7 @@ import mysql.connector
 class DatabaseHandler:
 
     def __init__(self):
-        self.connection = self.connecter()
+        self.connection = self.connector()
         self.cursor = self.getCursor()
 
     def connector(self):
@@ -14,10 +14,11 @@ class DatabaseHandler:
         return self.connection.cursor()
     
     def commit(self, query, data=None):
-        if data == None:
-            self.cursor.execute(query)
-        else:
-            self.cursor.execute(query,data)
+        #if data == None:
+            #self.cursor.execute(query)
+        #else:
+            #self.cursor.execute(query,data)
+        self.cursor.execute(query, data)
         self.connection.commit()
     
     def closeConnection(self):

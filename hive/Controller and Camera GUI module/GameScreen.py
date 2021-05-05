@@ -1,6 +1,7 @@
 import pygame
 import DroneHandler as DH
-import cv2
+import CameraWindow as CW
+#import cv2
 
 class Game:
 
@@ -8,10 +9,15 @@ class Game:
 
     #MainCamera = OLD_Camera.Camera()
     # Constructer for game object with it's resolution and other options
-    def __init__(self, DroneHandler: DH.DroneHandler, ScreenWidth = 960, ScreenHeight = 720,
+    def __init__(self, DroneHandler: [DH.DroneHandler], ScreenWidth = 960, ScreenHeight = 720,
                  FullScreen = False, Run = True, FPS = 60):
         pygame.init()   # Initialize all pygame modules
         self.DH = DroneHandler # Initialize the drone handler
+        self.DH_Index = 0
+        #self.Camera_Windows = [CW.CameraWindow(i) for i in self.DH]
+        self.Camera_Windows = []
+        for i in self.DH:
+            self.Camera_Windows.append(CW.CameraWindow(i))
         self.ScreenSize = self.ScreenWidth, self.ScreenHeight = ScreenWidth, ScreenHeight
         self.Screen = pygame.display.set_mode(self.ScreenSize, flags= pygame.FULLSCREEN * FullScreen)
         self.Run = Run
@@ -71,18 +77,52 @@ class Game:
     def close(self):
         pygame.display.quit()
         pygame.quit()
-        self.DH.Stop()
+        for i in self.DH:
+            i.Stop()
 
     # Function that updates the key holds for all objects that need updating them
     def Update_Key_Holds(self, KeyPressList, EventList):
         if pygame.joystick.get_count() == 0:
-            self.DH.ControlHandler(KeyPressList, EventList, {})
+            #for i in self.DH:
+            for i in self.Camera_Windows:
+                i.ControlHandler(KeyPressList, EventList, {})
         else:
-            self.DH.ControlHandler(KeyPressList, EventList, self.JoysticksInput[0])
+            #for i in self.DH:
+            for i in self.Camera_Windows:
+                i.ControlHandler(KeyPressList, EventList, self.JoysticksInput[0])
 
-    # Function that draws the sprites for all displayed objects
-    def Draw_Sprites(self):
-        pass
+    # Function that draws the Cameras for all available drones
+    def Draw_Cameras(self):
+        #print("Drawing camera")
+        Focused = False; Focused_Cam = 0
+        for i in range(len(self.Camera_Windows)):
+            #print(f'Checking for focused camera: {i}')
+            if self.Camera_Windows[i].Focused:
+                Focused = True
+                Focused_Cam = i
+                break
+            else:
+                continue
+        if Focused:
+            for i in range(len(self.Camera_Windows)):
+                #print(f'Drawing after detecting focus: {i}')
+                if i == Focused_Cam:
+                    self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, self.ScreenHeight), len(self.Camera_Windows), True)
+                else:
+                    self.Camera_Windows[i].Camera_Unfocused()
+        else:
+            for i in range(len(self.Camera_Windows)):
+                #print(f'Drawing camera without focus: {i}')
+                self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, self.ScreenHeight), len(self.Camera_Windows))
+
+    """
+    def Draw_Rect_Alpha(self, surface, color, alpha, rect):
+        #shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
+        shape_surf = pygame.Surface(pygame.Rect(rect).size)
+        shape_surf.set_alpha(alpha)
+        pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
+        surface.blit(shape_surf, rect)
+    """
 
 
     # The main game loop
@@ -97,7 +137,10 @@ class Game:
             self.Joystick_Handler(0)                    # Run the joystick input handler (Only running for first joystick currnetly)
             self.Update_Key_Holds(keyPressList, eventsList)         # Run the keyhold function
             self.Screen.fill((255,255,255))             # Fill screen with white to refresh
-            Frame = self.DH.GetFrame()                  # Get the video frame from the drone handler
+            self.Draw_Cameras()
+            '''
+            Frame = self.DH[self.DH_Index].GetFrame()                  # Get the video frame from the drone handler
+            FrameRatio = 1
             FrameWidth = 960                            # Set the video frame width
             FrameHeight = 720                           # Set the video frame height
             #Image = pygame.image.frombuffer(Frame, (FrameWidth, FrameHeight), "BGR")
@@ -109,33 +152,76 @@ class Game:
                 #pygame.transform.scale(Image, (FrameWidth, FrameHeight))
                 Frame = cv2.resize(Frame,(FrameWidth,FrameHeight))
             # Create pygame image surface of the frame and draw it on the main surface
+            Button_Rect1 = pygame.Rect(0,0,int(110*FrameRatio),int(64*FrameRatio))
+            Button_Rect1.topright = (FrameWidth,0)
+            Button_Text1 = pygame.font.SysFont("Calibri", int(60*FrameRatio)).render("Kill!!", True, pygame.Color("red"))
+            Button_Rect2 = pygame.Rect(0,0,int(110*FrameRatio),int(64*FrameRatio))
+            Button_Rect2.bottomleft = (0,FrameHeight)
+            Button_Text2 = pygame.font.SysFont("Calibri", int(60*FrameRatio)).render("Stop", True, pygame.Color("red"))
             Image = pygame.image.frombuffer(Frame, (FrameWidth, FrameHeight), "BGR")
+            #self.Draw_Rect_Alpha(Image, (0,0,0), 128, Button_Rect1)
+            pygame.draw.rect(Image,(0,0,0,0), Button_Rect1)
+            Image.blit(Button_Text1, Button_Rect1)
+            #self.Draw_Rect_Alpha(Image, (0,0,0), 128, Button_Rect2)
+            pygame.draw.rect(Image,(0,0,0,0), Button_Rect2)
+            Image.blit(Button_Text2, Button_Rect2)
             self.Screen.blit(Image, ((self.ScreenWidth - FrameWidth)/2,0))
             #self.Screen.blit(Image, (0,0))
+            '''
             for e in eventsList:
                 if e.type == pygame.QUIT:   # QUIT is the event of the X button on the top corner being pressed
                     self.close()
                     return
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    Set_Focus = False; Pressed = 0
+                    for i in range(len(self.Camera_Windows)):
+                        result = self.Camera_Windows[i].Detect_Click(pygame.mouse.get_pos())
+                        if result == 69:
+                            Pressed = i
+                            Set_Focus = True
+                    if Set_Focus:
+                        for i in range(len(self.Camera_Windows)):
+                            if i == Pressed:
+                                continue
+                            else:
+                                self.Camera_Windows[i].Focused = False
+                    """
+                    if Button_Rect1.collidepoint(pygame.mouse.get_pos()):
+                        print("Drone Killed")
+                    elif Button_Rect2.collidepoint(pygame.mouse.get_pos()):
+                        print("Drone Stopped")
+                    """
                 # Check an event of a key being pressed
                 if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_1:
+                        self.DH_Index = 0
+                        print(f'Index number is: {self.DH_Index}')
+                    elif e.key == pygame.K_2:
+                        self.DH_Index = 1
+                        print(f'Index number is: {self.DH_Index}')
                     if e.key == pygame.K_c: # Pressing c will give drone control to the controller
-                        self.DH.SetControllerMode(True)
+                        for i in range(len(self.DH)):
+                            if i == self.DH_Index:
+                                self.DH[i].SetControllerMode(True)
+                            else:
+                                self.DH[i].SetControllerMode(False)
                     if e.key == pygame.K_x:
-                        self.DH.Controllable = not self.DH.Controllable
-                        print(self.DH.Controllable)
+                        for i in range(len(self.DH)):
+                            self.DH[i].Controllable = not self.DH[i].Controllable
+                            print(self.DH[i].Controllable)
                     if e.key == pygame.K_z:
-                        self.DH.Connect_Network("ssid", "pass")
+                        self.DH[0].Connect_Network("ssid", "pass")
                     if e.key == pygame.K_ESCAPE:    # Escape will also close the program
                         self.close()
                         return
             # Get the FPS value to print it on the display (Can't really see it in this program)
             FPS = self.clock.get_fps()
-            FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), False, (0,0,0))
+            FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), False, (255,255,255))
             self.Screen.blit(FPS_Text, (0,0))
             # Get the battery level of the drone to print it on the display (Did not test it yet)
-            Battery_Level = self.DH.GetBattery()
-            Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, (0,0,0))
+            Battery_Level = self.DH[0].GetBattery()
+            Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, (255,255,255))
             self.Screen.blit(Battery_Text, (0,48))
 
-            self.Draw_Sprites()             # Draw any sprites if available
+            #self.Draw_Sprites()             # Draw any sprites if available
             pygame.display.flip()           # Update the pygame display

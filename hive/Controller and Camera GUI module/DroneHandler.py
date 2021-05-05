@@ -1,13 +1,12 @@
 import djitellopy as dji
+import threading
 import pygame
 
 class DroneHandler:
 
-    def __init__(self, Swarm = False, Tello_IP = "192.168.10.1"):
+    def __init__(self, Tello_IP = "192.168.10.1"):
         self.IP_Address = Tello_IP
-        # Swarm capabilities not yet made or tested
-        if not Swarm:
-            self.Drone = dji.Tello(self.IP_Address)
+        self.Drone = dji.Tello(self.IP_Address)
 
         self.Controllable = False
         self.ControllerMode = False
@@ -91,22 +90,32 @@ class DroneHandler:
                         # The land button lands or takes off the drone (Depending on if the drone is flying or not)
                         if KeyList[self.Control_Dict.get("land")]:
                             if self.Drone.is_flying:
-                                self.Drone.land()
+                                Land_Thread = threading.Thread(target=self.Drone.land)
+                                Land_Thread.start()
+                                #self.Drone.land()
                             else:
-                                self.Drone.takeoff()
+                                Takeoff_Thread = threading.Thread(target=self.Drone.takeoff)
+                                Takeoff_Thread.start()
+                                #self.Drone.takeoff()
                         #if KeyList[self.Control_Dict.get("takeoff")]:
                         #    if not self.Drone.is_flying:
                         #        self.Drone.takeoff()
                         # The rc button switches RC_Mode on or off
                         elif KeyList[self.Control_Dict.get("rc")]:
                             self.RC_Mode = not self.RC_Mode
+                            #RC_Mode_Thread = threading.Thread(target=self.Drone.send_rc_control, args=(0,0,0,0,))
+                            #RC_Mode_Thread.start()
                             self.Drone.send_rc_control(0,0,0,0)
                         # The stop button sends the stop command that is supposed to let the drone hover in its place
                         elif KeyList[self.Control_Dict.get("stop")]:
-                            self.Drone.send_control_command("stop")
+                            Stop_Command_Thread = threading.Thread(target=self.Drone.send_control_command, args=("stop",))
+                            Stop_Command_Thread.start()
+                            #self.Drone.send_control_command("stop")
                         # The emergency button sends the emergency command that stops the propellers
                         elif KeyList[self.Control_Dict.get("emergency")]:
-                            self.Drone.emergency()
+                            Emergency_Thread = threading.Thread(target=self.Drone.emergency)
+                            Emergency_Thread.start()
+                            #self.Drone.emergency()
                         """ Dangerous :P
                         # The d-pad up does a forward flip (Not yet tested)
                         elif KeyList[self.Control_Dict.get("flipf")]:
@@ -146,13 +155,26 @@ class DroneHandler:
     # Give the battery status from the drone
     def GetBattery(self):
         return self.Drone.get_battery()
-    def Emergency(self, Stop:bool):
+    def Emergency(self, Stop:bool = False):
         if Stop:
-            self.Drone.send_control_command("stop")
+            #self.Drone.send_control_command("stop")
+            Stop_Command_Thread = threading.Thread(target=self.Drone.send_control_command, args=("stop",))
+            Stop_Command_Thread.start()
         else:
-            self.Drone.emergency()
+            #self.Drone.emergency()
+            Emergency_Thread = threading.Thread(target=self.Drone.emergency)
+            Emergency_Thread.start()
     def Connect_Network(self, SSID, Pass):
         self.Drone.connect_to_wifi(SSID, Pass)
+        Wifi_Connect_Thread = threading.Thread(target=self.Drone.connect_to_wifi, args=("ssid", "pass",))
+    def Stop_Button_Command(self):
+        if self.Drone.is_flying:
+            Land_Thread = threading.Thread(target=self.Drone.land)
+            Land_Thread.start()
+            #self.Drone.land()
+        #self.Stop()
     # Stop the drone
     def Stop(self):
-        self.Drone.end()
+        End_Thread = threading.Thread(target=self.Drone.end)
+        End_Thread.start()
+        #self.Drone.end()

@@ -1,3 +1,4 @@
+import mysql.connector
 
 """
 Variables needed in insert:
@@ -13,6 +14,8 @@ class TableHandler:
 
     def __init__(self, table):
         self.table = table
+        self.connection = self.connector()
+        self.cursor = self.getCursor()
 
     #Function to insert string into middle of another string, used for generating column check
     def insert_string_lat(self, str, word):
@@ -41,9 +44,9 @@ class TableHandler:
         query_cor = ', '.join(query_cor)
         query_end = ', '.join(ending)
         if len(query_cor) == 0:
-            mySql_insert_query = ''' INSERT INTO hive.%s (%s%s) VALUES (%s, CURRENT_TIME) ''' %(self.table, query_columns, query_end, query_placeholders)
+            mySql_insert_query = """INSERT INTO hive.%s (%s%s) VALUES (%s, CURRENT_TIME)""" %(self.table, query_columns, query_end, query_placeholders)
         else :
-            mySql_insert_query = ''' INSERT INTO hive.%s (%s, %s%s) VALUES (%s, CURRENT_TIME) ''' %(self.table, query_columns, query_cor, query_end, query_placeholders)
+            mySql_insert_query = """INSERT INTO hive.%s (%s, %s%s) VALUES (%s, CURRENT_TIME)""" %(self.table, query_columns, query_cor, query_end, query_placeholders)
         
         return mySql_insert_query
 
@@ -58,7 +61,7 @@ class TableHandler:
         query_placeholders = ', '.join(['%s'] * (len(insert)))
         query_columns = ', '.join(ds_list)
 
-        mySql_update_query = ''' UPDATE hive.%s SET %s, time = CURRENT_TIME WHERE %s ''' %(self.table, query_columns, where_statement)
+        mySql_update_query = ''' UPDATE hive.%s SET %s, received = CURRENT_TIME WHERE %s ''' %(self.table, query_columns, where_statement)
         
         return mySql_update_query
 
@@ -68,5 +71,24 @@ class TableHandler:
         
         return mySql_delete_query
 
+    def connector(self):
+        connection = mysql.connector.connect(user='root', password='password', host='localhost', database='hive')
+        return connection
+    
+    def getCursor(self):
+        return self.connection.cursor()
+    
+    def commit(self, query, data=None):
+        if data == None:
+            self.cursor.execute(query)
+        else:
+            self.cursor.execute(query, data)
+        self.connection.commit()
+    
+    def closeConnection(self):
+        if self.connection.is_connected():
+                self.cursor.close()
+                self.connection.close()
+                print("MySQL connection is closed")
 
 

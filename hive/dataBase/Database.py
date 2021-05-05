@@ -50,13 +50,17 @@ The streaming variable is ('DroneName')
 
 ###########################################################
 
-PythonDrone = drone.Drone('PythonDrone', 87.654321, 12.345678)
+PythonDrone = drone.Drone('PythonDrone', 'Online', 87.654321, 12.345678)
+
 print("drone table handler")
-PythonDrone.insert()
-PythonDrone.update()
+#PythonDrone.insert()
+
+
+PythonDrone = drone.Drone('PythonDrone', 'Updating', 87.654321, 12.345678)
+#PythonDrone.update()
 PythonDrone.delete()
 print("\n") 
-
+"""
 print("poi table handler")
 PythonDrone = poi.Poi('PythonDrone', 87.654321, 12.345678)
 
@@ -67,25 +71,21 @@ print("route table handler")
 PythonDrone = route.Route('PythonDrone', 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678)
 
 PythonDrone.insert()
-print("\n")
+print("\n") 
 
 print("video table handler")
 PythonDrone = video.Video('PythonDrone')
 PythonDrone.insert()
-"""
-
-
-
 
 test = getTable.fetchall('hive.drone')
-
 for x in range(len(test)):    
     print(test[x])
 
 for i in test:
     print(i['drone'])
     print("-------------")
-    print(i['latitude'])
-    print(i['longitude'])
+    print(i['state'])
+    print(i['lat'])
+    print(i['long'])
     print("\n")
 """
