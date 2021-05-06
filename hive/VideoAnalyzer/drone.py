@@ -3,6 +3,8 @@ import numpy as np
 
 # Video Input
 VideoCapture = cv2.VideoCapture(0)
+# VideoCapture = cv2.VideoCapture("udp:\\\\@0.0.0.0:11111")
+
 
 # Cascades
 faceCascade = cv2.CascadeClassifier("Resource/haarcascade_frontalface_default.xml") # For frontface detection
@@ -30,7 +32,7 @@ def findFace(img):
     # convert frame to grayscale
     grayConversion = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    faces = faceCascade.detectMultiScale(grayConversion, 2, 6)
+    faces = faceCascade.detectMultiScale(grayConversion, 1.1, 6)
 
     # Draw rectangle around detected faces
     for (x, y, w, h) in faces:
@@ -78,8 +80,8 @@ def getContours(img):
 while True: # Searches each frame for faces, bodies and colors
     ret, frame = VideoCapture.read()
     output = frame
-    findColor(frame, fColor)
+    #findColor(frame, fColor)
     findFace(frame)
-    findBody(frame)
+    #findBody(frame)
     cv2.imshow("Original", output)
     cv2.waitKey(1)
