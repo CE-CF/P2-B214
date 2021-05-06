@@ -1,7 +1,6 @@
 from .tableHandler import TableHandler
-from .databaseHandler import DatabaseHandler
 
-class Video(TableHandler, DatabaseHandler):
+class Video(TableHandler):
 
     def __init__(self, DroneName):
         self.DroneName = DroneName

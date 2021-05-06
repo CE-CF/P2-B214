@@ -9,12 +9,12 @@ from relayBoxUtilities import *
 
 INTERVAL = 0.2
 # IP and port of Tello
-tello1_address = ('192.168.137.97', 8889)
-#tello2_address = ('192.168.0.101', 8889)
+tello1_address = ('192.168.137.103', 8889)
+#tello2_address = ('192.168.0.66', 8889)
 
 # IP and port of local computer
-local1_address = ('', 9010)
-#local2_address = ('', 9011)
+#local1_address = ('', 9010)
+local1_address = ('', 9011)
 
 # Create a UDP connection that we'll send the command to
 sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -42,9 +42,9 @@ def receive():
             # Try to receive the message otherwise print the exception
             try:
                 response1, ip_address = sock1.recvfrom(1024) # The 128 is a buffer for the received message, it has to be large enough for any message
-                #response2, ip_address = sock2.recvfrom(128)
+                #response2, ip_address = sock2.recvfrom(1024)
                 print("Received message: from Tello EDU #1: " + response1.decode(encoding='utf-8')) # UTF-8 stands for “Unicode Transformation Format - 8 bits.” It can translate any Unicode character to a matching unique binary string, and can also translate the binary string back to a Unicode character. 
-                #print("Received message: from Tello EDU #2: " + response2.decode(encoding='utf-8'))
+                print("Received message: from Tello EDU #2: " + response2.decode(encoding='utf-8'))
                 if response == 'ok':
                     continue
                 out = response.replace(';', ';\n')
@@ -65,6 +65,7 @@ receiveThread.daemon = True
 receiveThread.start()
 
 send("command", 3)
+"""
 try:
         index = 0
         while True:
@@ -80,15 +81,17 @@ try:
         curses.echo()
         curses.nocbreak()
         curses.endwin()
+"""
 #send("takeoff",8)
-#send("land", 3 )
-#send('takeoff', 3)
-#send('land', 1)
+#send("command", 3 )
+send('takeoff', 3)
+send('land', 1)
 # Close the socket
 sock1.close()
 #sock2.close()
 
-#testPing = functions.Functions.ping("192.168.137.241")
+#testPing1 = functions.Functions.ping("192.168.137.103")
+#testPing1 = functions.Functions.ping("192.168.137.66")
 
 
 

@@ -24,7 +24,15 @@ class TableHandler:
     def insert_string_long(self, str, word):
         return str[:4] + word
     
+    #Function to insert string into middle of another string, used for checking file path
+    def insert_string_middle_video(self, str, word):
+        return str[:31] + word + str[31:]
+
+    def insert_string_middle_snapshot(self, str, word):
+        return str[:34] + word + str[34:]
+
     def insert_query(self, *route, **insert):
+        """either a normal insert query or a route insert query"""
         ds_list= (', '.join(['{}'.format(k) for k, w in insert.items()]))
         ending = (', received',)
         query_cor = [None]*len(route)
@@ -51,9 +59,34 @@ class TableHandler:
         return mySql_insert_query
 
     def check_query(self, video):
-        mySql_check_query = """SELECT video, COUNT(*) FROM hive.%s WHERE video = %s GROUP BY video""" %(self.table, video)
+        """ Insert video path to check for """
+        mySql_check_query = """SELECT video, COUNT(*) FROM hive.%s WHERE video = '%s' GROUP BY video""" %(self.table, video)
         return mySql_check_query
+    
+    def route_check_query(self, latitude):
+        """ Route check query"""
+        mySql_route_check_query = """ SELECT * 
+                                            FROM information_schema.COLUMNS
+                                            WHERE 
+                                                TABLE_SCHEMA = 'hive' 
+                                            AND TABLE_NAME = 'route' 
+                                            AND COLUMN_NAME = '%s' """%(latitude)
+        
+        return mySql_route_check_query
 
+    def route_noColumn(self):
+        mySql_route_noColumn = """ALTER TABLE hive.route 
+                ADD COLUMN lat1 DECIMAL(10,6) AFTER type, 
+                ADD COLUMN long1 DECIMAL(10,6) AFTER lat1 """
+        
+        return mySql_route_noColumn
+    
+    def route_withColumns(self):
+        mySql_route_withColumns = """ALTER TABLE hive.route 
+                    ADD COLUMN lat%s DECIMAL(10,6) AFTER long%s, 
+                    ADD COLUMN long%s DECIMAL(10,6) AFTER lat%s"""
+        
+        return mySql_route_withColumns
 
     def update_query(self, **insert):
         ds_list= (', '.join(['{} = {!r}'.format(k, w) for k, w in insert.items()]),)
@@ -85,6 +118,18 @@ class TableHandler:
             self.cursor.execute(query, data)
         self.connection.commit()
     
+    def execute(self, query, data=None):
+        if data == None:
+            self.cursor.execute(query)
+        else:
+            self.cursor.execute(query, data)
+
+    def fetchRow(self):
+        self.cursor.fetchall()
+        output = self.cursor.rowcount
+        
+        return output
+
     def closeConnection(self):
         if self.connection.is_connected():
                 self.cursor.close()
