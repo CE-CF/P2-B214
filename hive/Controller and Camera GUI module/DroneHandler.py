@@ -1,4 +1,5 @@
-import djitellopy as dji
+#import djitellopy as dji
+import Loc_djitellopy as dji
 import threading
 import pygame
 
@@ -6,6 +7,7 @@ class DroneHandler:
 
     def __init__(self, Tello_IP = "192.168.10.1"):
         self.IP_Address = Tello_IP
+        print(f'IP Address is: {Tello_IP}, {self.IP_Address}')
         self.Drone = dji.Tello(self.IP_Address)
 
         self.Controllable = False
@@ -86,7 +88,7 @@ class DroneHandler:
             else:
                 for e in EventList:
                     if e.type == pygame.KEYDOWN:
-                        print(f'Takeoff button state is: {KeyList[self.Control_Dict.get("takeoff")]}')
+                        #print(f'Takeoff button state is: {KeyList[self.Control_Dict.get("takeoff")]}')
                         # The land button lands or takes off the drone (Depending on if the drone is flying or not)
                         if KeyList[self.Control_Dict.get("land")]:
                             if self.Drone.is_flying:

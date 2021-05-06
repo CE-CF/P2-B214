@@ -74,11 +74,12 @@ class CameraWindow:
             Surface.blit(self.Image, self.Rect)
             #Surface.blit(self.Image, (self.Pos_x, self.Pos_y))
         else:
+            self.FrameRatio = self.FrameRatio/2
             if No_Of_Cameras > 4:
                 if (Camera_Index-2*Camera_Scroll)>=0 and (Camera_Index-2*Camera_Scroll)<4:
                     self.Frame = self.Drone.GetFrame()
-                    self.FrameHeight = int(self.FrameHeight*self.FrameRatio/2)
-                    self.FrameWidth = int(self.FrameWidth*self.FrameRatio/2)
+                    self.FrameHeight = int(self.FrameHeight*self.FrameRatio)
+                    self.FrameWidth = int(self.FrameWidth*self.FrameRatio)
                     self.Frame = cv2.resize(self.Frame,(self.FrameWidth,self.FrameHeight))
                     self.Image = pygame.image.frombuffer(self.Frame, (self.FrameWidth, self.FrameHeight), "BGR")
                     Index = Camera_Index - 2*Camera_Scroll
@@ -95,15 +96,22 @@ class CameraWindow:
                     self.Rect = pygame.rect.Rect(0,0,0,0)
             else:
                 self.Frame = self.Drone.GetFrame()
-                self.FrameHeight = int(self.FrameHeight*self.FrameRatio/2)
-                self.FrameWidth = int(self.FrameWidth*self.FrameRatio/2)
+                #print(f'Frame type is: {type(self.Frame)}')
+
+                self.FrameHeight = int(self.FrameHeight*self.FrameRatio)
+                self.FrameWidth = int(self.FrameWidth*self.FrameRatio)
                 #print(f'\tFrame width is: {self.FrameWidth}\n\tFrame height is: {self.FrameHeight}')
-                self.Frame = cv2.resize(self.Frame,(self.FrameWidth,self.FrameHeight))
-                self.Image = pygame.image.frombuffer(self.Frame, (self.FrameWidth, self.FrameHeight), "BGR")
+                if type(self.Frame) == type(None):
+                    self.Image = pygame.surface.Surface((self.FrameWidth, self.FrameHeight))
+                else:
+                    self.Frame = cv2.resize(self.Frame,(self.FrameWidth,self.FrameHeight))
+                    self.Image = pygame.image.frombuffer(self.Frame, (self.FrameWidth, self.FrameHeight), "BGR")
                 Index = Camera_Index - 2*Camera_Scroll
                 self.Pos_x = (Resolution[0]/2) - self.FrameWidth*((Index // 2) + 1)
                 self.Pos_y = (Resolution[1]/2) - self.FrameHeight*((Index+1) % 2)
                 self.Rect = pygame.rect.Rect(self.Pos_x, self.Pos_y, self.FrameWidth, self.FrameHeight)
+                if type(self.Frame) == type(None):
+                    pygame.draw.rect(self.Image, (0,0,0),self.Rect)
                 self.Draw_Buttons()
                 Battery_Level = self.Drone.GetBattery()
                 Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, (255,255,255))
