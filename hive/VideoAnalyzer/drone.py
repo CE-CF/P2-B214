@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import datetime
 
 # Video Input
 VideoCapture = cv2.VideoCapture(0)
@@ -8,7 +9,7 @@ VideoCapture = cv2.VideoCapture(0)
 
 # Cascades
 faceCascade = cv2.CascadeClassifier("Resource/haarcascade_frontalface_default.xml") # For frontface detection
-bodyCascade = cv2.CascadeClassifier("Resource/haarcascade_fullbody.xml") # For fullbody detection
+bodyCascade = cv2.CascadeClassifier("Resource/haarcascade_upperbody.xml") # For Upperbody detection
 
 # Color detection values
 fColor = [
@@ -25,6 +26,9 @@ iColor = [
     []
 ]
 
+detectionTime = []
+POIDetected = False
+image_count = 0
 
 def findFace(img):
     """Face detection via haarcascade"""
@@ -32,7 +36,26 @@ def findFace(img):
     # convert frame to grayscale
     grayConversion = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    faces = faceCascade.detectMultiScale(grayConversion, 1.1, 6)
+
+    faces = faceCascade.detectMultiScale(grayConversion, 1.05, 6)
+    now = datetime.datetime.now()
+
+    if len(faces) > 0:
+        if len(detectionTime) == 0:
+            detectionTime.append(now)
+        elif len(detectionTime) == 1:
+            detectionTime.append(now)
+        else:
+            detectionTime[1] = now
+            if (detectionTime[1]-detectionTime[0]) > datetime.timedelta(0, 2):
+                print("###################")
+                print("!!!POI Detected!!!")
+                print("###################")
+                global POIDetected
+                POIDetected = True
+                detectionTime.clear()
+    else:
+        detectionTime.clear()
 
     # Draw rectangle around detected faces
     for (x, y, w, h) in faces:
@@ -42,7 +65,7 @@ def findFace(img):
     cv2.putText(output, 'Number of Faces: ' + str(len(faces)), (20, 20), cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 0), 2)
 
 def findBody(img):
-    """Fullbody detection via haarcascade"""
+    """Upperbody detection via haarcascade"""
 
     # convert frame to grayscale
     grayConversion = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -82,6 +105,10 @@ while True: # Searches each frame for faces, bodies and colors
     output = frame
     #findColor(frame, fColor)
     findFace(frame)
-    #findBody(frame)
+    findBody(frame)
+    if POIDetected:
+        cv2.imwrite("C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\{:03d}.png".format(image_count), output)
+        image_count += 1
+        POIDetected = False
     cv2.imshow("Original", output)
     cv2.waitKey(1)
