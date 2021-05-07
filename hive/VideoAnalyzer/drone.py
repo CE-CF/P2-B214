@@ -1,11 +1,13 @@
 import cv2
 import numpy as np
 import datetime
+import DroneHandler
 
 # Video Input
-VideoCapture = cv2.VideoCapture(0)
-# VideoCapture = cv2.VideoCapture("udp:\\\\@0.0.0.0:11111")
+#VideoCapture = cv2.VideoCapture(0)
+#VideoCapture = cv2.VideoCapture("udp:\\\\@192.168.10.1:11111")
 
+DH = DroneHandler.DroneHandler()
 
 # Cascades
 faceCascade = cv2.CascadeClassifier("Resource/haarcascade_frontalface_default.xml") # For frontface detection
@@ -128,7 +130,8 @@ def getContours(img):
             x, y, w, h = cv2.boundingRect(approx)
 
 while True: # Searches each frame for faces, bodies and colors
-    ret, frame = VideoCapture.read()
+    DroneImg = DH.GetFrame()
+    ret, frame = DroneImg.read()
     output = frame
     findColor(frame, fColor)
     findFace(frame)
