@@ -336,19 +336,20 @@ class Server(ABC):
         log_string = f"TCP Listener on port: {self.srv_port_tcp}"
         print(log_string)
         logging.info(log_string)
-        self.srv_socket_tcp.listen(1)
-        conn_tcp, addr_tcp = self._accept_tcp()
-        # Begin multithreading TCP
-        # ---
-        self.conns_counter_tcp += 1
-        tcpthread = TCPClientHandler(
-            self.conns_counter_tcp,
-            conn_tcp,
-            addr_tcp,
-            self.run,
-            self.max_clients_tcp,
-        )
-        tcpthread.start()
+        while True:
+            self.srv_socket_tcp.listen(1)
+            conn_tcp, addr_tcp = self._accept_tcp()
+            # Begin multithreading TCP
+            # ---
+            self.conns_counter_tcp += 1
+            tcpthread = TCPClientHandler(
+                self.conns_counter_tcp,
+                conn_tcp,
+                addr_tcp,
+                self.run,
+                self.max_clients_tcp,
+            )
+            tcpthread.start()
 
     def start(self):
         """Starts the server and handles errors, executes the abstract run

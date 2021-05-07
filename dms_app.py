@@ -6,7 +6,7 @@ from hive.dataBase.tableHandlers.route import Route
 
 class DmsServer(Server):
     def __init__(self):
-        super().__init__(1337, 9241)
+        super().__init__(9000, 9241)
 
     def eval_cmd(self, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
