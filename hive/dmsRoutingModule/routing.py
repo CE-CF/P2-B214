@@ -58,7 +58,7 @@ class Routing(Coordinates):
         self.append_plot(pl.get_plots())
 
         # after accumulating plots in the plots-array we are now able to show them all at once
-        show_plots(self.plots, self.plot_padding)
+        # show_plots(self.plots, self.plot_padding)
 
     # the first if-statement checks if the plots-parameter is an array/list
     # if it is, it will iterate through the array/list while it appends each element to the plots-array

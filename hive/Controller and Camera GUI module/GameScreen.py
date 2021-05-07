@@ -9,9 +9,10 @@ class Game:
 
     #MainCamera = OLD_Camera.Camera()
     # Constructer for game object with it's resolution and other options
-    def __init__(self, DroneHandler: [DH.DroneHandler], ScreenWidth = 960, ScreenHeight = 720,
+    def __init__(self, DroneHandler: [DH.DroneHandler], VideoSorter, ScreenWidth = 960, ScreenHeight = 720,
                  FullScreen = False, Run = True, FPS = 60):
         pygame.init()   # Initialize all pygame modules
+        self.VS = VideoSorter
         self.DH = DroneHandler # Initialize the drone handler
         self.DH_Index = 0
         #self.Camera_Windows = [CW.CameraWindow(i) for i in self.DH]
@@ -77,6 +78,7 @@ class Game:
     def close(self):
         pygame.display.quit()
         pygame.quit()
+        self.VS.Finish()
         for i in self.DH:
             i.Stop()
 
@@ -210,7 +212,11 @@ class Game:
                             self.DH[i].Controllable = not self.DH[i].Controllable
                             print(self.DH[i].Controllable)
                     if e.key == pygame.K_z:
-                        self.DH[0].Connect_Network("ssid", "pass")
+                        print("Connecting to ssid now")
+                        #self.DH[0].Connect_Network("Krellebas", "bearnaise")
+                        #self.DH[0].Connect_Network("HUAWEI P20 lite", "87651234")
+                        self.DH[0].Connect_Network("Bateekha", "BleeBloo")
+                        print("Connection done")
                     if e.key == pygame.K_ESCAPE:    # Escape will also close the program
                         self.close()
                         return

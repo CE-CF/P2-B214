@@ -1,6 +1,5 @@
 import mysql.connector
 from .tableHandler import TableHandler
-from .databaseHandler import DatabaseHandler
 
 class Drone(TableHandler):
 
@@ -21,7 +20,7 @@ class Drone(TableHandler):
         except mysql.connector.Error as error:
             print("Failed to insert into MySQL table {}".format(error))
         finally:
-            
+
             super().closeConnection()
 
     def update(self):
