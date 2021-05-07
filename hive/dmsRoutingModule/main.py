@@ -3,7 +3,8 @@ import time
 
 from routing import Routing
 from routingpackage.distanceinmeters import DistanceInMeters
-from routingpackage.dronecommands import instantiate, the_thread
+from routingpackage.dronecommands import instantiate, the_thread, correct_yaw
+from routingpackage.flymodes import get_to_route, search_route, go_home
 
 big_array = np.array([[57.02848118809145, 9.948913866684594],
                       [57.02867865592206, 9.949934871541862],
@@ -24,18 +25,23 @@ def run():
     bob.reverse_calculate(20)
 
     instantiate()
-    the_thread("takeoff")
-    print("drone has taken off")
-    time.sleep(2)
-    the_thread("rc 0 0 0 100")
-    print("rc +100")
-    time.sleep(2)
-    the_thread("rc 0 0 0 -100")
-    print("rc -100")
-    time.sleep(2)
-    the_thread("rc 0 0 0 0")
-    print("rc 0")
-    time.sleep(5)
+    #the_thread("rc 0 0 0 100")
+    #print("cw rotation")
+    #time.sleep(3)
+    #the_thread("rc 0 0 0 -100")
+    #print("ccw rotation")
+    #time.sleep(3)
+    #the_thread("rc 0 0 0 0")
+    #print("stop turning")
+    #time.sleep(1)
+
+    #the_thread("rc 0 100 0 0")
+
+    print("go straight")
+
+    correct_yaw()
+
+    time.sleep(1)
     the_thread("land")
     print("TOUCHDOWN!!!")
 
