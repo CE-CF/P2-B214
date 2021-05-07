@@ -1,6 +1,7 @@
 import hashlib
 import ipaddress
 from abc import ABC, abstractmethod
+
 from hive.exceptions.packet_exceptions import (
     DecodeErrorChecksum,
     EncodeErrorPacket,
@@ -130,7 +131,7 @@ class HiveT(Packet):
     _p_data = None
     _src = None
 
-    def __init__(self, p_type="heart", p_dest="127.0.0.1", p_data=""):
+    def __init__(self, p_type="sccmd", p_dest="127.0.0.1", p_data=""):
         self.p_type = p_type
         self.p_dest = p_dest
         self.p_data = p_data
@@ -166,7 +167,7 @@ class HiveT(Packet):
                 "wayp": 0,
                 "bound": 1,
                 "drone": 2,
-                "heart": 3,
+                "sccmd": 3,
             }[p_type]
         elif type(p_type) is int and p_type in [0, 1, 2, 3]:
             self._p_type = p_type
@@ -238,6 +239,7 @@ class HiveT(Packet):
 
         """
         d = {}
+        array = []
         delim1 = ";"
         delim2 = ":"
         element = ""
@@ -245,10 +247,22 @@ class HiveT(Packet):
             if v is not delim1:
                 element += v
             else:
-                arr = element.split(delim2)
-                d[arr[0]] = arr[1]
-                element = ""
-        return d
+                if self.p_type == 0 or self.p_type == 1:
+                    tmp_arr = element.split(delim2)
+                    array.append(tmp_arr)
+                    element = ""
+                elif self.p_type == 2:
+                    array.append(element)
+                    element = ""
+                elif self.p_type == 3:
+                    arr = element.split(delim2)
+                    d[arr[0]] = arr[1]
+                    element = ""
+
+        if self.p_type == 3:
+            return d
+        else:
+            return array
 
     @staticmethod
     def encode_packet(packet):

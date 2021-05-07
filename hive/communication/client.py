@@ -2,7 +2,7 @@ import logging
 import threading
 from abc import ABC, abstractmethod
 from datetime import datetime
-from socket import AF_INET, SHUT_RDWR, SOCK_STREAM, socket, SOCK_DGRAM
+from socket import AF_INET, SHUT_RDWR, SOCK_DGRAM, SOCK_STREAM, socket
 from time import sleep
 
 from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
@@ -10,7 +10,6 @@ from hive.exceptions.packet_exceptions import DecodeErrorChecksum
 from hive.utils.decorators import setInterval
 
 from .packet import HiveT, HiveU, Packet
-
 
 # =====================
 # LOGGING RELATED
