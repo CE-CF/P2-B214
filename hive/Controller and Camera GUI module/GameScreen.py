@@ -19,12 +19,26 @@ class Game:
         self.Camera_Windows = []
         for i in self.DH:
             self.Camera_Windows.append(CW.CameraWindow(i))
-        self.ScreenSize = self.ScreenWidth, self.ScreenHeight = ScreenWidth, ScreenHeight
+        self.ScreenHeightAdjuster = int(60*(ScreenHeight/720))
+        print(f'Adjuster is: {self.ScreenHeightAdjuster}')
+        print(f'Fill screen size is: {ScreenWidth}, {ScreenHeight+self.ScreenHeightAdjuster}')
+        self.ScreenSize = self.ScreenWidth, self.ScreenHeight = ScreenWidth, ScreenHeight+self.ScreenHeightAdjuster
         self.Screen = pygame.display.set_mode(self.ScreenSize, flags= pygame.FULLSCREEN * FullScreen)
+        print(f'Actual display size is: {self.Screen.get_size()}')
         self.Run = Run
         self.Joystick_Handler_Ran = 0
         self.clock = pygame.time.Clock()
         self.FPS = FPS
+        self.KillAllRect = pygame.Rect(0,0,int(self.ScreenWidth/2),self.ScreenHeightAdjuster)
+        self.KillAllRect.bottomright = (self.ScreenWidth, self.ScreenHeight)
+        self.KillAllText = pygame.font.SysFont("Calibri", int(self.ScreenHeightAdjuster)).render("KILL ALL", True, pygame.Color("black"))
+        self.KillAllTextRect = self.KillAllText.get_rect()
+        self.KillAllTextRect.center = self.KillAllRect.center
+        self.StopAllRect = pygame.Rect(0,0,int(self.ScreenWidth/2),self.ScreenHeightAdjuster)
+        self.StopAllRect.bottomleft = (0,self.ScreenHeight)
+        self.StopAllText = pygame.font.SysFont("Calibri", int(self.ScreenHeightAdjuster)).render("STOP ALL", True, pygame.Color("black"))
+        self.StopAllTextRect = self.StopAllText.get_rect()
+        self.StopAllTextRect.center = self.StopAllRect.center
     # Setup for the game loop function
     def setup(self):
         pass
@@ -96,6 +110,7 @@ class Game:
     # Function that draws the Cameras for all available drones
     def Draw_Cameras(self):
         #print("Drawing camera")
+        AdjustedScreenHeight = self.ScreenHeight - self.ScreenHeightAdjuster
         Focused = False; Focused_Cam = 0
         for i in range(len(self.Camera_Windows)):
             #print(f'Checking for focused camera: {i}')
@@ -109,13 +124,20 @@ class Game:
             for i in range(len(self.Camera_Windows)):
                 #print(f'Drawing after detecting focus: {i}')
                 if i == Focused_Cam:
-                    self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, self.ScreenHeight), len(self.Camera_Windows), True)
+                    self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, AdjustedScreenHeight), len(self.Camera_Windows), True)
                 else:
                     self.Camera_Windows[i].Camera_Unfocused()
         else:
             for i in range(len(self.Camera_Windows)):
                 #print(f'Drawing camera without focus: {i}')
-                self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, self.ScreenHeight), len(self.Camera_Windows))
+                self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, AdjustedScreenHeight), len(self.Camera_Windows))
+                #self.Camera_Windows[i].Draw_Camera(self.Screen, i+1, 0, (self.ScreenWidth, self.ScreenHeight), 3)
+
+    def Draw_Buttons(self):
+        pygame.draw.rect(self.Screen,pygame.Color("yellow"), self.StopAllRect)
+        pygame.draw.rect(self.Screen,pygame.Color("red"), self.KillAllRect)
+        self.Screen.blit(self.StopAllText, self.StopAllTextRect)
+        self.Screen.blit(self.KillAllText, self.KillAllTextRect)
 
     """
     def Draw_Rect_Alpha(self, surface, color, alpha, rect):
@@ -140,6 +162,7 @@ class Game:
             self.Update_Key_Holds(keyPressList, eventsList)         # Run the keyhold function
             self.Screen.fill((255,255,255))             # Fill screen with white to refresh
             self.Draw_Cameras()
+            self.Draw_Buttons()
             '''
             Frame = self.DH[self.DH_Index].GetFrame()                  # Get the video frame from the drone handler
             FrameRatio = 1
@@ -175,18 +198,25 @@ class Game:
                     self.close()
                     return
                 if e.type == pygame.MOUSEBUTTONDOWN:
-                    Set_Focus = False; Pressed = 0
-                    for i in range(len(self.Camera_Windows)):
-                        result = self.Camera_Windows[i].Detect_Click(pygame.mouse.get_pos())
-                        if result == 69:
-                            Pressed = i
-                            Set_Focus = True
-                    if Set_Focus:
+                    if self.KillAllRect.collidepoint(pygame.mouse.get_pos()):
+                        for i in self.DH:
+                            i.Emergency()
+                    elif self.StopAllRect.collidepoint(pygame.mouse.get_pos()):
+                        for i in self.DH:
+                            i.Stop_Button_Command()
+                    else:
+                        Set_Focus = False; Pressed = 0
                         for i in range(len(self.Camera_Windows)):
-                            if i == Pressed:
-                                continue
-                            else:
-                                self.Camera_Windows[i].Focused = False
+                            result = self.Camera_Windows[i].Detect_Click(pygame.mouse.get_pos())
+                            if result == 69:
+                                Pressed = i
+                                Set_Focus = True
+                        if Set_Focus:
+                            for i in range(len(self.Camera_Windows)):
+                                if i == Pressed:
+                                    continue
+                                else:
+                                    self.Camera_Windows[i].Focused = False
                     """
                     if Button_Rect1.collidepoint(pygame.mouse.get_pos()):
                         print("Drone Killed")
@@ -207,27 +237,31 @@ class Game:
                                 self.DH[i].SetControllerMode(True)
                             else:
                                 self.DH[i].SetControllerMode(False)
+                            #self.DH[i].SetControllerMode(True)
+                            #print(f'Controller mode to drone number {i} is: {self.DH[i].Controllable}')
+                    if e.key == pygame.K_v:
+                        for i in range(len(self.DH)):
+                            self.DH[i].SetControllerMode(False)
+                            print(f'Controller mode to drone number {i} is: {self.DH[i].Controllable}')
                     if e.key == pygame.K_x:
                         for i in range(len(self.DH)):
                             self.DH[i].Controllable = not self.DH[i].Controllable
-                            print(self.DH[i].Controllable)
+                            print(f'Control to drone number {i} is: {self.DH[i].Controllable}')
                     if e.key == pygame.K_z:
                         print("Connecting to ssid now")
-                        #self.DH[0].Connect_Network("Krellebas", "bearnaise")
-                        #self.DH[0].Connect_Network("HUAWEI P20 lite", "87651234")
-                        self.DH[0].Connect_Network("Bateekha", "BleeBloo")
+                        self.DH[0].Connect_Network("ssid", "pass")
                         print("Connection done")
                     if e.key == pygame.K_ESCAPE:    # Escape will also close the program
                         self.close()
                         return
             # Get the FPS value to print it on the display (Can't really see it in this program)
-            FPS = self.clock.get_fps()
-            FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), False, (255,255,255))
-            self.Screen.blit(FPS_Text, (0,0))
+            #FPS = self.clock.get_fps()
+            #FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), False, (255,255,255))
+            #self.Screen.blit(FPS_Text, (0,0))
             # Get the battery level of the drone to print it on the display (Did not test it yet)
-            Battery_Level = self.DH[0].GetBattery()
-            Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, (255,255,255))
-            self.Screen.blit(Battery_Text, (0,48))
+            #Battery_Level = self.DH[0].GetBattery()
+            #Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, (255,255,255))
+            #self.Screen.blit(Battery_Text, (0,48))
 
             #self.Draw_Sprites()             # Draw any sprites if available
             pygame.display.flip()           # Update the pygame display

@@ -16,25 +16,52 @@ class VideoSorter(threading.Thread):
         self.Socket.bind((self.IP,self.Port))
         self.Socket.settimeout(1)
 
+    def Send_The_Ting(self,r,a):
+        try:
+            #print(f'Address received from is: {a}')
+            SplitIP = str(a[0]).split('.')
+            #print(f'Split IP: {SplitIP}')
+            LastIP = SplitIP[-1]
+            #print(f'LastIP: {LastIP}')
+            while len(LastIP) < 3:
+                LastIP = '0' + LastIP
+            SendPort = int("22" + LastIP)
+            #print(f'Send Port: {SendPort}')
+            #FileName = str(a[0]) + '.txt'
+            #print(f"The packet length is: {len(r)}")
+            #with open(FileName, "wb+") as f:
+            #    f.write(r)
+            self.Socket.sendto(r, ('127.0.0.1', SendPort))
+            #os.chmod(FileName, 0o777)
+            #f = open(FileName, 'wb')
+            #f.write(r)
+            #f.close()
+        except OSError:
+            print("OSError Caught")
+            traceback.print_exc()
+            return
+
     def run(self):
         TimeoutCount = 0
         while self.Running:
             try:
                 r, a = self.Socket.recvfrom(self.BuffSize)
+                Send_Thread = threading.Thread(target=self.Send_The_Ting, args=(r,a,))
+                Send_Thread.start()
                 #print(f'Address received from is: {a}')
-                SplitIP = str(a[0]).split('.')
+                #SplitIP = str(a[0]).split('.')
                 #print(f'Split IP: {SplitIP}')
-                LastIP = SplitIP[-1]
+                #LastIP = SplitIP[-1]
                 #print(f'LastIP: {LastIP}')
-                while len(LastIP) < 3:
-                    LastIP = '0' + LastIP
-                SendPort = int("22" + LastIP)
+                #while len(LastIP) < 3:
+                #    LastIP = '0' + LastIP
+                #SendPort = int("22" + LastIP)
                 #print(f'Send Port: {SendPort}')
-                FileName = str(a[0]) + '.txt'
+                #FileName = str(a[0]) + '.txt'
                 #print(f"The packet length is: {len(r)}")
                 #with open(FileName, "wb+") as f:
                 #    f.write(r)
-                self.Socket.sendto(r, ('127.0.0.1', SendPort))
+                #self.Socket.sendto(r, ('127.0.0.1', SendPort))
                 #os.chmod(FileName, 0o777)
                 #f = open(FileName, 'wb')
                 #f.write(r)

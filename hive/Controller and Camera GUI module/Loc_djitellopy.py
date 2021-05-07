@@ -930,6 +930,9 @@ class BackgroundFrameRead:
     """
 
     def __init__(self, tello, address):
+        self.Old_Frame_Time = 0
+        self.New_Frame_Time = 1
+        self.FPS = 1
         print("BackgroundFrameRead started")
         #address = "udp://@127.0.0.1:11001"
         tello.cap = cv2.VideoCapture(address)
@@ -963,6 +966,19 @@ class BackgroundFrameRead:
                 self.stop()
             else:
                 self.grabbed, self.frame = self.cap.read()
+                try:
+                    if self.grabbed:
+                        self.New_Frame_Time = time.time()
+                        self.FPS = 1/(self.New_Frame_Time-self.Old_Frame_Time)
+                        self.Old_Frame_Time = self.New_Frame_Time
+                    else:
+                        print(f'Grabbed status is: {self.grabbed}')
+                        self.Old_Frame_Time = time.time()
+                except ZeroDivisionError:
+                    print("Division by zero error")
+                    self.FPS = 0
+                    self.Old_Frame_Time = time.time()
+
 
     def stop(self):
         """Stop the frame update worker
