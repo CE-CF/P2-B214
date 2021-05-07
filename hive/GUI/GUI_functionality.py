@@ -81,11 +81,8 @@ def AngleChecker(canvas):
         return True
 
 
-def clearCanvas(canvas, image_container):
+def clearCanvas(canvas):
     canvas.delete("all")
-    global img
-    img = ImageTk.PhotoImage(file="map.png")
-    canvas.itemconfig(image_container)
     Points.clear()
 
 
