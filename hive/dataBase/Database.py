@@ -12,16 +12,14 @@ PythonDrone.delete()
 PythonDrone = poi.Poi('PythonDrone', 87.654321, 12.345678)
 PythonDrone.insert()
 
-
 ### route ###
 PythonDrone = route.Route('PythonDrone2', 0, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678, 87.654321, 12.345678)
 PythonDrone.insert()
-
 
 ### video ###
 PythonDrone = video.Video('PythonDrone')
 PythonDrone.insert()
 
-"""
 ### fetchall ###
 test1 = getTable.fetchall('hive.drone')
+"""
