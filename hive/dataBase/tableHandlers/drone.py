@@ -30,7 +30,7 @@ class Drone(TableHandler):
             mySql_update_query = super().update_query(drone = self.DroneName, state = self.status, latitude = self.latitude, longitude = self.longitude)
             super().commit(mySql_update_query)
         except mysql.connector.Error as error:
-            print("Failed to insert into MySQL table {}".format(error))
+            print("Failed to update MySQL table {}".format(error))
         finally:
             super().closeConnection()
     
@@ -41,7 +41,7 @@ class Drone(TableHandler):
             mySql_delete_query = super().delete_query(drone = self.DroneName)
             super().commit(mySql_delete_query)
         except mysql.connector.Error as error:
-            print("Failed to insert into MySQL table {}".format(error))
+            print("Failed to delete MySQL table {}".format(error))
         finally:
             super().closeConnection()
     
