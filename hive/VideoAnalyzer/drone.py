@@ -26,36 +26,33 @@ iColor = [
     []
 ]
 
-detectionTime = []
+face_detectionTime = []
+body_detectionTime = []
+color_detectionTime = []
 POIDetected = False
 image_count = 0
 
 def findFace(img):
     """Face detection via haarcascade"""
-
     # convert frame to grayscale
     grayConversion = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-
     faces = faceCascade.detectMultiScale(grayConversion, 1.05, 6)
-    now = datetime.datetime.now()
+    FaceTime = datetime.datetime.now()
 
     if len(faces) > 0:
-        if len(detectionTime) == 0:
-            detectionTime.append(now)
-        elif len(detectionTime) == 1:
-            detectionTime.append(now)
+        if len(face_detectionTime) == 0:
+            face_detectionTime.append(FaceTime)
+        elif len(face_detectionTime) == 1:
+            face_detectionTime.append(FaceTime)
         else:
-            detectionTime[1] = now
-            if (detectionTime[1]-detectionTime[0]) > datetime.timedelta(0, 2):
-                print("###################")
-                print("!!!POI Detected!!!")
-                print("###################")
+            face_detectionTime[1] = FaceTime
+            if (face_detectionTime[1]-face_detectionTime[0]) > datetime.timedelta(0, 2):
                 global POIDetected
                 POIDetected = True
-                detectionTime.clear()
+                face_detectionTime.clear()
     else:
-        detectionTime.clear()
+        face_detectionTime.clear()
 
     # Draw rectangle around detected faces
     for (x, y, w, h) in faces:
@@ -66,11 +63,25 @@ def findFace(img):
 
 def findBody(img):
     """Upperbody detection via haarcascade"""
-
     # convert frame to grayscale
     grayConversion = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     bodies = bodyCascade.detectMultiScale(grayConversion, 1.1, 4)
+    BodyTime = datetime.datetime.now()
+
+    if len(bodies) > 0:
+        if len(body_detectionTime) == 0:
+            body_detectionTime.append(BodyTime)
+        elif len(body_detectionTime) == 1:
+            body_detectionTime.append(BodyTime)
+        else:
+            body_detectionTime[1] = BodyTime
+            if (body_detectionTime[1]-body_detectionTime[0]) > datetime.timedelta(0, 2):
+                global POIDetected
+                POIDetected = True
+                body_detectionTime.clear()
+    else:
+        body_detectionTime.clear()
 
     # Draw rectangle around detected bodies
     for (x, y, w, h) in bodies:
@@ -92,6 +103,22 @@ def findColor(img, fColor):
 def getContours(img):
     """Finds contours for detected colors"""
     contours,hiearchy  = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    ColorTime = datetime.datetime.now()
+
+    if len(contours) > 0:
+        if len(color_detectionTime) == 0:
+            color_detectionTime.append(ColorTime)
+        elif len(color_detectionTime) == 1:
+            color_detectionTime.append(ColorTime)
+        else:
+            color_detectionTime[1] = ColorTime
+            if (color_detectionTime[1]-color_detectionTime[0]) > datetime.timedelta(0, 2):
+                global POIDetected
+                POIDetected = True
+                color_detectionTime.clear()
+    else:
+        color_detectionTime.clear()
+
     for cnt in contours:
         area = cv2.contourArea(cnt)
         if area > 800:
@@ -103,11 +130,15 @@ def getContours(img):
 while True: # Searches each frame for faces, bodies and colors
     ret, frame = VideoCapture.read()
     output = frame
-    #findColor(frame, fColor)
+    findColor(frame, fColor)
     findFace(frame)
     findBody(frame)
     if POIDetected:
-        cv2.imwrite("C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\{:03d}.png".format(image_count), output)
+        print("###################")
+        print("!!!POI Detected!!!")
+        print("###################")
+        print("Image saved at C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\ ")
+        cv2.imwrite("C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\POI_{:02d}.png".format(image_count), output)
         image_count += 1
         POIDetected = False
     cv2.imshow("Original", output)

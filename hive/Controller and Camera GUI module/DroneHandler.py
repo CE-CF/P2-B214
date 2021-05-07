@@ -13,9 +13,13 @@ class DroneHandler:
         self.Controllable = False
         self.ControllerMode = False
         self.RC_Mode = True
+        self.Move_Speed = 50
+        self.Yaw_Speed = 80
         self.Drone.connect()
         self.Drone.streamon()
+        self.Drone.send_rc_control(0,0,0,0)
         self.Frame = self.Drone.get_frame_read()
+        # Dictionary with keyboard controls
         self.Control_Dict = {"land":    pygame.K_SPACE, "takeoff":  pygame.K_SPACE,
                              "up":      pygame.K_UP,    "down":     pygame.K_DOWN,
                              "cw":      pygame.K_RIGHT, "ccw":      pygame.K_LEFT,
@@ -39,19 +43,27 @@ class DroneHandler:
                         # The X button lands or takes off the drone (Depending on if the drone is flying or not)
                         if CD.get("Button0"):
                             if self.Drone.is_flying:
-                                self.Drone.land()
+                                Land_Thread = threading.Thread(target=self.Drone.land)
+                                Land_Thread.start()
+                                #self.Drone.land()
                             else:
-                                self.Drone.takeoff()
+                                Takeoff_Thread = threading.Thread(target=self.Drone.takeoff)
+                                Takeoff_Thread.start()
+                                #self.Drone.takeoff()
                         # The circle button switches RC_Mode on or off
                         elif CD.get("Button1"):
                             self.RC_Mode = not self.RC_Mode
                             self.Drone.send_rc_control(0,0,0,0)
                         # The square button sends the stop command that is supposed to let the drone hover in its place
                         elif CD.get("Button2"):
-                            self.Drone.send_control_command("stop")
+                            Stop_Command_Thread = threading.Thread(target=self.Drone.send_control_command, args=("stop",))
+                            Stop_Command_Thread.start()
+                            #self.Drone.send_control_command("stop")
                         # The triangle button sends the emergency command that stops the propellers
                         elif CD.get("Button3"):
-                            self.Drone.emergency()
+                            Emergency_Thread = threading.Thread(target=self.Drone.emergency)
+                            Emergency_Thread.start()
+                            #self.Drone.emergency()
                         """ Dangerous :P
                         # The d-pad up does a forward flip (Not yet tested)
                         elif CD.get("Button11"):
@@ -76,11 +88,12 @@ class DroneHandler:
                     if self.RC_Mode and self.Drone.is_flying:
                         # Move the RC command in half speed for movement and 80% speed for rotation
                         # The checks if the axis are over a 0.2 deadzone, so that stick drifting does not affect the drone
-                        Front = -int(50*Axis1)*(abs(Axis1)>0.2)
-                        Side =   int(50*Axis0)*(abs(Axis0)>0.2)
-                        Up =    -int(50*Axis3)*(abs(Axis3)>0.2)
-                        Yaw =    int(80*Axis2)*(abs(Axis2)>0.2)
+                        Front = -int(self.Move_Speed*Axis1)*(abs(Axis1)>0.2)
+                        Side =   int(self.Move_Speed*Axis0)*(abs(Axis0)>0.2)
+                        Up =    -int(self.Move_Speed*Axis3)*(abs(Axis3)>0.2)
+                        Yaw =    int(self.Yaw_Speed*Axis2)*(abs(Axis2)>0.2)
                         self.Drone.send_rc_control(Side,Front,Up,Yaw)
+                        return
                 # TypeError occurs when the input dictionary does not have a value for the axis and gives none instead
                 except TypeError:
                     print("Type error detected")
@@ -137,11 +150,12 @@ class DroneHandler:
                     if self.RC_Mode and self.Drone.is_flying:
                         # Move the RC command in half speed for movement and 80% speed for rotation
                         # The checks if the axis are over a 0.2 deadzone, so that stick drifting does not affect the drone
-                        Front = (50*KeyList[self.Control_Dict.get("forward")])-(50*KeyList[self.Control_Dict.get("backward")])
-                        Side =  (50*KeyList[self.Control_Dict.get("right")])  -(50*KeyList[self.Control_Dict.get("left")])
-                        Up =    (50*KeyList[self.Control_Dict.get("up")])     -(50*KeyList[self.Control_Dict.get("down")])
-                        Yaw =   (80*KeyList[self.Control_Dict.get("cw")])     -(80*KeyList[self.Control_Dict.get("ccw")])
+                        Front = (self.Move_Speed*KeyList[self.Control_Dict.get("forward")])-(self.Move_Speed*KeyList[self.Control_Dict.get("backward")])
+                        Side =  (self.Move_Speed*KeyList[self.Control_Dict.get("right")])  -(self.Move_Speed*KeyList[self.Control_Dict.get("left")])
+                        Up =    (self.Move_Speed*KeyList[self.Control_Dict.get("up")])     -(self.Move_Speed*KeyList[self.Control_Dict.get("down")])
+                        Yaw =   (self.Yaw_Speed*KeyList[self.Control_Dict.get("cw")])     -(self.Yaw_Speed*KeyList[self.Control_Dict.get("ccw")])
                         self.Drone.send_rc_control(Side,Front,Up,Yaw)
+                        return
                 # TypeError occurs when the input dictionary does not have a value for the axis and gives none instead
                 except TypeError:
                     print("Type error detected")
@@ -154,9 +168,18 @@ class DroneHandler:
     # Give the frame from the drone
     def GetFrame(self):
         return self.Frame.frame
+    def GetFrameFPS(self):
+        return self.Frame.FPS
     # Give the battery status from the drone
     def GetBattery(self):
         return self.Drone.get_battery()
+    # Give the speed of the drone (Don't think it actually works. It gives an exception)
+    def GetSpeed(self):
+        return self.Drone.query_speed()
+    # Give the flying state of the drone
+    def GetFlying(self):
+        return self.Drone.is_flying
+    # Send an emergency command to the drone
     def Emergency(self, Stop:bool = False):
         if Stop:
             #self.Drone.send_control_command("stop")
@@ -166,9 +189,11 @@ class DroneHandler:
             #self.Drone.emergency()
             Emergency_Thread = threading.Thread(target=self.Drone.emergency)
             Emergency_Thread.start()
+    # Connect the drone to a network with a given name and password
     def Connect_Network(self, SSID, Pass):
         self.Drone.connect_to_wifi(SSID, Pass)
         Wifi_Connect_Thread = threading.Thread(target=self.Drone.connect_to_wifi, args=("ssid", "pass",))
+    # The command that is used when the stop button is pressed. Currently only lands the drone
     def Stop_Button_Command(self):
         if self.Drone.is_flying:
             Land_Thread = threading.Thread(target=self.Drone.land)

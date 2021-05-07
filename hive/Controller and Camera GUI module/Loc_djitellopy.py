@@ -922,7 +922,10 @@ class Tello:
     def __del__(self):
         self.end()
 
-
+"""
+This class has been edited so that it works with the video sorter
+It captures video from the local port corresponding to the drone's IP
+"""
 class BackgroundFrameRead:
     """
     This class read frames from a VideoCapture in background. Use
@@ -930,15 +933,18 @@ class BackgroundFrameRead:
     """
 
     def __init__(self, tello, address):
+        self.Old_Frame_Time = 0
+        self.New_Frame_Time = 1
+        self.FPS = 1
         print("BackgroundFrameRead started")
         #address = "udp://@127.0.0.1:11001"
         tello.cap = cv2.VideoCapture(address)
-        print("BFR 1")
+        #print("BFR 1")
         self.cap = tello.cap
-        print("BFR 2")
+        #print("BFR 2")
         if not self.cap.isOpened():
             self.cap.open(address)
-        print("BFR 3")
+        #print("BFR 3")
         self.grabbed, self.frame = self.cap.read()
         while not self.grabbed or self.frame is None:
             #print('Failed to grab first frame from video stream')
@@ -963,6 +969,19 @@ class BackgroundFrameRead:
                 self.stop()
             else:
                 self.grabbed, self.frame = self.cap.read()
+                try:
+                    if self.grabbed:
+                        self.New_Frame_Time = time.time()
+                        self.FPS = 1/(self.New_Frame_Time-self.Old_Frame_Time)
+                        self.Old_Frame_Time = self.New_Frame_Time
+                    else:
+                        print(f'Grabbed status is: {self.grabbed}')
+                        self.Old_Frame_Time = time.time()
+                except ZeroDivisionError:
+                    print("Division by zero error when finding video feed fps")
+                    self.FPS = 0
+                    self.Old_Frame_Time = time.time()
+
 
     def stop(self):
         """Stop the frame update worker
