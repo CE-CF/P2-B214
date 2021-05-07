@@ -2,9 +2,11 @@ from CameraButton import CameraButton
 import pygame
 import cv2
 
+"""
+This class is used to draw the camera feed on the main window, and to draw all buttons and text needed for them
+It also detects clicks on each camera window accordingly
+"""
 class CameraWindow:
-
-
 
     #def __init__(self, Drone, Resolution, No_Of_Cameras):
     def __init__(self, Drone):
@@ -28,6 +30,7 @@ class CameraWindow:
         self.Image = pygame.image.frombuffer(self.Frame, (self.FrameWidth, self.FrameHeight), "BGR")
         """
 
+    # This function draws all the buttons on each camera feed
     #def Draw_Buttons(self, Image, FrameRatio, Pos_x, Pos_y, FrameWidth, FrameHeight):
     def Draw_Buttons(self):
         #print(f"Button position is: ({self.Pos_x}, {self.Pos_y})")
@@ -72,8 +75,10 @@ class CameraWindow:
             self.Image.blit(self.Unfocus_Button.Text, self.Unfocus_Button.Rect)
 
 
+    # This function checks the status of the camera and draws the frames accordingly
     def Draw_Camera(self, Surface, Camera_Index, Camera_Scroll, Resolution, No_Of_Cameras, FullScreen = False):
         self.FrameWidth = 960; self.FrameHeight = 720
+        # Resizes the camera accordingly if the window is not as big as needed
         if Resolution[0] < 960 or Resolution[1] < 720:
             self.FrameRatio = min((Resolution[0]/920), (Resolution[1]/720))
         else:
@@ -88,17 +93,20 @@ class CameraWindow:
             self.Pos_y = (Resolution[1] - self.FrameHeight)/2
             self.Rect = pygame.rect.Rect(self.Pos_x, self.Pos_y, self.FrameWidth, self.FrameHeight)
             self.Draw_Buttons()
+            # Stuff to draw the fps of the camera feed
             Frame_FPS = self.Drone.GetFrameFPS()
-            FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(Frame_FPS)), False, pygame.Color("white"))
+            FPS_Text = pygame.font.SysFont("Arial", 32).render(str(int(Frame_FPS)), False, pygame.Color("white"))
             self.Image.blit(FPS_Text, (0,0))
+            # Stuff to draw the battery of the drone
             Battery_Level = self.Drone.GetBattery()
-            Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, pygame.Color("red"))
-            self.Image.blit(Battery_Text, (0,48))
+            Battery_Text = pygame.font.SysFont("Arial", 32).render(str(int(Battery_Level)), False, pygame.Color("red"))
+            self.Image.blit(Battery_Text, (0,64))
+            # Stuff to draw the flying status of the drone
             if self.Drone.GetFlying():
-                Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
+                Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("green"))
             else:
-                Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("red"))
-            self.Image.blit(Flying_Text, (0,96))
+                Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("red"))
+            self.Image.blit(Flying_Text, (0,128))
             Surface.blit(self.Image, self.Rect)
             #Surface.blit(self.Image, (self.Pos_x, self.Pos_y))
         else:
@@ -115,12 +123,15 @@ class CameraWindow:
                     self.Pos_y = (Resolution[1]/2) - self.FrameHeight*((Index+1) % 2)
                     self.Rect = pygame.rect.Rect(self.Pos_x, self.Pos_y, self.FrameWidth, self.FrameHeight)
                     self.Draw_Buttons()
+                    # Stuff to draw the fps of the camera feed
                     Frame_FPS = self.Drone.GetFrameFPS()
                     FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(Frame_FPS)), False, pygame.Color("white"))
                     self.Image.blit(FPS_Text, (0,0))
+                    # Stuff to draw the battery of the drone
                     Battery_Level = self.Drone.GetBattery()
                     Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, pygame.Color("red"))
                     self.Image.blit(Battery_Text, (0,48))
+                    # Stuff to draw the flying status of the drone
                     if self.Drone.GetFlying():
                         Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
                     else:
@@ -150,13 +161,16 @@ class CameraWindow:
                     pygame.draw.rect(self.Image, (0,0,0),self.Rect)
                 #print(f"Camera position is: ({self.Pos_x}, {self.Pos_y})")
                 self.Draw_Buttons()
+                # Stuff to draw the fps of the camera feed
                 Frame_FPS = self.Drone.GetFrameFPS()
                 FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(Frame_FPS)), False, pygame.Color("white"))
                 self.Image.blit(FPS_Text, (0,0))
+                # Stuff to draw the battery of the drone
                 Battery_Level = self.Drone.GetBattery()
                 Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, pygame.Color("red"))
                 self.Image.blit(Battery_Text, (0,48))
                 #print(f'Flying state is: {self.Drone.GetFlying()}')
+                # Stuff to draw the flying status of the drone
                 if self.Drone.GetFlying():
                     Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
                 else:
@@ -168,11 +182,16 @@ class CameraWindow:
                 Surface.blit(self.Image, self.Rect)
                 #Surface.blit(self.Image, (self.Pos_x, self.Pos_y))\
 
+    # This function draws a camera when another camera is focused.
+    # It only sets the rectangle to zero so that no click is detected on it
     def Camera_Unfocused(self):
         self.Rect = pygame.rect.Rect(0,0,0,0)
 
+    # Detects if the mouse was placed on a certain place when it was clicked
     def Detect_Click(self, Mouse_Pos):
+        # Checks if the mouse was over the entire camera rectangle
         if self.Rect.collidepoint(Mouse_Pos):
+            # Detects if it was over the kill button. Sends emergency
             if self.Kill_Button.Click_Rect.collidepoint(Mouse_Pos):
                 if self.Kill_Button.Color == (255,255,255):
                     return 0
@@ -180,6 +199,7 @@ class CameraWindow:
                     self.Kill_Button.Update_Press_Time()
                     self.Drone.Emergency()
                     return 1
+            # Detects if it was over the stop button. Sends land
             elif self.Stop_Button.Click_Rect.collidepoint(Mouse_Pos):
                 if self.Stop_Button.Color == (255,255,255):
                     return 0
@@ -187,15 +207,18 @@ class CameraWindow:
                     self.Stop_Button.Update_Press_Time()
                     self.Drone.Stop_Button_Command()
                     return 2
+            # Detects if it was on the unfocus button, so it unfocuses the camera feed
             elif self.Unfocus_Button.Click_Rect.collidepoint(Mouse_Pos):
                 self.Focused = False
                 return 3
+            # If it was on the camera, but not on any button, then it focuses the camera
             else:
                 self.Focused = True
                 return 69
         else:
             return 0
 
+    # Runs the control handler of its corresponding drone
     def ControlHandler(self, KeyList, EventList, CD: dict):
         if self.Focused:
             self.Drone.ControlHandler(KeyList, EventList, CD)

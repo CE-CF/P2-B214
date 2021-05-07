@@ -3,7 +3,10 @@ import socket
 import os
 import traceback
 
-
+"""
+This class is used to intercept the video from the 11111 port and then sorts them
+It then sends the videos to local ports 22000-22255 depending on the ip of the drone it came from
+"""
 class VideoSorter(threading.Thread):
 
     def __init__(self, IP='0.0.0.0', Port=11111, BuffSize=2048):
@@ -16,6 +19,7 @@ class VideoSorter(threading.Thread):
         self.Socket.bind((self.IP,self.Port))
         self.Socket.settimeout(1)
 
+    # This function sorts the data and sends it to the correct local port
     def Send_The_Ting(self,r,a):
         try:
             #print(f'Address received from is: {a}')
@@ -41,6 +45,7 @@ class VideoSorter(threading.Thread):
             traceback.print_exc()
             return
 
+    # Run function receives the video frames and then starts a thread for each function that sends the frames
     def run(self):
         TimeoutCount = 0
         while self.Running:
@@ -78,5 +83,6 @@ class VideoSorter(threading.Thread):
                 print("Some other error occured")
         self.Socket.close()
 
+    # Ends the run thread
     def Finish(self):
         self.Running = False

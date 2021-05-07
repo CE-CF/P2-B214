@@ -108,10 +108,12 @@ class Game:
                 i.ControlHandler(KeyPressList, EventList, self.JoysticksInput[0])
 
     # Function that draws the Cameras for all available drones
+    # So that it shows one full screen camera or four small screen cameras at a time
     def Draw_Cameras(self):
         #print("Drawing camera")
         AdjustedScreenHeight = self.ScreenHeight - self.ScreenHeightAdjuster
         Focused = False; Focused_Cam = 0
+        # Check if any of the cameras is focused
         for i in range(len(self.Camera_Windows)):
             #print(f'Checking for focused camera: {i}')
             if self.Camera_Windows[i].Focused:
@@ -120,6 +122,7 @@ class Game:
                 break
             else:
                 continue
+        # If a camera is focused, then blit that camera in full screen, and the other cameras empty
         if Focused:
             for i in range(len(self.Camera_Windows)):
                 #print(f'Drawing after detecting focus: {i}')
@@ -133,6 +136,7 @@ class Game:
                 self.Camera_Windows[i].Draw_Camera(self.Screen, i, 0, (self.ScreenWidth, AdjustedScreenHeight), len(self.Camera_Windows))
                 #self.Camera_Windows[i].Draw_Camera(self.Screen, i+1, 0, (self.ScreenWidth, self.ScreenHeight), 3)
 
+    # Draws the buttons that are global to all drones
     def Draw_Buttons(self):
         pygame.draw.rect(self.Screen,pygame.Color("yellow"), self.StopAllRect)
         pygame.draw.rect(self.Screen,pygame.Color("red"), self.KillAllRect)
@@ -197,7 +201,7 @@ class Game:
                 if e.type == pygame.QUIT:   # QUIT is the event of the X button on the top corner being pressed
                     self.close()
                     return
-                if e.type == pygame.MOUSEBUTTONDOWN:
+                if e.type == pygame.MOUSEBUTTONDOWN:    # Activates if any mouse button is pressed (Even mouse wheel rotations)
                     if self.KillAllRect.collidepoint(pygame.mouse.get_pos()):
                         for i in self.DH:
                             i.Emergency()

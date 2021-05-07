@@ -19,6 +19,7 @@ class DroneHandler:
         self.Drone.streamon()
         self.Drone.send_rc_control(0,0,0,0)
         self.Frame = self.Drone.get_frame_read()
+        # Dictionary with keyboard controls
         self.Control_Dict = {"land":    pygame.K_SPACE, "takeoff":  pygame.K_SPACE,
                              "up":      pygame.K_UP,    "down":     pygame.K_DOWN,
                              "cw":      pygame.K_RIGHT, "ccw":      pygame.K_LEFT,
@@ -172,10 +173,13 @@ class DroneHandler:
     # Give the battery status from the drone
     def GetBattery(self):
         return self.Drone.get_battery()
+    # Give the speed of the drone (Don't think it actually works. It gives an exception)
     def GetSpeed(self):
         return self.Drone.query_speed()
+    # Give the flying state of the drone
     def GetFlying(self):
         return self.Drone.is_flying
+    # Send an emergency command to the drone
     def Emergency(self, Stop:bool = False):
         if Stop:
             #self.Drone.send_control_command("stop")
@@ -185,9 +189,11 @@ class DroneHandler:
             #self.Drone.emergency()
             Emergency_Thread = threading.Thread(target=self.Drone.emergency)
             Emergency_Thread.start()
+    # Connect the drone to a network with a given name and password
     def Connect_Network(self, SSID, Pass):
         self.Drone.connect_to_wifi(SSID, Pass)
         Wifi_Connect_Thread = threading.Thread(target=self.Drone.connect_to_wifi, args=("ssid", "pass",))
+    # The command that is used when the stop button is pressed. Currently only lands the drone
     def Stop_Button_Command(self):
         if self.Drone.is_flying:
             Land_Thread = threading.Thread(target=self.Drone.land)
