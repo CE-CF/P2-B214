@@ -335,7 +335,7 @@ class Server(ABC):
     def start_tcp(self):
         log_string = f"TCP Listener on port: {self.srv_port_tcp}"
         print(log_string)
-        self.log_info(log_string)
+        logging.info(log_string)
         self.srv_socket_tcp.listen(1)
         conn_tcp, addr_tcp = self._accept_tcp()
         # Begin multithreading TCP
