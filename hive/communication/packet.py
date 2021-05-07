@@ -249,7 +249,7 @@ class HiveT(Packet):
             else:
                 if self.p_type == 0 or self.p_type == 1:
                     tmp_arr = element.split(delim2)
-                    array.append(tmp_arr)
+                    array.append(float(tmp_arr))
                     element = ""
                 elif self.p_type == 2:
                     array.append(element)

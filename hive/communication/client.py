@@ -270,7 +270,7 @@ class Client(ABC):
             self.run_cmd(mig_data)
 
         self.log_info("Sending heartbeat to new connection")
-        self.send_message("heart", "127.0.0.1", "OK")
+        self.send_message("sccmd", "127.0.0.1", "OK")
 
         # Receive msg
         msg = self.recvall()
