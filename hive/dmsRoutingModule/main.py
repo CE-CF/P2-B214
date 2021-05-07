@@ -1,8 +1,9 @@
 import numpy as np
-import coordinates as co
-from routingpackage.distanceinmeters import DistanceInMeters
+import time
 
 from routing import Routing
+from routingpackage.distanceinmeters import DistanceInMeters
+from routingpackage.dronecommands import instantiate, the_thread
 
 big_array = np.array([[57.02848118809145, 9.948913866684594],
                       [57.02867865592206, 9.949934871541862],
@@ -16,11 +17,28 @@ thick_arr = np.array([[57.061873611380946, 9.874398700298244],
 
 
 def run():
-    sohn = Routing(thick_arr, 0.00002)
+    sohn = Routing(big_array, 0.00002)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
     bob = DistanceInMeters
     bob.reverse_calculate(20)
+
+    instantiate()
+    the_thread("takeoff")
+    print("drone has taken off")
+    time.sleep(2)
+    the_thread("rc 0 0 0 100")
+    print("rc +100")
+    time.sleep(2)
+    the_thread("rc 0 0 0 -100")
+    print("rc -100")
+    time.sleep(2)
+    the_thread("rc 0 0 0 0")
+    print("rc 0")
+    time.sleep(5)
+    the_thread("land")
+    print("TOUCHDOWN!!!")
+
 
 
 if __name__ == '__main__':
