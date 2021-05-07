@@ -21,7 +21,7 @@ class DmsServer(Server):
         if cmd == "QOS":
             pass
 
-    def run(self, packet, mode):
+    def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:
             # TCP CODE HERE
             if packet.p_type == 0 or packet.p_type == 1:
@@ -29,6 +29,7 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 route = Route(packet.p_dest, packet.p_type, data)
                 route.insert()
+                conn.send(b"Succes")
             elif packet.p_type == 2:
                 # Drone cmd code here
                 pass

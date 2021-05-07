@@ -237,6 +237,9 @@ class TCPClientHandler(threading.Thread):
                 msg = self.recvall(conn)
                 recv_packet = HiveT.decode_packet(msg)
                 if type(recv_packet) is HiveT:
+
+                    # Do some packet forwarding magic here
+
                     recv_packet.src = addr
                     p_dump = recv_packet.dump(to_stdout=False)
                     log_string = ""
@@ -252,7 +255,7 @@ class TCPClientHandler(threading.Thread):
                     if recv_packet.p_type == 3:
                         self.reply_heart(conn)
                     else:
-                        self.target(recv_packet, mode=CONN_TYPE_TCP)
+                        self.target(recv_packet, conn, mode=CONN_TYPE_TCP)
                 else:
                     connected = False
 
@@ -316,7 +319,7 @@ class Server(ABC):
         self.srv_socket_udp.bind(("", self.srv_port_udp))
 
     @abstractmethod
-    def run(self, packet: Packet, mode: bool):
+    def run(self, packet: Packet, conn, mode: bool):
         """The \"loop\" function for the Server class. All necessary packet
         handling should be done in here.
         *Note* A check should be implemented to differentiate between UDP based
