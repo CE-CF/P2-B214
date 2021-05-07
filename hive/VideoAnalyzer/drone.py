@@ -137,7 +137,7 @@ while True: # Searches each frame for faces, bodies and colors
         print("###################")
         print("!!!POI Detected!!!")
         print("###################")
-        print("Image written at to C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\ ")
+        print("Image saved at C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\ ")
         cv2.imwrite("C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\POI_{:02d}.png".format(image_count), output)
         image_count += 1
         POIDetected = False
