@@ -11,9 +11,6 @@ def fetchall(table):
 
             mySql_fetchall_query = """SELECT * FROM {}""".format(table)
             
-            #Create tuple with values for the insert
-            table = (table, )
-            
             #Execute query with values inserted
             cursor.execute(mySql_fetchall_query)
 
@@ -32,10 +29,13 @@ def fetchall(table):
                         print(row[x])  
                         print("---------------------") 
                     else:
-                        dataDict[column_names[x]] = row[x]
-                        print(column_names[x],": ", row[x])
+                        if (row[x] != None):
+                            dataDict[column_names[x]] = row[x]
+                            print(column_names[x],": ", row[x])
                 output.append(dataDict.copy())
+                print("\n Dictionary output: ")
                 print(output[counter])
+                print("\n ")
                 counter+=1 
                                          
                 

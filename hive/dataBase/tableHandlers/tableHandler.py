@@ -30,6 +30,9 @@ class TableHandler:
 
     def insert_string_middle_snapshot(self, str, word):
         return str[:34] + word + str[34:]
+    
+    def insert_string_middle_video2(self, str, word):
+        return str[:26] + word + str[26:]
 
     def insert_query(self, *route, **insert):
         """either a normal insert query or a route insert query"""
@@ -103,6 +106,7 @@ class TableHandler:
         mySql_delete_query = ''' DELETE FROM hive.%s WHERE %s ''' %(self.table, where_statement)
         
         return mySql_delete_query
+    
 
     def connector(self):
         connection = mysql.connector.connect(user='root', password='password', host='localhost', database='hive')
