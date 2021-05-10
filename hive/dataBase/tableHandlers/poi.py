@@ -9,7 +9,6 @@ class Poi(TableHandler):
         self.longitude = longitude
         super().__init__('poi')
     
-    
     def insert(self):
         try:
             super().connector()
