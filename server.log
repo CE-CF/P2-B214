@@ -1,0 +1,29 @@
+INFO:root:TCP Listener on port: 9000
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-07 13:29:27.717960 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:19.435764 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:19.435764 ]: Connection Information:
+							- Client Address: 192.168.137.103:45468
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:24.451683 ]: Received initial heartbeat
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:24.451683 ]: TRANSFER ('192.168.137.103', 45468) -> 60844
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:24.456515 ]: TRANSFER done!
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:29.468874 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xeb,R\x1b\x88#CvE\xe0\xab\xf3\x07-\\\xb3!\xed\xc0k\xa92\xb2\xca\xb8C\x83\xb1?1'\xf8"
+							[DEST]: 127.0.0.1
+							[DATA]: Pulsecheck
+							[SRC]: ('192.168.137.103', 54424)
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:34.439797 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xeb,R\x1b\x88#CvE\xe0\xab\xf3\x07-\\\xb3!\xed\xc0k\xa92\xb2\xca\xb8C\x83\xb1?1'\xf8"
+							[DEST]: 127.0.0.1
+							[DATA]: Pulsecheck
+							[SRC]: ('192.168.137.103', 54424)
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-07 13:30:34.442113 ]: Packet received content:
+							[TYPE]: 0
+							[CHECKSUM]: b'_+\xd1\xdd5\x8d\xe3\x0ff5S\x07t\xc2\x9d\xaa@\rZ\xf8/\xe2\xe7\x89\x02\x1f\xacL\xab\x8f\xe2\xda'
+							[DEST]: 192.168.1.1
+							[DATA]: 1:1;2:2;3:3;4:5;1:1;2:2;3:3;4:5;1:1;2:2;3:3;4:5;1:1;2:2;3:3;4:5;
+							[SRC]: ('192.168.137.103', 54424)
+							

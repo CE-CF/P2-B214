@@ -38,10 +38,16 @@ class TableHandler:
         """either a normal insert query or a route insert query"""
         ds_list= (', '.join(['{}'.format(k) for k, w in insert.items()]))
         ending = (', received',)
-        query_cor = [None]*len(route)
+        
         counter = 1
-        for i in range(len(route)):
-            
+        route_data = 0
+        for x in self.routeCor:
+                    for y in x:
+                        route_data += 1
+        route_data *= 2
+        query_cor = [None]*route_data
+
+        for i in range(route_data):
             converted_counter = '{}'.format(counter)
             converted_counter2 = '{}'.format(counter-1)
             if (i % 2) == 0:
@@ -50,7 +56,7 @@ class TableHandler:
             else:
                 query_cor[i] = self.insert_string_long('long', converted_counter2)
 
-        query_placeholders = ', '.join(['%s'] * (len(route)+len(insert)))
+        query_placeholders = ', '.join(['%s'] * (route_data+len(insert)))
         query_columns = ds_list
         query_cor = ', '.join(query_cor)
         query_end = ', '.join(ending)

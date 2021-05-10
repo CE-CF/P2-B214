@@ -4,7 +4,7 @@ from .tableHandler import TableHandler
 class Route(TableHandler):
 
     def __init__(self, DroneName, routeType, *routeCor):
-        self.DroneName = DroneName
+        self.DroneName = str(DroneName)
         self.routeCor = routeCor
         self.routeType = routeType
         super().__init__('route')
@@ -16,9 +16,14 @@ class Route(TableHandler):
             try:
                 super().connector()
                 super().getCursor()
+                route_points = 0
+
+                for x in self.routeCor:                         # Check how many points that are in the route
+                    for y in x:
+                        route_points += 1
                 exist = 0
                 noexist = 0
-                for i in range(len(lat_list)):
+                for i in range(route_points):    
                     converted_i = '{}'.format(i+1)
                     longitude = (super().insert_string_long('long', converted_i),)
                     print("hertil?")
@@ -51,14 +56,18 @@ class Route(TableHandler):
                 else:
                     type_converter = 'boundary'
 
-
-                query_routeCor = ', '.join(str(v) for v in self.routeCor)
-                mySql_insert_query = super().insert_query(*self.routeCor, drone = self.DroneName, type = self.routeType)
-                drone_data = (self.DroneName, type_converter)
-                route_data = drone_data+self.routeCor
-                print(mySql_insert_query)
-                print(route_data)
-                super().commit(mySql_insert_query, route_data)
+                mySql_insert_query = super().insert_query(*self.routeCor, drone = self.DroneName, type = self.routeType)    # Generate insert query
+                drone_type = (self.DroneName, type_converter)   # Define the insert arguments of the drone and type
+                route_data = drone_type                         # Create a route_data tuple
+                
+                for x in self.routeCor:
+                    for y in x:
+                        route_data += tuple(y)    
+                        
+                super().commit(mySql_insert_query, route_data)  # execute and commit insert query
+                print("Succesfully committed: "+mySql_insert_query)
+                print("with values: {}".format(route_data))
+                
             #Exception if there is a connection error, which display the error that occured
             except mysql.connector.Error as error:
                 print("Failed to insert new route to table: {}".format(error))
