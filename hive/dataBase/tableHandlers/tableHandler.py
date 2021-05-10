@@ -48,10 +48,7 @@ class TableHandler:
         query_cor = [None]*route_data
 
         for i in range(route_data):
-<<<<<<< Updated upstream
-=======
             
->>>>>>> Stashed changes
             converted_counter = '{}'.format(counter)
             converted_counter2 = '{}'.format(counter-1)
             if (i % 2) == 0:

@@ -4,11 +4,7 @@ from .tableHandler import TableHandler
 class Route(TableHandler):
 
     def __init__(self, DroneName, routeType, *routeCor):
-<<<<<<< Updated upstream
         self.DroneName = str(DroneName)
-=======
-        self.DroneName = str(DroneName)                         # Convert drone ip to string
->>>>>>> Stashed changes
         self.routeCor = routeCor
         self.routeType = routeType
         super().__init__('route')                               # Create tableHandler object
@@ -16,30 +12,19 @@ class Route(TableHandler):
     def insert(self):
         if self.routeType in [0,1]:
             try:
-<<<<<<< Updated upstream
-                super().connector()
-                super().getCursor()
-=======
                 super().connector()                             # Connect to database
                 super().getCursor()                             # Activate mysql.connector.cursor
                 
->>>>>>> Stashed changes
                 route_points = 0
 
                 for x in self.routeCor:                         # Check how many points that are in the route
                     for y in x:
                         route_points += 1
-<<<<<<< Updated upstream
-                exist = 0
-                noexist = 0
-                for i in range(route_points):    
-=======
                 
                 exist = 0
                 noexist = 0
                 
                 for i in range(route_points):                   # Create long and lat column for each point. Check if all columns exist
->>>>>>> Stashed changes
                     converted_i = '{}'.format(i+1)
                     longitude = (super().insert_string_long('long', converted_i),)
                     super().execute(super().route_check_query(longitude))
@@ -73,16 +58,6 @@ class Route(TableHandler):
                 
                 for x in self.routeCor:
                     for y in x:
-<<<<<<< Updated upstream
-                        route_data += tuple(y)    
-                        
-                super().commit(mySql_insert_query, route_data)  # execute and commit insert query
-                print("Succesfully committed: "+mySql_insert_query)
-                print("with values: {}".format(route_data))
-                
-            #Exception if there is a connection error, which display the error that occured
-            except mysql.connector.Error as error:
-=======
                         route_data += tuple(y)                  # Appending the coordinates to the route_data tuple
 
                 super().commit(mySql_insert_query, route_data)  # execute and commit insert query
@@ -90,7 +65,6 @@ class Route(TableHandler):
                 print("with values: {}".format(route_data))
             
             except mysql.connector.Error as error:              #Exception if there is a connection error, which display the error that occured
->>>>>>> Stashed changes
                 print("Failed to insert new route to table: {}".format(error))
             
             finally:                                            #Finally statement that closes connection to the database after the query is either committed or an error occurs
