@@ -3,8 +3,8 @@ import time
 
 from routing import Routing
 from routingpackage.distanceinmeters import DistanceInMeters
-from routingpackage.dronecommands import instantiate, the_thread, correct_yaw
-from routingpackage.flymodes import get_to_route, search_route, go_home
+from flightpackage.dronecommands import instantiate, the_thread, correct_yaw
+from flightpackage.flymodes import get_to_route, search_route, go_home
 
 big_array = np.array([[57.02848118809145, 9.948913866684594],
                       [57.02867865592206, 9.949934871541862],
@@ -39,12 +39,11 @@ def run():
 
     print("go straight")
 
-    correct_yaw()
+    correct_yaw(8)
 
     time.sleep(1)
     the_thread("land")
     print("TOUCHDOWN!!!")
-
 
 
 if __name__ == '__main__':

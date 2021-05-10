@@ -37,6 +37,7 @@ def recv():
             #print(response_arr[-1])
             if count == 0:
                 start_yaw = response_arr[0]
+                print("Start yaw is " + str(start_yaw))
         count = count + 1
 
 
@@ -106,8 +107,18 @@ def correct_yaw(distance):
 
         # change yaw
         if is_deviating:
-            new_yawk = int(start_yaw) - newest_yaw_response
-            yaw_per_sec = new_yawk/delay
+            #new_yawk = int(start_yaw) - newest_yaw_response
+            #yaw_per_sec = (new_yawk / delay)
+            if yaw_per_sec > 100:
+                yaw_per_sec = 100
+            elif yaw_per_sec < -100:
+                yaw_per_sec = -100
+            if start_yaw > 0:
+                new_yawk = int(start_yaw) - newest_yaw_response
+                yaw_per_sec = (new_yawk / delay)
+            elif start_yaw < 0:
+                new_yawk = int(start_yaw) + newest_yaw_response
+                yaw_per_sec = (new_yawk / delay)
             is_deviating = False
             print(newest_yaw_response)
         else:
