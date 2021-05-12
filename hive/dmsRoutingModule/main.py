@@ -23,7 +23,10 @@ def run():
     sohn.analyze_coordinates()
 
     get_to_route(sohn.get_path_limit_points(), sohn.get_origo(), [57.028239241386345, 9.949700557143565], sohn.get_path_functions())
-    search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
+
+    search_route(5, sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
+    # search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
+
     # instantiate()
 
     # print("go straight")
