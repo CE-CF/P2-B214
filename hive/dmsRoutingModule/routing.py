@@ -18,15 +18,29 @@ from plots import Plot, show_plots
 # in Coordinates. Routing can also use find_origo() and get_local_coordinates()
 class Routing(Coordinates):
     longest_line_index = None
+    path_width = None
     plot_padding = .01
     x_ratio, y_ratio = 0.0, 0.0  # local ratios for straight x- and y-lines
     functions = np.empty(0)
     plots = []
     path_functions = []
+    path_limit_points = []
 
     def __init__(self, coordinates, plot_p):
         super().__init__(coordinates)
         self.plot_padding = plot_p
+
+    def get_path_limit_points(self):
+        return self.path_limit_points
+
+    def get_origo(self):
+        return self.global_c[self.find_origo()]
+
+    def get_path_functions(self):
+        return self.path_functions
+
+    def get_path_width(self):
+        return self.path_width
 
     def analyze_coordinates(self):
         # we find the functions of the borders of the area - it returns a 2D-array [[slope][intersection], ..] of floats
@@ -47,14 +61,20 @@ class Routing(Coordinates):
 
         # this function "run" goes through almost all functions in findroutefunctions.py
         # and it gets us an array consisting of functions of the paths(green lines) that the drone(s) need to follow
-        self.path_functions, self.longest_line_index = routingpackage.findroutefunctions.run(self.global_c, self.local_c, self.functions, origo_c, self.y_ratio)
+        self.path_functions, self.longest_line_index, self.path_width = \
+            routingpackage.findroutefunctions.run(self.global_c, self.local_c, self.functions, origo_c, self.y_ratio)
+
+        print(self.path_functions)
 
         # in findroutefunctions.py we retrieve the functions of the points' projection(blue lines) onto the function of
         # the border line that is the longest
         self.append_plot(routingpackage.findroutefunctions.get_plots())
 
         pl = PathLimits(self.path_functions, self.functions, self.longest_line_index, self.local_c)
-        pl.run()
+        self.path_limit_points = pl.run()
+
+        print(self.path_limit_points)
+
         self.append_plot(pl.get_plots())
 
         # after accumulating plots in the plots-array we are now able to show them all at once

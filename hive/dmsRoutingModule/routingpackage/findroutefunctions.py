@@ -138,6 +138,6 @@ def run(global_c, local_c, func, origo_c, y_ratio):
     # Put together the functions - returns an array of all the path functions
     path_functions_arr = complete_path_functions(path_intersection_arr, func[longest_line_index])
 
-    return path_functions_arr, longest_line_index
+    return path_functions_arr, longest_line_index, path_width
 
     # in the end return the drone fov(meters)

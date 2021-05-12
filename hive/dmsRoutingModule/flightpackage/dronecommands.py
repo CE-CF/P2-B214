@@ -133,6 +133,17 @@ def correct_yaw(distance):
         time.sleep(delay)
 
 
+def search_turns(cmd, semi_circle):
+    start_time = time.time()
+
+    # semi circle is the
+    # drone flies with 1 m/s which means that the value of semi_circle is the time it takes for the drone
+    # to complete its turn
+    print(semi_circle)
+    #while (time.time() - start_time) < semi_circle:
+        #pass
+
+
 def instantiate():
     global sent, recvThread, event
     # print('\r\n\r\nTello Python3 Demo.\r\n')
