@@ -26,7 +26,7 @@ class PathLimits:
         return s.plot_array
 
     # returns a 2D-array of functions and a one-dimensional with the new array-values old index values
-    # if you want to know the original index of the new function with index, lets say 2. then we do: original_index[2]
+    # if you want to know the original index of the new function with index, lets say 2. then we do: original_indexes[2]
     def get_intersection_borders(s):
         intersection_functions = \
                    [s.border_functions[(s.longest_line_index - 1 % 4)],     # function clockwise to longest
@@ -89,9 +89,10 @@ class PathLimits:
                                          + intersection_functions[2-j][1]
                         point_array.append([x_intersection, y_intersection])
                         s.set_plot(Plot([[x_intersection, y_intersection]], 0, 'b', False))
+        return point_array
 
     def run(s):
         # works
         intersection_functions, original_indexes = s.get_intersection_borders()
 
-        s.get_path_limit_points(intersection_functions, original_indexes)
+        return s.get_path_limit_points(intersection_functions, original_indexes)

@@ -50,25 +50,3 @@ class DistanceInMeters:
         distance = r * hav_c
 
         return distance
-
-
-    @staticmethod
-    def reverse_calculate(distance):
-        # point = np.array(p)
-        r = 6371000  # Radius of the earth
-        # Latitude, longitude
-        point1 = [57.028508, 9.948725]
-        point2 = [57.029086, 9.948725]
-        # calculations to find the bearing of the y-axis
-        # y = np.sin(point2[1]-point1[1])*np.cos(point2[0])
-        # x = np.cos(point1[0])*np.sin(point2[0])-np.sin(point1[0])*np.cos(point2[0])*np.cos(point2[1]-point1[1])
-        # q = np.arctan2(y,x)
-        # bearing = (q*180/np.pi+360) % 360
-        # print(bearing)
-        lat1 = point1[0] * (math.pi / 180)
-
-        # Den giver lat2 = 0,99534. Det kan ikke passe
-        lat2 = math.asin(math.sin(lat1) * math.cos(distance / r) + (math.cos(lat1) * math.sin(distance / r) * math.cos(0)))
-        lon2 = point1[1] + math.atan2(math.sin(0) * math.sin(distance / r) * math.cos(lat1),
-                                      math.cos(distance / r) - math.sin(lat1) * math.sin(lat2))
-        #print("Latitude er: ", lat2)

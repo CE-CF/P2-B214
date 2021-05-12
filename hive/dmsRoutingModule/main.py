@@ -21,29 +21,18 @@ def run():
     sohn = Routing(big_array, 0.00002)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
-    bob = DistanceInMeters
-    bob.reverse_calculate(20)
 
-    instantiate()
-    #the_thread("rc 0 0 0 100")
-    #print("cw rotation")
-    #time.sleep(3)
-    #the_thread("rc 0 0 0 -100")
-    #print("ccw rotation")
-    #time.sleep(3)
-    #the_thread("rc 0 0 0 0")
-    #print("stop turning")
-    #time.sleep(1)
+    get_to_route(sohn.get_path_limit_points(), sohn.get_origo(), [57.028239241386345, 9.949700557143565], sohn.get_path_functions())
+    search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
+    # instantiate()
 
-    #the_thread("rc 0 100 0 0")
+    # print("go straight")
 
-    print("go straight")
+    # correct_yaw(8)
 
-    correct_yaw(8)
-
-    time.sleep(1)
-    the_thread("land")
-    print("TOUCHDOWN!!!")
+    # time.sleep(1)
+    # the_thread("land")
+    # print("TOUCHDOWN!!!")
 
 
 if __name__ == '__main__':
