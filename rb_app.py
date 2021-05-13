@@ -30,25 +30,24 @@ class RbClient(Client):
         self.state.switch(state)
 
     def run(self, packet):
-        self.change(On)
-        print("Efter change")
-        print(type(self.state))
-        
+                
         if (type(self.state) is Inactive):
             print("State inactive if statement")
             DroneCheck = DroneChecker(self.hotSpotIP)
+            
             while True:   
-                print("While true loop")
                 activeDroneList = DroneCheck.ping()
+                
                 if (len(activeDroneList) > 1):
                     print('There are {} active drones'.format(len(activeDroneList))+"\n")
                     self.change(Active)
                     break
+                
                 else:
                     print("There are no active drones")
                     sleep(2.5)
 
-        if (type(self.state) == Active):
+        if (type(self.state) is Active):
             droneData = DroneCheck.activeDronePacket(activeDroneList)
             print(droneData)
             self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
@@ -86,4 +85,5 @@ class RbClient(Client):
 
 if __name__ == "__main__":
     client = RbClient()
+    client.change(On)
     client.start()
