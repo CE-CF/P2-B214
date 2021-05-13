@@ -5,7 +5,7 @@ from hive.communication.server_proto import Server
 
 class TestServer(Server):
     def __init__(self):
-        super().__init__(8888, 6060)
+        super().__init__(9000, 9241)
 
     def run(self, packet: Packet, conn, mode):
         packet.dump()

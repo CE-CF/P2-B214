@@ -8,7 +8,7 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import Off, On, Inactive, Act
 class RbClient(Client):
     def __init__(self):
         self.srv_ip = "127.0.0.1" 
-        super().__init__(self.srv_ip, 9000, 9241)
+        super().__init__(self.srv_ip, 'relayBox', tcp_port=9000, udp_port=9241)
         self.state = Off()
         self.hotSpotIP = "192.168.137"
     

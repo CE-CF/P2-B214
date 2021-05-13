@@ -69,3 +69,38 @@ INFO:root:[ THREAD-TCP 2 | TIME 2021-05-12 12:55:19.596248 ]: Packet received co
 							[DEST]: 127.0.0.1
 							[DATA]: OK
 							
+INFO:root:[ ROUTER | TIME 2021-05-13 12:37:54.030859 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-13 12:37:54.031859 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 62745
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.032851 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.032851 ]: Client info: 127.0.0.1:62745
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.032851 ]: Client name: relayBox
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.032851 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.032851 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.032851 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.033859 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.033859 ]: New client information: ('127.0.0.1', 62747)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.033859 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-13 12:37:54.033859 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-13 12:37:54.033859 ]: 
+=============================================
+			Client: relayBox
+			Address: 127.0.0.1
+			Port: 62747
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-13 12:37:54.033859 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
