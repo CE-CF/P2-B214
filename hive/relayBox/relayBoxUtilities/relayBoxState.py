@@ -18,7 +18,7 @@ class RelayBoxState(object):
 
 class Off(RelayBoxState):
    name = "off"
-   allowed = ['on']
+   allowed = ['on', 'inactive']
 
 class On(RelayBoxState):
    """ State of being powered on and working """

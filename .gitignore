@@ -4,3 +4,5 @@ __pycache__
 .idea\workspace.xml
 config.py
 .log
+client.log
+server.log

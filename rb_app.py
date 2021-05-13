@@ -8,7 +8,7 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import Off, On, Inactive, Act
 class RbClient(Client):
     def __init__(self):
         self.srv_ip = "127.0.0.1" 
-        super().__init__(self.srv_ip, 'relayBox', tcp_port=9000, udp_port=9241)
+        super().__init__(self.srv_ip, tcp_port=9000, udp_port=9241)
         self.state = Off()
         self.hotSpotIP = "192.168.137"
     
@@ -29,12 +29,16 @@ class RbClient(Client):
         """ Change state """
         self.state.switch(state)
 
-    def run(self, packet, conn, mode):
+    def run(self, packet):
         self.change(On)
-
-        if (self.state == Inactive):
+        print("Efter change")
+        print(type(self.state))
+        
+        if (type(self.state) is Inactive):
+            print("State inactive if statement")
             DroneCheck = DroneChecker(self.hotSpotIP)
             while True:   
+                print("While true loop")
                 activeDroneList = DroneCheck.ping()
                 if (len(activeDroneList) > 1):
                     print('There are {} active drones'.format(len(activeDroneList))+"\n")
@@ -44,40 +48,36 @@ class RbClient(Client):
                     print("There are no active drones")
                     sleep(2.5)
 
-        if (self.state == Active):
+        if (type(self.state) == Active):
             droneData = DroneCheck.activeDronePacket(activeDroneList)
             print(droneData)
-            conn.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
-            if mode is CONN_TYPE_TCP:
-                print("MODE: TCP")
-                # TCP CODE HERE
-                packet.dump()
+            self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
+            
+            print("MODE: TCP")
+            # TCP CODE HERE
+            packet.dump()
 
-                if packet.p_type == 0 or packet.p_type == 1:
-                    # Enter route code here
-                    data = packet.data_parser()
-                    b_dest = packet.p_dest.packed # Used to generate a port number for drone connection
+            if packet.p_type == 0 or packet.p_type == 1:
+                # Enter route code here
+                data = packet.data_parser()
+                b_dest = packet.p_dest.packed # Used to generate a port number for drone connection
                     
-                    drone_port = 8889
-                    rb_port = 9000+b_dest[3]
+                drone_port = 8889
+                rb_port = 9000+b_dest[3]
                     
-                    drone = Drone(str(packet.p_dest), drone_port, rb_port)
-                    drone.send(data)
-                    drone.closeConnection()
+                drone = Drone(str(packet.p_dest), drone_port, rb_port)
+                drone.send(data)
+                drone.closeConnection()
 
-                elif packet.p_type == 2:
-                    # Drone cmd code here
-                    pass
-                elif packet.p_type == 3:
-                    # Server/client cmd code here
-                    cmd_dict = packet.data_parser()
-                    self.eval_cmd(cmd_dict)
-                else:
-                    # Wrong packet type
-                    pass
-            elif mode is CONN_TYPE_UDP:
-                print("MODE: UDP")
-                # UDP CODE HERE
+            elif packet.p_type == 2:
+                # Drone cmd code here
+                pass
+            elif packet.p_type == 3:
+                # Server/client cmd code here
+                cmd_dict = packet.data_parser()
+                self.eval_cmd(cmd_dict)
+            else:
+                # Wrong packet type
                 pass
 
 
