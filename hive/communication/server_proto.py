@@ -168,6 +168,9 @@ class TCPClientHandler(Thread):
         msg = self.recvall()
         return HiveT.decode_packet(msg)
 
+    def forward(self, packet: HiveT):
+        self.client_conn.send(HiveT.encode_packet(packet))
+
     def migrate(self):
         # Send migration information
         self.log_info("Starting migration")
@@ -215,6 +218,8 @@ class TCPClientHandler(Thread):
         connected = False
         if packet.p_data == "OK":
             print("TRANSFER DONE!")
+            packet = HiveT(3, self.client_addr[0], "DONE")
+            self.client_conn.send(HiveT.encode_packet(packet))
             connected = True
         else:
             print("TRANSFER FAILED!")
@@ -241,6 +246,12 @@ class TCPClientHandler(Thread):
                         self.target(
                             packet, self.client_conn, mode=CONN_TYPE_TCP
                         )
+                    else:
+                        self.client_conn.send(
+                            HiveT.encode_packet(
+                                HiveT(3, self.client_addr[0], "MSG FORWARDED")
+                            )
+                        )
                 else:
                     connected = False
 
@@ -252,118 +263,113 @@ class TCPClientHandler(Thread):
         self.log_info("ENDED")
 
 
-class Server(ABC):
-    class _Router:
-        @property
-        def clientlist(self):
-            return self._clientlist
+class Router:
+    @property
+    def clientlist(self):
+        return self._clientlist
 
-        def __init__(self):
-            self._clientlist: List[TCPClientHandler] = []
-            self.lock = Lock()
+    def __init__(self, srv_ip):
+        self._clientlist: List[TCPClientHandler] = []
+        self.lock = Lock()
+        self.srv_ip = srv_ip
 
-        def is_destination(self):
-            if type(self.packet) == HiveT:
-                if self.packet.p_dest == self.srv_sock:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-
-        def update_table(self):
-            self.log_info("Updating lookup table")
-            self.lock.acquire()
-            self.dest_table = {}
-            for x in self.clientlist:
-                self.dest_table[x.client_name] = {
-                    "address": x.client_addr[0],
-                    "port": x.client_addr[1],
-                    "handler": x,
-                }
-            log_string = ""
-            for x in self.dest_table:
-                log_string += (
-                    "\n=============================================\n"
-                )
-                log_string += f"\t\t\tClient: {x}\n"
-                log_string += (
-                    f"\t\t\tAddress: {self.dest_table[x]['address']}\n"
-                )
-                log_string += f"\t\t\tPort: {self.dest_table[x]['port']}\n"
-                log_string += (
-                    "\t\t\tThread-ID:"
-                    + f"{self.dest_table[x]['handler'].thread_id}\n"
-                )
-                log_string += (
-                    "\n=============================================\n"
-                )
-            self.log_info(log_string)
-            self.lock.release()
-
-        def log_info(self, msg: str):
-            """Logging helper
-
-            :param msg:
-            :type msg: str
-
-            """
-            log_format = f"[ ROUTER | TIME {datetime.now()} ]: {msg}"
-            logging.info(log_format)
-
-        def log_warning(self, msg: str):
-            """Logging helper
-
-            :param msg:
-            :type msg: str
-
-            """
-            log_format = f"[ ROUTER | TIME {datetime.now()} ]: {msg}"
-            logging.warning(log_format)
-
-        def add_client(self, client: TCPClientHandler):
-            self._clientlist.append(client)
-
-        def find_dest(self):
-            """Finds the destination for packet in destination table
-
-            :returns: client key in destination table
-
-            """
-            for x in self.dest_table:
-                if (
-                    self.dest_table[x]["address"]
-                    == self.packet.p_dest.exploded
-                ):
-                    self.log_info(f"Destination found in client: {x}")
-                    return x
-
-        def route(self, packet):
-            """Routes the supplied packet to its final destination,
-            based on the destination table
-
-            :param packet:
-            :type packet: HiveT
-            :returns: bool
-
-            """
-            self.packet = packet
-            self.lock.acquire()
-            if self.is_destination():
-                self.log_info("Server is destination")
-                self.lock.release()
+    def is_destination(self):
+        if type(self.packet) == HiveT:
+            print("in is_destination")
+            if self.packet.p_dest.exploded == self.srv_ip:
                 return True
             else:
-                dest_key = self.find_dest()
-                self.log_info(f"Forwarding packet to destination: {dest_key} ")
-                c_handler = self.dest_table[dest_key]["handler"]
-                c_handler.forward(self.packet)
-                self.lock.release()
                 return False
+        else:
+            return False
 
-    router = _Router()
+    def update_table(self):
+        self.log_info("Updating lookup table")
+        self.lock.acquire()
+        self.dest_table = {}
+        for x in self.clientlist:
+            self.dest_table[x.client_name] = {
+                "address": x.client_addr[0],
+                "port": x.client_addr[1],
+                "handler": x,
+            }
+        log_string = ""
+        for x in self.dest_table:
+            log_string += "\n=============================================\n"
+            log_string += f"\t\t\tClient: {x}\n"
+            log_string += f"\t\t\tAddress: {self.dest_table[x]['address']}\n"
+            log_string += f"\t\t\tPort: {self.dest_table[x]['port']}\n"
+            log_string += (
+                "\t\t\tThread-ID:"
+                + f"{self.dest_table[x]['handler'].thread_id}\n"
+            )
+            log_string += "\n=============================================\n"
+        self.log_info(log_string)
+        self.lock.release()
 
-    def __init__(self, tcp_port=1337, udp_port=6969):
+    def log_info(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
+        log_format = f"[ ROUTER | TIME {datetime.now()} ]: {msg}"
+        logging.info(log_format)
+
+    def log_warning(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
+        log_format = f"[ ROUTER | TIME {datetime.now()} ]: {msg}"
+        logging.warning(log_format)
+
+    def add_client(self, client: TCPClientHandler):
+        self._clientlist.append(client)
+
+    def find_dest(self):
+        """Finds the destination for packet in destination table
+
+        :returns: client key in destination table
+
+        """
+        for x in self.dest_table:
+            if self.dest_table[x]["address"] == self.packet.p_dest.exploded:
+                self.log_info(f"Destination found in client: {x}")
+                return x
+
+    def route(self, packet):
+        """Routes the supplied packet to its final destination,
+        based on the destination table
+
+        :param packet:
+        :type packet: HiveT
+        :returns: bool
+
+        """
+        self.packet = packet
+        self.log_info(
+            f"Received packet with destination: {self.packet.p_dest.exploded}"
+        )
+        self.lock.acquire()
+        if self.is_destination():
+            self.log_info("Server is destination of packet")
+            self.lock.release()
+            return True
+        else:
+            dest_key = self.find_dest()
+            self.log_info(f"Forwarding packet to destination: {dest_key} ")
+            c_handler = self.dest_table[dest_key]["handler"]
+            c_handler.forward(self.packet)
+            self.lock.release()
+            return False
+
+
+class Server(ABC):
+    def __init__(self, tcp_port=1337, udp_port=6969, srv_ip="127.0.0.1"):
         self.srv_port_tcp = tcp_port
         self.srv_socket_tcp = socket(AF_INET, SOCK_STREAM)
         self.srv_socket_tcp.bind(("", self.srv_port_tcp))
@@ -372,6 +378,8 @@ class Server(ABC):
         self.srv_socket_udp = socket(AF_INET, SOCK_DGRAM)
         self.srv_socket_udp.bind(("", self.srv_port_udp))
         self.conn_counter_tcp = 0
+
+        self.router = Router(srv_ip)
 
     @abstractmethod
     def run(self, packet: Packet, conn, mode: bool):
