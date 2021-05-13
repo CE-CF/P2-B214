@@ -32,11 +32,7 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 route = Route(packet.p_dest, packet.p_type, data)
                 route.insert()
-<<<<<<< Updated upstream
                 conn.send(b"Succes")
-=======
-                print("efter insert")
->>>>>>> Stashed changes
             elif packet.p_type == 2:
                 # Drone cmd code here
                 pass

@@ -1,6 +1,4 @@
-import ipaddress
 import os
-import platform    # For getting the operating system name
 import subprocess  # For executing a shell command
 
 class DroneChecker():
@@ -12,10 +10,12 @@ class DroneChecker():
     
     def ping(self):
         alive = []
-        print('Pinging all hosts on {}.2-254'.format(self.host))
+        rangeFrom = 2
+        rangeTo = 50
+        print('Pinging all hosts on {0}.{1}-{2}'.format(self.host,rangeFrom,rangeTo))
         
         with open(os.devnull, "wb") as limbo:
-            for n in range(2, 254):
+            for n in range(rangeFrom, rangeTo):
                     ip="{0}.{1}".format(self.host, n)
                     result=subprocess.Popen(["ping", "-n", "1", "-w", "100", ip],
                             stdout=limbo, stderr=limbo).wait()
@@ -24,23 +24,20 @@ class DroneChecker():
                     else:
                             print(ip + " active")
                             alive.append(ip)
-        print("\n")
-
+            
         return alive
-            
-            
+                
 
-    def activeDrones(self):
-        counter = 0
-        active_drone = [[None for x in range(self.ip_range)] for x in range(3)]
-        for x in range (2,255):
-            new_host_ip = '{}.{}.{}.{}'.format(self.host_ip[0],self.host_ip[1],self.host_ip[2],x)
-            if self.ping(new_host_ip):
-                print('The drone at IP: {} is online'.format(new_host_ip))
-                active_drone[counter][0] = 'RelayBox1_Drone{}'.format(counter)
-                active_drone[counter][1] = new_host_ip
-                active_drone[counter][2] = "Online"
-            else:
-                print('The drone at IP: {} is offline'.format(new_host_ip))
+    def activeDronePacket(self, ActiveDrones):
+        droneName = "RelayBoxDrone"
+        outputList = []
+        outputString = ""
+
+
+        for x in range (len(ActiveDrones)):
+            outputList.append('{0}{1}:{2}'.format(droneName,(x+1),ActiveDrones[x]))
         
-        return active_drone
+        outputString = "CMD:ADD_DRONE;"+(';'.join(outputList))+";"
+
+        
+        return outputString
