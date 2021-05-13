@@ -2,7 +2,15 @@ import logging
 import threading
 from abc import ABC, abstractmethod
 from datetime import datetime
-from socket import AF_INET, SHUT_RDWR, SOCK_DGRAM, SOCK_STREAM, socket
+from socket import (
+    AF_INET,
+    SHUT_RDWR,
+    SOCK_DGRAM,
+    SOCK_STREAM,
+    socket,
+    gethostname,
+)
+
 from time import sleep
 
 from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
@@ -47,7 +55,7 @@ class Client(ABC):
 
     # Constructor
     def __init__(
-        self, srv_ip, cl_name, mode=CONN_TYPE_TCP, tcp_port=None, udp_port=None
+        self, srv_ip, mode=CONN_TYPE_TCP, tcp_port=None, udp_port=None
     ):
         """Constructor for hive Client objects
 
@@ -61,7 +69,7 @@ class Client(ABC):
 
         """
         self.srv_ip = srv_ip
-        self.name = cl_name
+        self.name = gethostname()
         self.mode = mode
         if self.mode is CONN_TYPE_TCP:
             self.srv_port_tcp = tcp_port
