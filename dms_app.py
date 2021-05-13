@@ -1,6 +1,6 @@
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
+from hive.communication.packet import HiveT, HiveU
 from hive.communication.server import Server
-from hive.communication.packet import HiveU, HiveT
 from hive.dataBase.tableHandlers.route import Route
 
 

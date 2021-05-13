@@ -1,4 +1,5 @@
 # Full imports
+import re
 import logging
 import threading
 
@@ -37,8 +38,6 @@ logging.basicConfig(filename="server.log", level=logging.DEBUG)
 #    ██    ██   ██ ██   ██ ███████ ██   ██ ██████  ███████
 # ========================================================
 # ========================================================
-
-
 class UDPPacketHandler(threading.Thread):
     def __init__(
         self,
@@ -123,15 +122,16 @@ class TCPClientHandler(threading.Thread):
         self,
         thread_id: int,
         client_conn: socket,
-        client_addr,
+        client_addr: tuple,
         target,
-        max_conns,
+        router: _Router,
     ):
         super().__init__()
         self.thread_id = thread_id
         self.client_conn = client_conn
         self.client_addr = client_addr
         self.target = target
+        self.router = router
 
     def recvall(self, conn):
         """Receive all of incoming packet
@@ -182,6 +182,17 @@ class TCPClientHandler(threading.Thread):
         new_server.bind(("", 0))
         return new_server
 
+    def forward(self, packet: HiveT):
+        self.conn.send(HiveT.encode_packet(packet))
+
+    @property
+    def client_name(self):
+        return self._client_name
+
+    @client_name.setter
+    def client_name(self, name):
+        self._client_name = name
+
     def run(self):
         # log thread start
         self.log_info("STARTED")
@@ -219,9 +230,9 @@ class TCPClientHandler(threading.Thread):
         self.log_info(f"TRANSFER {self.client_addr} -> {new_port}")
 
         thread_server.listen(1)
-        conn, addr = thread_server.accept()
+        self.conn, self.addr = thread_server.accept()
 
-        msg = self.recvall(conn)
+        msg = self.recvall(self.conn)
         packet = HiveT.decode_packet(msg)
         if packet.p_data == "OK":
             self.log_info("TRANSFER done!")
@@ -234,13 +245,11 @@ class TCPClientHandler(threading.Thread):
         while connected:
             # Packet handling
             try:
-                msg = self.recvall(conn)
+                msg = self.recvall(self.conn)
                 recv_packet = HiveT.decode_packet(msg)
                 if type(recv_packet) is HiveT:
 
-                    # Do some packet forwarding magic here
-
-                    recv_packet.src = addr
+                    recv_packet.src = self.addr
                     p_dump = recv_packet.dump(to_stdout=False)
                     log_string = ""
                     for k in p_dump:
@@ -253,19 +262,70 @@ class TCPClientHandler(threading.Thread):
                         + log_string
                     )
                     if recv_packet.p_type == 3:
-                        self.reply_heart(conn)
+                        self.reply_heart(self.conn)
                     else:
-                        self.target(recv_packet, conn, mode=CONN_TYPE_TCP)
+                        self.target(recv_packet, self.conn, mode=CONN_TYPE_TCP)
                 else:
                     connected = False
 
             except ConnectionResetError:
-                conn.shutdown(SHUT_RDWR)
-                conn.close()
+                self.conn.shutdown(SHUT_RDWR)
+                self.conn.close()
                 connected = False
 
         # log thread end
         self.log_info("ENDED")
+
+
+class _Router:
+    def __init__(self):
+        self.populate_dest_table()
+
+    def is_destination(self):
+        if type(self.packet) == HiveT:
+            if self.packet.p_dest == self.srv_sock:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def add_client(self, client: TCPlientHandler):
+        
+        
+    def populate_dest_table(self):
+        self.dest_table = {}
+        for x in self.client_handlers:
+            self.dest_table[x.client_name] = {
+                "address": x.addr[0],
+                "port": x.addr[1],
+                "handler": x,
+            }
+
+    def find_dest(self):  # returns destination handler
+        for x in self.dest_table:
+            if self.dest_table[x]["address"] == self.packet.p_dest.exploded:
+                print(f"Destination found in client: {x}")
+                return x
+
+    def route(self, packet):
+        """Routes the supplied packet to its final destination,
+        based on the destination table
+
+        :param packet: 
+        :type packet: HiveT
+        :returns: bool
+
+        """
+        self.packet = packet
+
+        if self.is_destination():
+            return True
+        else:
+            dest_key = self.find_dest()
+            c_handler = self.dest_table[dest_key]["handler"]
+            c_handler.forward(self.packet)
+            return False
 
 
 # ================================
