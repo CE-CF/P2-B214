@@ -47,7 +47,7 @@ class Client(ABC):
 
     # Constructor
     def __init__(
-        self, srv_ip, mode=CONN_TYPE_TCP, tcp_port=None, udp_port=None
+        self, srv_ip, cl_name, mode=CONN_TYPE_TCP, tcp_port=None, udp_port=None
     ):
         """Constructor for hive Client objects
 
@@ -61,6 +61,7 @@ class Client(ABC):
 
         """
         self.srv_ip = srv_ip
+        self.name = cl_name
         self.mode = mode
         if self.mode is CONN_TYPE_TCP:
             self.srv_port_tcp = tcp_port
@@ -248,16 +249,16 @@ class Client(ABC):
             self.client_sock.close()
             self.client_sock = socket(AF_INET, SOCK_STREAM)
             self.client_sock.connect((self.srv_ip, new_port))
+            print("Migration completed")
 
     def tcp_flow(self):
         self.pulse = False
 
-        # Start the heartbeat
-        self.log_info("Sending initial heartbeat")
-        self.send_heartbeat()
+        # Send initial information
+        self.send_message("sccmd", self.srv_ip, self.name)
 
         # Receive transfer info
-        mig_msg = self.client_sock.recv(BUFFER_SIZE)
+        mig_msg = self.recvall()
         mig_packet = HiveT.decode_packet(mig_msg)
         mig_data = mig_packet.data_parser()
 
@@ -273,19 +274,19 @@ class Client(ABC):
         self.send_message("sccmd", "127.0.0.1", "OK")
 
         # Receive msg
-        msg = self.recvall()
-        packet = HiveT.decode_packet(msg)
+        # msg = self.recvall()
+        # packet = HiveT.decode_packet(msg)
 
-        # Throw that packet into another thread and check pulse
-        heartbeat_handler = threading.Thread(
-            target=self._set_pulse, args=(packet,), daemon=True
-        )
-        if not heartbeat_handler.is_alive():
-            self.log_info("Starting heartbeat handler")
-            heartbeat_handler.start()
+        # # Throw that packet into another thread and check pulse
+        # heartbeat_handler = threading.Thread(
+        #     target=self._set_pulse, args=(packet,), daemon=True
+        # )
+        # if not heartbeat_handler.is_alive():
+        #     self.log_info("Starting heartbeat handler")
+        #     heartbeat_handler.start()
 
         # If there is life (funny i know) execute run method
-        while self.pulse:
+        while True:
             # Receive msg
             msg = self.recvall()
             packet = HiveT.decode_packet(msg)
