@@ -16,19 +16,16 @@ data[1][0] = 'takeoff'
 data[1][1] = 1
 data[2][0] = 'land'
 data[2][1] = 1
+hotSpotIP = "192.168.137"
 
-DroneCheck = droneChecker.DroneChecker("192.168.137")
+DroneCheck = droneChecker.DroneChecker(hotSpotIP)
 activeDroneList = DroneCheck.ping()
 if (len(activeDroneList) > 0):
     print('There are {} active drones'.format(len(activeDroneList))+"\n")
-    for x in range (len(activeDroneList)):
-        print('Drone {} has ip {}'.format((x+1), activeDroneList[x]))
+    outputString = DroneCheck.activeDronePacket(activeDroneList)
+    print(outputString)
 else:
     print("There are no active drones")
-
-
-
-
 """
 # IP and port of Tello and Relay Box
 tello1 = drone.Drone(str(p_dest), drone_port, rb_port)
@@ -44,3 +41,4 @@ if (tello1.ping()):
 else:
     print("\n Cannot establish connection to tello1")
 """
+
