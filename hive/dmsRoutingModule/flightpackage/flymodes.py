@@ -125,25 +125,31 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             # fly straight
             temp_arr = [[path_limit_points[i][1] + origo[1], path_limit_points[i][0] + origo[0]],
                         [path_limit_points[i + 1][1] + origo[1], path_limit_points[i + 1][0] + origo[0]]]
-            print(temp_arr)
+            # print(temp_arr)
             dist = DistanceInMeters.calculate_distance(temp_arr[0], temp_arr[1])
 
             # dist = DistanceInMeters.calculate_distance(path_limit_points[i], path_limit_points[i + 1])
             # correct_yaw(dist)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            if path_functions[(math.floor(i / 2) + 1)][1]:      # if there is a point after the turn
+            if not (i+2) == len(path_limit_points):      # if there is a point after the turn .... (i+2) because this only runs when i%2==0
                 # figure out which way to turn next
-                if path_limit_points[i] < path_limit_points[i + 1]:  # if the x-value increases as the drone flies
-                    # if the next path has a function with lower intersection value
+                # print(math.floor(i / 2) + 1)
+                if path_limit_points[i][0] < path_limit_points[i + 1][0]:  # if the x-value increases as the drone flies
+                    # if the next path has a function with higher intersection value
                     if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
-                        which_way = False
-                    else:
+                        #print(str(path_functions[math.floor(i / 2)][1]) + " < " + str(path_functions[(math.floor(i / 2) + 1)][1]))
+                        print("lefttt")
                         which_way = True
+                    else:
+                        print("righttt")
+                        which_way = False
                 else:  # else if the x-value decreases as the drone flies
                     # if the next path has a function with lower intersection value
                     if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
+                        print("right")
                         which_way = True
                     else:
+                        print("left")
                         which_way = False
             else:                       # if there is no point after the turn then the drone should return home
                 break
@@ -157,9 +163,9 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             degrees_pr_sec = str(int(round(180 / semi_circle)))
 
             if which_way:  # if which_way is set to true then turn left
-                search_turns("rc 0 100 0 -" + degrees_pr_sec, semi_circle)
+                search_turns("rc 0 100 0 -" + degrees_pr_sec, semi_circle, True)
             if not which_way:  # if which_way is set to false then turn right
-                search_turns("rc 0 100 0 " + degrees_pr_sec, semi_circle)
+                search_turns("rc 0 100 0 " + degrees_pr_sec, semi_circle, False)
 
     # if (index % 2) == 0:              # if we
     #   # find distance between x path_limit_point[i] and path_limit_point[i+1] in meters

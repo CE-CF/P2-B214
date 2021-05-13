@@ -67,7 +67,7 @@ def data_parser(data):
 
 def the_thread(cmd):
     global sent, event
-    print(cmd)
+    # print('cmd: ' + cmd)
     try:
         if 'end' in cmd:
             print('ending')
@@ -98,6 +98,7 @@ def correct_yaw(distance):
     new_yawk = None
     yaw_per_sec = 0
     while (time.time() - start_time) < distance:                        # if the drone flies at 1 m/s then this works
+        print(str(distance - (time.time() - start_time)) + " seconds left before turning")
         newest_yaw_response = int(response_arr[-1])                     # is redefined after each loop
         # check yaw status
         if newest_yaw_response == int(start_yaw):                       # no deviation
@@ -133,15 +134,24 @@ def correct_yaw(distance):
         time.sleep(delay)
 
 
-def search_turns(cmd, semi_circle):
+def search_turns(cmd, semi_circle, left_right):
     start_time = time.time()
 
     # semi circle is the
     # drone flies with 1 m/s which means that the value of semi_circle is the time it takes for the drone
     # to complete its turn
-    print(semi_circle)
-    #while (time.time() - start_time) < semi_circle:
-        #pass
+    # print(semi_circle)
+
+    left_right_str = ""
+
+    if left_right:
+        left_right_str = "left"
+    else:
+        left_right_str = "right"
+
+    while (time.time() - start_time) < semi_circle:
+        the_thread(cmd)
+        # print(str(semi_circle - (time.time() - start_time)) + " seconds left of this " + left_right_str + " turn")
 
 
 def instantiate():
