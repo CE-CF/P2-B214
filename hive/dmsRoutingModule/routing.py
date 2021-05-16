@@ -48,6 +48,10 @@ class Routing(Coordinates):
         # we find the functions of the borders of the area - it returns a 2D-array [[slope][intersection], ..] of floats
         self.functions = find_functions(self.local_c)
 
+        # print('{0:f}'.format(self.functions[3][0]))
+        print("functions:")
+        print(self.functions)
+
         # we append the plot-object of the borders and points to the plots-array(red lines, blue dots)
         # this way we can save the plots and show them at the same time - less inefficient...
         self.append_plot(Plot(self.local_c, self.functions, 'r', True))
@@ -78,7 +82,7 @@ class Routing(Coordinates):
         pl = PathLimits(self.path_functions, self.functions, self.longest_line_index, self.local_c)
         self.path_limit_points = pl.run()
 
-        print(self.path_limit_points)
+        # print(self.path_limit_points)
 
         self.append_plot(pl.get_plots())
 

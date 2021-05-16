@@ -37,7 +37,7 @@ class PathLimits:
                             ((s.longest_line_index + 2) % 4),
                             ((s.longest_line_index + 1) % 4)]
 
-        print(original_indexes)
+        # print(original_indexes)
 
         return intersection_functions, original_indexes
 

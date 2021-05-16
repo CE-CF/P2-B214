@@ -22,7 +22,6 @@ def get_x_y_meter_to_coordinates_ratio(origo_c):
 
     # print('{0:f}'.format(x_ratio), '{0:f}'.format(y_ratio))
     # print(x_ratio, y_ratio)
-    print(x_ratio, y_ratio)
 
     # return the lat-lon-coordinates to get (lon,lat)
     return y_ratio, x_ratio
