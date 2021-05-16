@@ -164,21 +164,62 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
     semicircle = math.pi / 180
     #print('pi     ' + str(semicircle * angle))
 
-    scaler = (angle / 90)
+    scaler = 1 - (angle / 90)
 
     pon2 = ((cos(angle) * x_ratio) + (sin(angle) * y_ratio))
     pon3 = (math.cos(semicircle * angle) * x_ratio) + (math.sin(semicircle * angle) * y_ratio)
     pon4 = ((1 - scaler) * x_ratio) + (scaler * y_ratio)
     print('pon  ' + '{0:f}'.format(pon))
     print('pon2 ' + '{0:f}'.format(pon2))
-
     print("scaler " + str(scaler))
-    # print('{0:f}'.format(pon4, '.8f'))
 
-    # print('{0:f}'.format(x_ratio))
-    # print('{0:f}'.format(y_ratio))
+    diff = abs(x_ratio - y_ratio)
+    new_scaler = 1 - abs(math.sin(math.radians(angle)))
 
-    path_border_intersection = (path_width * 0.0000093) / (math.sin(math.radians(90 - math.degrees(math.atan(func[0])))))
+    # mid_thing = abs((scaler - (scaler / 2)) * y_ratio)
+
+    weird_value = 0
+    if scaler > 0.9:
+        weird_value = -.4
+    elif scaler > 0.8:
+        weird_value = -.2
+    elif scaler > 0.7:
+        weird_value = .15
+    elif scaler > 0.6:
+        weird_value = .35
+    elif scaler > 0.5:
+        weird_value = .35
+    elif scaler > 0.4:
+        weird_value = .4
+    elif scaler > 0.3:
+        weird_value = .5
+    elif scaler > 0.2:
+        weird_value = .55
+    elif scaler > 0.1:
+        weird_value = .65
+    else:
+        weird_value = .7
+
+    mid_thing = (0.5 - abs((scaler - 0.5))) * y_ratio * weird_value
+
+    bonbonbon = y_ratio + (diff * scaler) - mid_thing
+
+    print("diff " + str(diff))
+    print("new_scaler " + str(new_scaler))
+    print("diff * new_scaler " + str(diff * new_scaler))
+    print('{0:f}'.format(diff*new_scaler))
+    print('cos angle ' + str(math.cos(math.radians(angle))))
+    print('sin angle ' + str(math.sin(math.radians(angle))))
+
+    print('{0:f}'.format(x_ratio))
+    print('{0:f}'.format(y_ratio))
+
+    print(bonbonbon)
+    print('{0:f}'.format(bonbonbon))
+
+    print("mid con " + str(mid_thing))
+
+    path_border_intersection = (path_width * bonbonbon) / (math.sin(math.radians(90 - math.degrees(math.atan(func[0])))))
 
     # in which direction should the parallel paths be generated? this code solves this problem
     # pseudo code of this -> picture on my phone 15/5-2021

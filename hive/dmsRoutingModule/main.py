@@ -130,12 +130,17 @@ deg_75 = np.array([[57.04394621010424, 9.941992504764456],  # approx 75 degrees
                    [57.04332179604662, 9.941749287658181],
                    [57.04343269009751, 9.940075589296312]])
 
+deg_85 = np.array([[57.0436002010424, 9.941992504764456],  # approx 85 degrees
+                   [57.04351983058689, 9.942146254577343],
+                   [57.04332179604662, 9.941749287658181],
+                   [57.04343269009751, 9.940075589296312]])
+
 def run():
     # Routing(  2D-array of global coordinates specifying the corners of the map,
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-    sohn = Routing(deg_75, 0.0002, 12)
+    sohn = Routing(thick_arr, 0.0002, 30)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
 
