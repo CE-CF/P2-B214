@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 from abc import ABC, abstractmethod
 from datetime import datetime
 from socket import (
@@ -93,7 +94,7 @@ class UDPPacketHandler(Thread):
             self.log_info(
                 "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
             )
-            self.target(packet, CONN_TYPE_UDP)
+            self.target(packet, self.conn_sock, CONN_TYPE_UDP)
         self.log_info("ENDED")
 
 
@@ -241,17 +242,31 @@ class TCPClientHandler(Thread):
                         + log_string
                     )
                     # Catch packet by router here
-                    if self.router.route(packet):
+                    routemsg = self.router.route(packet)
+                    if routemsg is RoutingMSG.SELF_IS_DEST:
                         packet.src = self.client_addr
                         self.target(
                             packet, self.client_conn, mode=CONN_TYPE_TCP
                         )
-                    else:
+                    elif routemsg is (
+                        RoutingMSG.FORWARDED or RoutingMSG.DRONE_IS_DEST
+                    ):
                         self.client_conn.send(
                             HiveT.encode_packet(
-                                HiveT(3, self.client_addr[0], "MSG FORWARDED")
+                                HiveT(3, self.client_addr[0], "MSG:FORWARDED;")
                             )
                         )
+                    elif routemsg is RoutingMSG.DEST_NOT_FOUND:
+                        self.client_conn.send(
+                            HiveT.encode_packet(
+                                HiveT(
+                                    3,
+                                    self.client_addr[0],
+                                    "ERROR:404;",
+                                )
+                            )
+                        )
+
                 else:
                     connected = False
 
@@ -261,6 +276,13 @@ class TCPClientHandler(Thread):
                 connected = False
 
         self.log_info("ENDED")
+
+
+class RoutingMSG(Enum):
+    FORWARDED = 1
+    DEST_NOT_FOUND = 2
+    SELF_IS_DEST = 3
+    DRONE_IS_DEST = 4
 
 
 class Router:
@@ -358,14 +380,18 @@ class Router:
         if self.is_destination():
             self.log_info("Server is destination of packet")
             self.lock.release()
-            return True
+            return RoutingMSG.SELF_IS_DEST
+        elif self.find_dest() is None:
+            self.log_info("Destination not found")
+            self.lock.release
+            return RoutingMSG.DEST_NOT_FOUND
         else:
             dest_key = self.find_dest()
             self.log_info(f"Forwarding packet to destination: {dest_key} ")
             c_handler = self.dest_table[dest_key]["handler"]
             c_handler.forward(self.packet)
             self.lock.release()
-            return False
+            return RoutingMSG.FORWARDED
 
 
 class Server(ABC):
@@ -382,7 +408,7 @@ class Server(ABC):
         self.router = Router(srv_ip)
 
     @abstractmethod
-    def run(self, packet: Packet, conn, mode: bool):
+    def run(self, packet: Packet, conn: socket, mode: bool):
         """The \"loop\" function for the Server class. All necessary packet
         handling should be done in here.
         *Note* A check should be implemented to differentiate between UDP based
@@ -417,12 +443,12 @@ class Server(ABC):
             tcpmain.start()
 
             # Start UDP thread
-            # print(f"UDP Listener on port: {self.srv_port_udp}")
-            # udpthread = UDPPacketHandler(1, self.run, self.srv_socket_udp)
-            # udpthread.start()
+            print(f"UDP Listener on port: {self.srv_port_udp}")
+            udpthread = UDPPacketHandler(1, self.run, self.srv_socket_udp)
+            udpthread.start()
 
             tcpmain.join()
-            # udpthread.join()
+            udpthread.join()
         except IndexError:
             print("Stopping server")
             self.srv_socket_tcp.shutdown(SHUT_RDWR)

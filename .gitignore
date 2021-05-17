@@ -6,3 +6,8 @@ config.py
 .log
 client.log
 server.log
+client.log
+rb_app.py
+server.log
+*.log
+*.log
