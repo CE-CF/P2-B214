@@ -277,13 +277,7 @@ class Client(ABC):
         self.log_info("Sending heartbeat to new connection")
         self.send_message("sccmd", "127.0.0.1", "OK")
 
-        connected = False
-        msg = self.recvall()
-        packet = HiveT.decode_packet(msg)
-        if packet.p_data == "DONE":
-            connected = True
-
-        while connected:
+        while True:
             # Receive msg
             msg = self.recvall()
             packet = HiveT.decode_packet(msg)
