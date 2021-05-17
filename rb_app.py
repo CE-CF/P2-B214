@@ -10,8 +10,8 @@ class RbClient(Client):
         self.srv_ip = "127.0.0.1" 
         super().__init__(self.srv_ip, tcp_port=9000, udp_port=9241)
         self.state = Off()
-        self.hotSpotIP = "192.168.137"
-    
+        self.hotSpotIP = "192.168.137" # First 3 octets of the hotspot IP
+        self.connDrones = 1
     def eval_cmd(self, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
         args = {}
@@ -38,8 +38,11 @@ class RbClient(Client):
             while True:   
                 activeDroneList = DroneCheck.ping()
                 
-                if (len(activeDroneList) > 1):
+                if (len(activeDroneList) == self.connDrones):
                     print('There are {} active drones'.format(len(activeDroneList))+"\n")
+                    droneData = DroneCheck.activeDronePacket(activeDroneList)
+                    print(droneData)
+                    self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
                     self.change(Active)
                     break
                 
@@ -48,10 +51,7 @@ class RbClient(Client):
                     sleep(2.5)
 
         if (type(self.state) is Active):
-            droneData = DroneCheck.activeDronePacket(activeDroneList)
-            print(droneData)
-            self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
-            
+                     
             print("MODE: TCP")
             # TCP CODE HERE
             packet.dump()
@@ -63,7 +63,7 @@ class RbClient(Client):
                     
                 drone_port = 8889
                 rb_port = 9000+b_dest[3]
-                    
+                
                 drone = Drone(str(packet.p_dest), drone_port, rb_port)
                 drone.send(data)
                 drone.closeConnection()
@@ -75,6 +75,7 @@ class RbClient(Client):
                 # Server/client cmd code here
                 cmd_dict = packet.data_parser()
                 self.eval_cmd(cmd_dict)
+                #pass
             else:
                 # Wrong packet type
                 pass

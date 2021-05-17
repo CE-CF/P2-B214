@@ -17,8 +17,9 @@ class RelayBoxState(object):
       return self.name
 
 class Off(RelayBoxState):
+   """ State of being powered off """
    name = "off"
-   allowed = ['on', 'inactive']
+   allowed = ['on']
 
 class On(RelayBoxState):
    """ State of being powered on and working """
@@ -26,12 +27,12 @@ class On(RelayBoxState):
    allowed = ['off','inactive']
 
 class Active(RelayBoxState):
-   """ State of being in suspended mode after switched on """
+   """ State of being in active mode after the criteria has been met """
    name = "active"
    allowed = ['off']
 
 class Inactive(RelayBoxState):
-   """ State of being in hibernation after powered on """
+   """ State of being inactive after powered on until criteria has been met """
    name = "inactive"
    allowed = ['active','off']
 
