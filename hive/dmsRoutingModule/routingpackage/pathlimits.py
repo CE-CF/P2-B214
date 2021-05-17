@@ -29,13 +29,15 @@ class PathLimits:
     # if you want to know the original index of the new function with index, lets say 2. then we do: original_indexes[2]
     def get_intersection_borders(s):
         intersection_functions = \
-                   [s.border_functions[(s.longest_line_index - 1 % 4)],     # function clockwise to longest
-                    s.border_functions[(s.longest_line_index + 2 % 4)],     # function opposite to longest
-                    s.border_functions[(s.longest_line_index + 1 % 4)]]     # function counter-clockwise to longest
+                   [s.border_functions[((s.longest_line_index - 1) % 4)],     # function clockwise to longest
+                    s.border_functions[((s.longest_line_index + 2) % 4)],     # function opposite to longest
+                    s.border_functions[((s.longest_line_index + 1) % 4)]]     # function counter-clockwise to longest
 
-        original_indexes = [(s.longest_line_index - 1 % 4),
-                            (s.longest_line_index + 2 % 4),
-                            (s.longest_line_index + 1 % 4)]
+        original_indexes = [((s.longest_line_index - 1) % 4),
+                            ((s.longest_line_index + 2) % 4),
+                            ((s.longest_line_index + 1) % 4)]
+
+        # print(original_indexes)
 
         return intersection_functions, original_indexes
 

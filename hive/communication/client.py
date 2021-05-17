@@ -7,10 +7,9 @@ from socket import (
     SHUT_RDWR,
     SOCK_DGRAM,
     SOCK_STREAM,
-    socket,
     gethostname,
+    socket,
 )
-
 from time import sleep
 
 from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
@@ -270,9 +269,6 @@ class Client(ABC):
         mig_packet = HiveT.decode_packet(mig_msg)
         mig_data = mig_packet.data_parser()
 
-        # print(mig_msg)
-        # mig_packet.dump()
-        # print(mig_data)
         if mig_data["CMD"] is not None:
             port = mig_data["P"]
             self.log_info(f"Received migration info: {port}")
@@ -281,20 +277,13 @@ class Client(ABC):
         self.log_info("Sending heartbeat to new connection")
         self.send_message("sccmd", "127.0.0.1", "OK")
 
-        # Receive msg
-        # msg = self.recvall()
-        # packet = HiveT.decode_packet(msg)
+        connected = False
+        msg = self.recvall()
+        packet = HiveT.decode_packet(msg)
+        if packet.p_data == "DONE":
+            connected = True
 
-        # # Throw that packet into another thread and check pulse
-        # heartbeat_handler = threading.Thread(
-        #     target=self._set_pulse, args=(packet,), daemon=True
-        # )
-        # if not heartbeat_handler.is_alive():
-        #     self.log_info("Starting heartbeat handler")
-        #     heartbeat_handler.start()
-
-        # If there is life (funny i know) execute run method
-        while True:
+        while connected:
             # Receive msg
             msg = self.recvall()
             packet = HiveT.decode_packet(msg)

@@ -89,7 +89,7 @@ def the_thread(cmd):
         tello_sock.shutdown(1)
 
 
-def correct_yaw(distance):
+def correct_yaw(flight_time):
     global start_yaw
     delay = 1
     start_time = time.time()
@@ -97,8 +97,8 @@ def correct_yaw(distance):
     is_deviating = False
     new_yawk = None
     yaw_per_sec = 0
-    while (time.time() - start_time) < distance:                        # if the drone flies at 1 m/s then this works
-        print(str(distance - (time.time() - start_time)) + " seconds left before turning")
+    while (time.time() - start_time) < flight_time:                     # if the drone flies at 1 m/s then this works
+        print(str(flight_time - (time.time() - start_time)) + " seconds left before turning")
         newest_yaw_response = int(response_arr[-1])                     # is redefined after each loop
         # check yaw status
         if newest_yaw_response == int(start_yaw):                       # no deviation
@@ -126,7 +126,6 @@ def correct_yaw(distance):
             new_yawk = 0
 
         rc_string = "rc 0 80 0 " + str(yaw_per_sec)
-        # rc_string = "rc 0 10 0 0"
 
         print("new york: " + rc_string + "\t\told yaw: " + str(start_yaw))
         the_thread(rc_string)
@@ -134,13 +133,8 @@ def correct_yaw(distance):
         time.sleep(delay)
 
 
-def search_turns(cmd, semi_circle, left_right):
+def search_turns(cmd, flight_time, left_right):
     start_time = time.time()
-
-    # semi circle is the
-    # drone flies with 1 m/s which means that the value of semi_circle is the time it takes for the drone
-    # to complete its turn
-    # print(semi_circle)
 
     left_right_str = ""
 
@@ -149,7 +143,7 @@ def search_turns(cmd, semi_circle, left_right):
     else:
         left_right_str = "right"
 
-    while (time.time() - start_time) < semi_circle:
+    while (time.time() - start_time) < flight_time:
         the_thread(cmd)
         # print(str(semi_circle - (time.time() - start_time)) + " seconds left of this " + left_right_str + " turn")
 

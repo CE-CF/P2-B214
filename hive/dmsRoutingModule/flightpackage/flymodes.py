@@ -4,8 +4,14 @@ import math
 # from ..routingpackage.findroutefunctions import run
 import numpy as np
 
+drone_speed = 1
 
-def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions):
+
+def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions, d_speed):
+    global drone_speed
+    if d_speed != 0:
+        drone_speed = d_speed
+
     relay_box_local_position = [relay_box_global_pos[1] - origo[0], relay_box_global_pos[0] - origo[1]]
     route_starting_point = path_limit_points[0]
     # print(relay_box_local_position)
@@ -74,7 +80,7 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
     # print(temp_arr)
     distance_to_first_point = DistanceInMeters.calculate_distance(temp_arr[0], temp_arr[1])
     # print(distance_to_first_point)
-    # the_thread(correct_yaw(distance_to_first_point)) !!!!!!!!!!!!!!!!!!!! UNCOMMENT PLZ
+    # correct_yaw(distance_to_first_point) !!!!!!!!!!!!!!!!!!!! UNCOMMENT PLZ
 
     # Stop and hover at the first point
     the_thread("stop")
@@ -118,18 +124,23 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
 
 
 def search_route(path_width, path_limit_points, origo, path_functions):
-    which_way = None  # true = left, false = right
+    global drone_speed
+
+    which_way = None        # true = left, false = right
     for i in range(len(path_limit_points)):
 
-        if (i % 2) == 0:  # when path_limit_point[i] is the point in the beginning of a straight flight
+        if (i % 2) == 0:    # when path_limit_point[i] is the point in the beginning of a straight flight
             # fly straight
             temp_arr = [[path_limit_points[i][1] + origo[1], path_limit_points[i][0] + origo[0]],
                         [path_limit_points[i + 1][1] + origo[1], path_limit_points[i + 1][0] + origo[0]]]
             # print(temp_arr)
             dist = DistanceInMeters.calculate_distance(temp_arr[0], temp_arr[1])
 
-            # dist = DistanceInMeters.calculate_distance(path_limit_points[i], path_limit_points[i + 1])
-            # correct_yaw(dist)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            # distance in meters divided by speed in meters per second = flight time in seconds
+            flight_time = dist / drone_speed
+
+            # dist = DistanceInMeters.calculate_distance(path_limit_points[i], path_limit_points[i + 1]) dont uncomment this
+            # correct_yaw(flight_time)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             if not (i+2) == len(path_limit_points):      # if there is a point after the turn .... (i+2) because this only runs when i%2==0
                 # figure out which way to turn next
@@ -158,14 +169,19 @@ def search_route(path_width, path_limit_points, origo, path_functions):
 
             # the drone flies with 1 m/s which means that the value of semi_circle is the time it takes for the drone
             # to complete its turn
-            semi_circle = (path_width / 2) * math.pi
+            semi_circle_dist = (path_width / 2) * math.pi
 
-            degrees_pr_sec = str(int(round(180 / semi_circle)))
+            # distance in meters divided by speed in meters per second = flight time in seconds
+            flight_time = semi_circle_dist / drone_speed
+
+            # 180 degrees divided by the time it takes to complete the 180-turn outputs the
+            # yaw the drone should turn with each second ... the "yaw per second"
+            degrees_pr_sec = str(int(round(180 / flight_time)))
 
             if which_way:  # if which_way is set to true then turn left
-                search_turns("rc 0 100 0 -" + degrees_pr_sec, semi_circle, True)
+                search_turns("rc 0 100 0 -" + degrees_pr_sec, flight_time, True)
             if not which_way:  # if which_way is set to false then turn right
-                search_turns("rc 0 100 0 " + degrees_pr_sec, semi_circle, False)
+                search_turns("rc 0 100 0 " + degrees_pr_sec, flight_time, False)
 
     # if (index % 2) == 0:              # if we
     #   # find distance between x path_limit_point[i] and path_limit_point[i+1] in meters

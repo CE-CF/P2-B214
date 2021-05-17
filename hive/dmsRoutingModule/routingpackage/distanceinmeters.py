@@ -1,19 +1,30 @@
 import math
-
 import numpy as np
-from math import *
 
 
 def get_x_y_meter_to_coordinates_ratio(origo_c):
-    x_coord_dist = abs((origo_c[0] - 0.005) - (origo_c[0] + 0.005))
-    y_coord_dist = abs((origo_c[1] - 0.005) - (origo_c[1] + 0.005))
-    x_meter_dist = DistanceInMeters.calculate_distance(origo_c - [0, 0.005], origo_c + [0, 0.005])
-    y_meter_dist = DistanceInMeters.calculate_distance(origo_c - [0.005, 0], origo_c + [0.005, 0])
+
+    origo_correct_order = [origo_c[1], origo_c[0]]
+
+    # x relates to latitude and y to longitude
+
+    x_coord_dist = abs((origo_correct_order[0] - 0.0001) - (origo_correct_order[0] + 0.0001))
+    y_coord_dist = abs((origo_correct_order[1] - 0.0001) - (origo_correct_order[1] + 0.0001))
+
+    x_meter_dist = DistanceInMeters.calculate_distance([origo_correct_order[0] - 0.0001, origo_correct_order[1]],
+                                                       [origo_correct_order[0] + 0.0001, origo_correct_order[1]])
+
+    y_meter_dist = DistanceInMeters.calculate_distance([origo_correct_order[0], origo_correct_order[1] - 0.0001],
+                                                       [origo_correct_order[0], origo_correct_order[1] + 0.0001])
 
     x_ratio = x_coord_dist / x_meter_dist
     y_ratio = y_coord_dist / y_meter_dist
 
-    return x_ratio, y_ratio
+    # print('{0:f}'.format(x_ratio), '{0:f}'.format(y_ratio))
+    # print(x_ratio, y_ratio)
+
+    # return the lat-lon-coordinates to get (lon,lat)
+    return y_ratio, x_ratio
 
 
 class DistanceInMeters:
