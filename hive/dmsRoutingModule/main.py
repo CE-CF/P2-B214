@@ -140,7 +140,7 @@ def run():
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-    sohn = Routing(thick_arr, 0.0002, 30)
+    sohn = Routing(odin_arr, 0.00002, 2)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
 
@@ -152,7 +152,7 @@ def run():
 
     get_to_route(sohn.get_path_limit_points(),
                  sohn.get_origo(),
-                 big_relay_box,
+                 odin_relay_box,
                  sohn.get_path_functions(),
                  1)
 

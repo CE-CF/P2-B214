@@ -1,5 +1,6 @@
-from .dronecommands import instantiate, the_thread, correct_yaw, search_turns
-from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters
+from .dronecommands import instantiate, the_thread, correct_yaw, search_turns, yaw_reset
+
+from routingpackage.distanceinmeters import DistanceInMeters
 import math
 # from ..routingpackage.findroutefunctions import run
 import numpy as np
@@ -33,8 +34,8 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
     it is possible to calculate angle.
     A vector from relay-box to first point is made first.
     '''
-    rbfp = [route_starting_point[0]-relay_box_local_position[0],
-            route_starting_point[1]-relay_box_local_position[1]]
+    rbfp = [route_starting_point[0] - relay_box_local_position[0],
+            route_starting_point[1] - relay_box_local_position[1]]
     ''' 
     A second vector is made from relay-box to made up point.
     '''
@@ -74,11 +75,19 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
     '''
     Now the drone should be in the right direction to just fly straight to
     the first point using the correct_yaw function.
+    
+    But first the newest yaw has to be set, to stay on this line
     '''
+
+    # RESET YAW HERE !!!!!!!!!!!!!
+
+    yaw_reset = True
+
     temp_arr = [[relay_box_local_position[1] + origo[1], relay_box_local_position[0] + origo[0]],
                 [route_starting_point[1] + origo[1], route_starting_point[0] + origo[0]]]
     # print(temp_arr)
     distance_to_first_point = DistanceInMeters.calculate_distance(temp_arr[0], temp_arr[1])
+
     # print(distance_to_first_point)
     # correct_yaw(distance_to_first_point) !!!!!!!!!!!!!!!!!!!! UNCOMMENT PLZ
 
@@ -120,16 +129,23 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
             rotation_back_ccw = "ccw " + str(int(round(total_angle)))
             the_thread(rotation_back_ccw)
 
-# Now the drone should be ready to fly straight to the second point
+
+    # Now the drone should be ready to fly straight to the second point
+    # RESET YAW HERE
+    yaw_reset = True
 
 
 def search_route(path_width, path_limit_points, origo, path_functions):
     global drone_speed
-
-    which_way = None        # true = left, false = right
+    yaw_reset = False
+    which_way = None  # true = left, false = right
+    path_num = None
     for i in range(len(path_limit_points)):
-
-        if (i % 2) == 0:    # when path_limit_point[i] is the point in the beginning of a straight flight
+        if i == 0:
+            path_num = 1
+        else:
+            path_num = math.floor(i / 2) + 1
+        if (i % 2) == 0:  # when path_limit_point[i] is the point in the beginning of a straight flight
             # fly straight
             temp_arr = [[path_limit_points[i][1] + origo[1], path_limit_points[i][0] + origo[0]],
                         [path_limit_points[i + 1][1] + origo[1], path_limit_points[i + 1][0] + origo[0]]]
@@ -142,31 +158,33 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             # dist = DistanceInMeters.calculate_distance(path_limit_points[i], path_limit_points[i + 1]) dont uncomment this
             # correct_yaw(flight_time)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            if not (i+2) == len(path_limit_points):      # if there is a point after the turn .... (i+2) because this only runs when i%2==0
+            if not (i + 2) == len(
+                    path_limit_points):  # if there is a point after the turn .... (i+2) because this only runs when i%2==0
                 # figure out which way to turn next
                 # print(math.floor(i / 2) + 1)
                 if path_limit_points[i][0] < path_limit_points[i + 1][0]:  # if the x-value increases as the drone flies
                     # if the next path has a function with higher intersection value
                     if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
-                        #print(str(path_functions[math.floor(i / 2)][1]) + " < " + str(path_functions[(math.floor(i / 2) + 1)][1]))
-                        print("lefttt")
+                        # print(str(path_functions[math.floor(i / 2)][1]) + " < " + str(path_functions[(math.floor(i / 2) + 1)][1]))
+                        print("Going on path number ", path_num, " turning left now")
                         which_way = True
                     else:
-                        print("righttt")
+                        print("Going on path number ", path_num, " turning right now")
                         which_way = False
                 else:  # else if the x-value decreases as the drone flies
                     # if the next path has a function with lower intersection value
                     if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
-                        print("right")
+                        print("Going on path number ", path_num, " turning right now")
                         which_way = True
                     else:
-                        print("left")
+                        print("Going on path number ", path_num, " turning left now")
                         which_way = False
-            else:                       # if there is no point after the turn then the drone should return home
+            else:  # if there is no point after the turn then the drone should return home
                 break
 
         else:  # when path_limit_point[i] is the point leading into a turn
-
+            last_path_num = path_num + 1
+            print("going on path ", last_path_num)
             # the drone flies with 1 m/s which means that the value of semi_circle is the time it takes for the drone
             # to complete its turn
             semi_circle_dist = (path_width / 2) * math.pi
@@ -182,27 +200,6 @@ def search_route(path_width, path_limit_points, origo, path_functions):
                 search_turns("rc 0 100 0 -" + degrees_pr_sec, flight_time, True)
             if not which_way:  # if which_way is set to false then turn right
                 search_turns("rc 0 100 0 " + degrees_pr_sec, flight_time, False)
-
-    # if (index % 2) == 0:              # if we
-    #   # find distance between x path_limit_point[i] and path_limit_point[i+1] in meters
-    #   # (the drone flies at 1 m/s so...:)
-    #   # fly straight for x seconds with correct_yaw()
-    #
-    #   # if path_limit_points[i] < path_limit_points[i+1]:
-    #   #   # if path_functions[floor(i/2)][1] < path_functions[floor(i/2) + 1][1]:
-    #   #   #   # which_way = false
-    #   #   # else:
-    #   #   #   # which_way = true
-    #   # else:
-    #   #   # if path_functions[floor(i/2)][1] < path_functions[floor(i/2) + 1][1]:
-    #   #   #   # which_way = true
-    #   #   # else:
-    #   #   #   # which_way = false
-    # else:
-    #   # if which_way:                   # if which_way is set to true then turn left
-    #   #   # turn left
-    #   if not which_way:                   # if which_way is set to false then turn right
-    #   #   # turn right
 
 
 def go_home():

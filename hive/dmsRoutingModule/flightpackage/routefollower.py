@@ -1,5 +1,5 @@
 from .dronecommands import instantiate, the_thread, correct_yaw
-from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters
+from routingpackage.distanceinmeters import DistanceInMeters
 import numpy as np
 
 

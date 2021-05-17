@@ -24,7 +24,7 @@ tello_address = (tello_host, tello_port)
 
 
 def recv():
-    global start_yaw
+    # global start_yaw
     count = 0
     while True:
         data, server = sock.recvfrom(2046)
@@ -34,11 +34,14 @@ def recv():
             print("error")
         else:
             response_arr.append(data_parser(data.decode(encoding="utf-8")))
-            #print(response_arr[-1])
+            # print(response_arr[-1])
+            '''
             if count == 0:
                 start_yaw = response_arr[0]
                 print("Start yaw is " + str(start_yaw))
         count = count + 1
+            '''
+
 
 
 def data_parser(data):
@@ -88,7 +91,7 @@ def the_thread(cmd):
         tello_sock.close()
         tello_sock.shutdown(1)
 
-
+yaw_reset = False
 def correct_yaw(flight_time):
     global start_yaw
     delay = 1
@@ -97,8 +100,12 @@ def correct_yaw(flight_time):
     is_deviating = False
     new_yawk = None
     yaw_per_sec = 0
+    print(yaw_reset)
+    if yaw_reset:
+        start_yaw = correct_yaw_start
+        print("pikkekusse")
     while (time.time() - start_time) < flight_time:                     # if the drone flies at 1 m/s then this works
-        print(str(flight_time - (time.time() - start_time)) + " seconds left before turning")
+        #  print(str(flight_time - (time.time() - start_time)) + " seconds left before turning")
         newest_yaw_response = int(response_arr[-1])                     # is redefined after each loop
         # check yaw status
         if newest_yaw_response == int(start_yaw):                       # no deviation
@@ -108,26 +115,27 @@ def correct_yaw(flight_time):
 
         # change yaw
         if is_deviating:
-            #new_yawk = int(start_yaw) - newest_yaw_response
-            #yaw_per_sec = (new_yawk / delay)
+            # Gamle kode der virkede
+            new_yawk = int(start_yaw) - newest_yaw_response
+            yaw_per_sec = (new_yawk / delay)
+            is_deviating = False
+            print(newest_yaw_response)
+
+            # Kode der skal sørge for at den kan dreje hurtigt rundt, hvis den er blevet drejet fra start.
+            # Men det vil aldrig komme til at ske så det er lige meget
+            '''      
+            yaw_per_sec = 180 - abs(start_yaw) + 180 - abs(newest_yaw_response)
             if yaw_per_sec > 100:
                 yaw_per_sec = 100
             elif yaw_per_sec < -100:
                 yaw_per_sec = -100
-            if start_yaw > 0:
-                new_yawk = int(start_yaw) - newest_yaw_response
-                yaw_per_sec = (new_yawk / delay)
-            elif start_yaw < 0:
-                new_yawk = int(start_yaw) + newest_yaw_response
-                yaw_per_sec = (new_yawk / delay)
-            is_deviating = False
-            print(newest_yaw_response)
+            '''
         else:
-            new_yawk = 0
+            yaw_per_sec = 0
 
         rc_string = "rc 0 80 0 " + str(yaw_per_sec)
 
-        print("new york: " + rc_string + "\t\told yaw: " + str(start_yaw))
+        print("The new rc string: " + rc_string + "\t\t old yaw: " + str(start_yaw))
         the_thread(rc_string)
 
         time.sleep(delay)

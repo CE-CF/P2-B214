@@ -1,6 +1,6 @@
 from sympy import *
 import numpy as np
-from dmsRoutingModule.plots import Plot
+from plots import Plot
 
 
 class PathLimits:
