@@ -1238,3 +1238,89 @@ INFO:root:[ THREAD-TCP 11 | TIME 2021-05-17 13:20:44.022607 ]: Packet received c
 INFO:root:[ ROUTER | TIME 2021-05-17 13:20:44.023613 ]: Received packet with destination: 127.0.0.1
 INFO:root:[ ROUTER | TIME 2021-05-17 13:20:44.023613 ]: Server is destination of packet
 INFO:root:[ THREAD-TCP 11 | TIME 2021-05-17 13:20:44.043605 ]: ENDED
+INFO:root:[ ROUTER | TIME 2021-05-17 13:21:41.105609 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-17 13:21:41.106609 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 55609
+			Thread-ID:11
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 55665
+			Thread-ID:12
+
+=============================================
+
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.106609 ]: STARTED
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.106609 ]: Client info: 127.0.0.1:55665
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.118613 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.118613 ]: Starting migration
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.123614 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.123614 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.124616 ]: Migration accepted
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.124616 ]: New client information: ('127.0.0.1', 55667)
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.124616 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-17 13:21:41.124616 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-17 13:21:41.124616 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 55667
+			Thread-ID:12
+
+=============================================
+
+INFO:root:[ THREAD-TCP 12 | TIME 2021-05-17 13:21:41.124616 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ ROUTER | TIME 2021-05-17 13:22:18.218609 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-17 13:22:18.218609 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 55667
+			Thread-ID:12
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 55677
+			Thread-ID:13
+
+=============================================
+
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.218609 ]: STARTED
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.219608 ]: Client info: 127.0.0.1:55677
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.219608 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.219608 ]: Starting migration
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.238613 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.238613 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.748458 ]: Migration accepted
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.749482 ]: New client information: ('127.0.0.1', 55679)
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.749482 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-17 13:22:18.749482 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-17 13:22:18.749482 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 55679
+			Thread-ID:13
+
+=============================================
+
+INFO:root:[ THREAD-TCP 13 | TIME 2021-05-17 13:22:18.749482 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							

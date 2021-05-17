@@ -30,25 +30,6 @@ class RbClient(Client):
         self.state.switch(state)
 
     def run(self, packet):
-                
-        if (type(self.state) is Inactive):
-            print("State inactive if statement")
-            DroneCheck = DroneChecker(self.hotSpotIP)
-            
-            while True:   
-                activeDroneList = DroneCheck.ping()
-                
-                if (len(activeDroneList) == self.connDrones):
-                    print('There are {} active drones'.format(len(activeDroneList))+"\n")
-                    droneData = DroneCheck.activeDronePacket(activeDroneList)
-                    print(droneData)
-                    self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
-                    self.change(Active)
-                    break
-                
-                else:
-                    print("There are no active drones")
-                    sleep(2.5)
 
         if (type(self.state) is Active):
                      
@@ -83,6 +64,27 @@ class RbClient(Client):
 
         # Husk at når der skal sendes data fra drone til dms, skal dataen wrappes
         # i en udp pakke, der skal være en sequence generator hver gang man modtager en pakke.
+                
+        if (type(self.state) is Inactive):
+            print("State inactive if statement")
+            DroneCheck = DroneChecker(self.hotSpotIP)
+            
+            while True:   
+                activeDroneList = DroneCheck.ping()
+                
+                if (len(activeDroneList) == self.connDrones):
+                    print('There are {} active drones'.format(len(activeDroneList))+"\n")
+                    droneData = DroneCheck.activeDronePacket(activeDroneList)
+                    print(droneData)
+                    self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
+                    self.change(Active)
+                    break
+                
+                else:
+                    print("There are no active drones")
+                    sleep(2.5)
+
+        
 
 if __name__ == "__main__":
     client = RbClient()

@@ -258,3 +258,9 @@ INFO:root:[ TIME 2021-05-17 13:20:37.052059 ]: Packet received content:
 							[DATA]: DONE
 							
 INFO:root:[ TIME 2021-05-17 13:20:37.052059 ]: PULSE: False
+INFO:root:[ TIME 2021-05-17 13:21:41.105609 ]: STARTED
+INFO:root:[ TIME 2021-05-17 13:21:41.123614 ]: Received migration info: 55666
+INFO:root:[ TIME 2021-05-17 13:21:41.124616 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-17 13:22:18.218609 ]: STARTED
+INFO:root:[ TIME 2021-05-17 13:22:18.238613 ]: Received migration info: 55678
+INFO:root:[ TIME 2021-05-17 13:22:18.748458 ]: Sending heartbeat to new connection
