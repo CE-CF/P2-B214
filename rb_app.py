@@ -1,3 +1,5 @@
+import threading
+import socket
 from time import sleep
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.communication.client import Client
@@ -7,11 +9,59 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import Off, On, Inactive, Act
 
 class RbClient(Client):
     def __init__(self):
-        self.srv_ip = "127.0.0.1" 
         super().__init__(self.srv_ip, tcp_port=9000, udp_port=9241)
         self.state = Off()
+        self.srv_ip = "127.0.0.1"
         self.hotSpotIP = "192.168.137" # First 3 octets of the hotspot IP
         self.connDrones = 1
+    
+    def threaded(fn):
+        def wrapper(*args, **kwargs):
+            threading.Thread(target=fn, args=args, kwargs=kwargs).start()
+        return wrapper
+    
+    def data_parser(data):
+        """Parse incoming packet data for easier manipulation
+        :param data:
+        :type data: str
+        :returns: Dictionary containing data
+        """
+
+        d = {}
+        delim1 = ";"
+        delim2 = ":"
+        element = ""
+        for _, v in enumerate(data):
+            if v is not delim1:
+                element += v
+            else:
+                arr = element.split(delim2)
+                d[arr[0]] = arr[1]
+                element = ""
+
+        return d['yaw']
+
+    @threaded
+    def listener_state(self):
+        state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        state_host = ''
+        state_port = 8890
+        state_address = (state_host, state_port)
+        state_sock.bind(state_address)
+        response_arr = []
+
+        while True:
+            data, server = state_sock.recvfrom(2046)
+            if data == b'ok':
+                print("ok")
+            elif data == b'error':
+                print("error")
+            else:
+                self.send(data.decode(encoding="utf-8"))
+                response_arr.append(self.data_parser(data.decode(encoding="utf-8")))
+    
+    def lisetener_stream(self):
+
     def eval_cmd(self, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
         args = {}
