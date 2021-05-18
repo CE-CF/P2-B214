@@ -89,5 +89,6 @@ class Canvas:
             if self.AngleChecker():
                 for c in range(-1, 3):
                     self.canvas.create_line(ObjectHandler.Points[c].trueX, ObjectHandler.Points[c].trueY, ObjectHandler.Points[c + 1].trueX, ObjectHandler.Points[c + 1].trueY, width=2)
+                
         else:
             showinfo("Error", "Please make sure you have entered 4 points before estimation.")
