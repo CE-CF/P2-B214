@@ -24,6 +24,7 @@ class Game():
         self.clock = pygame.time.Clock()
         self.TC = TC.Tello_Communication()
         self.TC.start()
+        self.DroneCameraCenterOffset = 0
     # This function was used for making a static object. It is not used right now.
     '''def init(self, ScreenHeight = 1080, ScreenWidth = 640, FullScreen = False, Run = True):
         pygame.init()
@@ -36,8 +37,11 @@ class Game():
         # Create a list of all drones
         # First drone has base speed of 1, second drone has speed set by start menu
         if GC.TelloMode:
-            self.Drones = [TD.TelloDrone(200,300), TD.TelloDrone(400,300,IP_Address="0.0.0.1")]
+            #self.Drones = [TD.TelloDrone(200,300), TD.TelloDrone(400,300,IP_Address="0.0.0.1")]
             #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
+            self.Drones = []
+            for i in range(10):
+                self.Drones.append(TD.TelloDrone(100 + 100*i, 300, IP_Address=f'0.0.0.{i}'))
         else:
             if pygame.joystick.get_count() == 0:
                 self.Drones = [Drone.Drone(200, 300),
@@ -49,7 +53,9 @@ class Game():
                                            Joystick_xAxis="Axis0", Joystick_yAxis="Axis1"),
                                Drone.Drone(500, 300, GC.Uniform_Drones_Speed, 2,
                                            "Button13", "Button14", "Button12", "Button11")]
-
+        self.DronesCollided = []
+        for i in range(len(self.Drones)):
+            self.DronesCollided.append(False)
         #self.Drones = [Drone.Drone(200,300), Drone.Drone(820,300), Drone.Drone(510, 100, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i),Drone.Drone(510, 500, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i)]
         for i in self.Drones:
             if i.__class__ == TD.TelloDrone:
@@ -133,18 +139,47 @@ class Game():
     # Function that runs the collision algorithm for all drones in the list
     # This function will also pass obstacles and such as rect arguments when they are implemented
     def Drones_Collision_Handler(self):
-        for i in self.Drones:
-            for j in self.Drones:
-                if i == j:
+        for i in range(len(self.Drones)):
+            self.DronesCollided[i] = False
+            for j in range(len(self.Drones)):
+                if self.Drones[i] == self.Drones[j]:
                     continue
                 else:
-                    i.Check_Collision(j.Rect)
+                    Result = self.Drones[i].Check_Collision(self.Drones[j].Rect)
+                    self.DronesCollided[i] = self.DronesCollided[i] or Result
+
     # Function that draws the sprites for all displayed objects
     def Draw_Sprites(self):
-        for i in self.Drones:
-            pygame.draw.rect(self.Screen, (0,0,0),i.Rect,2)
-            self.Screen.blit(i.Image, i.Rect)
+        for i in range(len(self.Drones)):
+            RectColor = (0,0,0)*(not self.DronesCollided[i]) + (255,0,0)*self.DronesCollided[i]
+            pygame.draw.rect(self.Screen, RectColor,self.Drones[i].Rect,2)
+            self.Screen.blit(self.Drones[i].Image, self.Drones[i].Rect)
+        #print(self.DronesCollided)
 
+    def Draw_Text(self):
+        FPS = self.clock.get_fps()
+        FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), False, (0,0,0))
+        self.Screen.blit(FPS_Text, (0,0))
+        Camera_Pos_x_Str = f'X: {int(Camera.Offset_x)}'
+        Camera_Pos_y_Str = f'Y: {int(Camera.Offset_y)}'
+        Camera_Pos_x_Text = pygame.font.SysFont("Arial", 16).render(Camera_Pos_x_Str, False, (0,0,0))
+        Camera_Pos_y_Text = pygame.font.SysFont("Arial", 16).render(Camera_Pos_y_Str, False, (0,0,0))
+        self.Screen.blit(Camera_Pos_x_Text, (0,self.ScreenHeight-48))
+        self.Screen.blit(Camera_Pos_y_Text, (0,self.ScreenHeight-32))
+        for i in range(len(self.Drones)):
+            if i<20:
+                TextColor = (0,0,0)*(not self.DronesCollided[i]) + (255,0,0)*self.DronesCollided[i]
+                DroneInfoStr = (f'Drone {i}: X={int(self.Drones[i].Pos_x)}, '
+                                           f'Y={int(self.Drones[i].Pos_y)}, '
+                                           f'Z={int(self.Drones[i].Pos_z)}, '
+                                           #f'SX={int(self.Drones[i].Speed_x)}, '
+                                           #f'SY={int(self.Drones[i].Speed_y)}, '
+                                           #f'SZ={int(self.Drones[i].Speed_z)}, '
+                                           f'Collided={self.DronesCollided[i]}')
+                DroneInfoText = pygame.font.SysFont("Arial", 16).render(DroneInfoStr, False, TextColor)
+                self.Screen.blit(DroneInfoText, (0,32 + 16*i))
+            else:
+                break
     def Temp_Rot_Drone(self, Drone, angle):
         Drone.Yaw += angle
         Drone.Image = pygame.transform.rotate(Drone.Init_Image, Drone.Yaw)
@@ -198,6 +233,16 @@ class Game():
                 #if e.type == pygame.JOYBUTTONUP:
                 #    print("Joystick button released.")
                 if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_KP0:
+                        Camera.Offset_x = 0; Camera.Offset_y = 0
+                    if e.key == pygame.K_KP4:
+                        self.DroneCameraCenterOffset = (len(self.Drones) - 1 + self.DroneCameraCenterOffset) % len(self.Drones)
+                        Camera.Offset_x = self.Drones[self.DroneCameraCenterOffset].Pos_x - self.ScreenWidth/2
+                        Camera.Offset_y = self.Drones[self.DroneCameraCenterOffset].Pos_y - self.ScreenHeight/2
+                    if e.key == pygame.K_KP6:
+                        self.DroneCameraCenterOffset = (self.DroneCameraCenterOffset + 1) % len(self.Drones)
+                        Camera.Offset_x = self.Drones[self.DroneCameraCenterOffset].Pos_x - self.ScreenWidth/2
+                        Camera.Offset_y = self.Drones[self.DroneCameraCenterOffset].Pos_y - self.ScreenHeight/2
                     if e.key == pygame.K_o:
                         self.Temp_Rot_Drone(self.Drones[0], 36)
                     if e.key == pygame.K_u:
@@ -216,9 +261,7 @@ class Game():
                         self.close()
                         #sys.exit()
                         return
-            FPS = self.clock.get_fps()
-            FPS_Text = pygame.font.SysFont("Arial", 16).render(str(int(FPS)), 0, (0,0,0))
-            self.Screen.blit(FPS_Text, (0,0))
 
             self.Draw_Sprites()
+            self.Draw_Text()
             pygame.display.flip()           # Update the pygame display

@@ -187,6 +187,7 @@ class Tello_Communication(Thread):
                     Speed_y = float(Command_Array[2])
                     Speed_z = float(Command_Array[3])
                     Yaw = float(Command_Array[4])
+                    #print(f'\t Speed is: {Speed_x}, {Speed_y}, {Speed_z}, {Yaw}')
                     Result = self.Tello[Drone_ID].RC(Speed_x, Speed_y, Speed_z, Yaw)
                     return (Result*"ok" + (not Result)*"error")
                 except (TypeError or ValueError):
@@ -265,11 +266,12 @@ class Tello_Communication(Thread):
         print(f'\tCommand Array is: {Command_Array}')
         print(f'\tCommand Array 0 is: {Command_Array[0]}')
         for i in range(len(self.Tello)):
-            print(f'\tTello IP is : {self.Tello[i].IP_Address}')
+            #print(f'\tTello IP is : {self.Tello[i].IP_Address}')
             if self.Tello[i].IP_Address == Command_Array[0]:
                 print(f"\tfound a drone in {self.Tello[i].IP_Address}")
                 Result = self.Receive_Command(Command_Array[1], i)
                 IP_Found = True
+                break
             else:
                 continue
         print(f'Result is: {Result}')
