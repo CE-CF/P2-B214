@@ -139,6 +139,7 @@ class Canvas:
         if len(Points) == 4:
             if self.AngleChecker():
                 for c in range(-1, 3):
+<<<<<<< HEAD
                     self.canvas.create_line(
                         Points[c].trueX,
                         Points[c].trueY,
@@ -146,6 +147,10 @@ class Canvas:
                         Points[c + 1].trueY,
                         width=2,
                     )
+=======
+                    self.canvas.create_line(ObjectHandler.Points[c].trueX, ObjectHandler.Points[c].trueY, ObjectHandler.Points[c + 1].trueX, ObjectHandler.Points[c + 1].trueY, width=2)
+                
+>>>>>>> 57e3e059cede61d984e7a1b0fdbb9adc73d3aa8b
         else:
             showinfo(
                 "Error",

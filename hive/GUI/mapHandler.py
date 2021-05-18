@@ -1,8 +1,12 @@
 from math import cos, pi
 
+<<<<<<< HEAD
 import config
 import requests
 
+=======
+# https://stackoverflow.com/questions/47106276/converting-pixels-to-latlng-coordinates-from-google-static-image
+>>>>>>> 57e3e059cede61d984e7a1b0fdbb9adc73d3aa8b
 
 class Map:
     def __init__(self):
