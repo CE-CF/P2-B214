@@ -177,8 +177,8 @@ class Client(ABC):
         else:
             self.client_sock.connect((self.srv_ip, self.srv_port_udp))
 
-    def send(self, data):
-        packet = HiveU(198, 0, data.encode())
+    def send_udp(self, ident, ptype, seq, data):
+        packet = HiveU(ident, ptype, seq, data.encode())
         self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
@@ -298,23 +298,24 @@ class Client(ABC):
             self.run(packet)
 
     def udp_flow(self):
+        self.run(packet=None)
         while True:
             # Receive msg
-            self.run(packet=None)
-            # msg = self.recvall()
-            # packet = HiveU.decode(msg)
+            msg = self.recvall()
+            packet = HiveU.decode(msg)
 
-            # # Log client info
-            # # ---
-            # p_dump = packet.dump(to_stdout=False)
-            # log_string = ""
-            # for k in p_dump:
-            #     log_string += f"[{k.upper()}]: {p_dump[k]}"
-            #     log_string += "\n\t\t\t\t\t\t\t"
+            # Log client info
+            # ---
+            p_dump = packet.dump(to_stdout=False)
+            log_string = ""
+            for k in p_dump:
+                log_string += f"[{k.upper()}]: {p_dump[k]}"
+                log_string += "\n\t\t\t\t\t\t\t"
 
-            # self.log_info(
-            #     "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
-            # )
+            self.log_info(
+                "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
+            )
+            self.run(packet)
 
     def start(self):
         """Start the client and execute the abstract run method
