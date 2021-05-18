@@ -59,6 +59,7 @@ class RbClient(Client):
             else:
                 self.send(data.decode(encoding="utf-8"))
                 response_arr.append(self.data_parser(data.decode(encoding="utf-8")))
+                return response_arr
     
     def lisetener_stream(self):
 
