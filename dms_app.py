@@ -21,6 +21,8 @@ class DmsServer(Server):
             pass
         if cmd == "QOS":
             pass
+        if cmd == "GET_DRONE":
+            pass
 
     def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:
