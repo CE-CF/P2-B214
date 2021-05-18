@@ -115,21 +115,14 @@ def correct_yaw(flight_time):
 
         # change yaw
         if is_deviating:
-            # Gamle kode der virkede
             new_yawk = int(start_yaw) - newest_yaw_response
             yaw_per_sec = (new_yawk / delay)
-            is_deviating = False
-            print(newest_yaw_response)
-
-            # Kode der skal sørge for at den kan dreje hurtigt rundt, hvis den er blevet drejet fra start.
-            # Men det vil aldrig komme til at ske så det er lige meget
-            '''      
-            yaw_per_sec = 180 - abs(start_yaw) + 180 - abs(newest_yaw_response)
             if yaw_per_sec > 100:
                 yaw_per_sec = 100
             elif yaw_per_sec < -100:
                 yaw_per_sec = -100
-            '''
+            is_deviating = False
+            print(newest_yaw_response)
         else:
             yaw_per_sec = 0
 

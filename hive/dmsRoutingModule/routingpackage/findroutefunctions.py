@@ -156,8 +156,8 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
         pon = math.sqrt((x_ratio ** 2) + ((perp_func_slope * y_ratio) ** 2))
 
     angle = abs(math.degrees(atan2(perp_func_slope, 1)))
-    print("angle " + str(angle))
-    print("slope " + str(perp_func_slope))
+    # print("angle " + str(angle))
+    # print("slope " + str(perp_func_slope))
 
     # print('{0:f}'.format(pon * path_width))
 
@@ -166,12 +166,12 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
 
     scaler = 1 - (angle / 90)
 
-    pon2 = ((cos(angle) * x_ratio) + (sin(angle) * y_ratio))
+    # pon2 = ((cos(angle) * x_ratio) + (sin(angle) * y_ratio))
     pon3 = (math.cos(semicircle * angle) * x_ratio) + (math.sin(semicircle * angle) * y_ratio)
     pon4 = ((1 - scaler) * x_ratio) + (scaler * y_ratio)
-    print('pon  ' + '{0:f}'.format(pon))
-    print('pon2 ' + '{0:f}'.format(pon2))
-    print("scaler " + str(scaler))
+    # print('pon  ' + '{0:f}'.format(pon))
+    # print('pon2 ' + '{0:f}'.format(pon2))
+    # print("scaler " + str(scaler))
 
     diff = abs(x_ratio - y_ratio)
     new_scaler = 1 - abs(math.sin(math.radians(angle)))
@@ -204,20 +204,20 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
 
     bonbonbon = y_ratio + (diff * scaler) - mid_thing
 
-    print("diff " + str(diff))
-    print("new_scaler " + str(new_scaler))
-    print("diff * new_scaler " + str(diff * new_scaler))
-    print('{0:f}'.format(diff*new_scaler))
-    print('cos angle ' + str(math.cos(math.radians(angle))))
-    print('sin angle ' + str(math.sin(math.radians(angle))))
+    # print("diff " + str(diff))
+    # print("new_scaler " + str(new_scaler))
+    # print("diff * new_scaler " + str(diff * new_scaler))
+    # print('{0:f}'.format(diff*new_scaler))
+    # print('cos angle ' + str(math.cos(math.radians(angle))))
+    # print('sin angle ' + str(math.sin(math.radians(angle))))
 
-    print('{0:f}'.format(x_ratio))
-    print('{0:f}'.format(y_ratio))
+    # print('{0:f}'.format(x_ratio))
+    # print('{0:f}'.format(y_ratio))
 
-    print(bonbonbon)
-    print('{0:f}'.format(bonbonbon))
+    # print(bonbonbon)
+    # print('{0:f}'.format(bonbonbon))
 
-    print("mid con " + str(mid_thing))
+    # print("mid con " + str(mid_thing))
 
     path_border_intersection = (path_width * bonbonbon) / (math.sin(math.radians(90 - math.degrees(math.atan(func[0])))))
 
