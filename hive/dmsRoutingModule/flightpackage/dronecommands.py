@@ -23,10 +23,14 @@ tello_port = 8889
 tello_address = (tello_host, tello_port)
 
 
+def get_yaw():
+    return response_arr[-1]
+
+
 def recv():
-    # global start_yaw
     count = 0
     while True:
+        count = count + 1
         data, server = sock.recvfrom(2046)
         if data == b'ok':
             print("ok")
@@ -35,13 +39,9 @@ def recv():
         else:
             response_arr.append(data_parser(data.decode(encoding="utf-8")))
             # print(response_arr[-1])
-            '''
-            if count == 0:
-                start_yaw = response_arr[0]
-                print("Start yaw is " + str(start_yaw))
-        count = count + 1
-            '''
 
+        if count == 0:
+            print(response_arr[0])
 
 
 def data_parser(data):
@@ -70,7 +70,7 @@ def data_parser(data):
 
 def the_thread(cmd):
     global sent, event
-    # print('cmd: ' + cmd)
+    print('cmd: ', cmd)
     try:
         if 'end' in cmd:
             print('ending')
@@ -78,10 +78,16 @@ def the_thread(cmd):
             tello_sock.shutdown(1)
             pass
 
-        # Send data
+        s_time = time.time()
+
         cmd = cmd.encode(encoding="utf-8")
+        # sent = tello_sock.sendto("ccw 180".encode(encoding="utf-8"), tello_address)
         sent = tello_sock.sendto(cmd, tello_address)
-        # print(response_arr[-1])               # make tello state work - array rn is empty
+
+        # Send data
+        # while time.time() < (s_time + 1):
+        #    pass
+
     except KeyboardInterrupt:
         print('\n . . .\n')
 
@@ -91,37 +97,70 @@ def the_thread(cmd):
         tello_sock.close()
         tello_sock.shutdown(1)
 
+
 yaw_reset = False
-def correct_yaw(flight_time):
-    global start_yaw
+
+
+def correct_yaw(yaw, flight_time):
+    yaw = int(yaw)
     delay = 1
     start_time = time.time()
     correct_yaw_start = int(response_arr[-1])                           # is defined only when function is called
     is_deviating = False
     new_yawk = None
     yaw_per_sec = 0
-    print(yaw_reset)
-    if yaw_reset:
-        start_yaw = correct_yaw_start
-        print("pikkekusse")
     while (time.time() - start_time) < flight_time:                     # if the drone flies at 1 m/s then this works
         #  print(str(flight_time - (time.time() - start_time)) + " seconds left before turning")
         newest_yaw_response = int(response_arr[-1])                     # is redefined after each loop
         # check yaw status
-        if newest_yaw_response == int(start_yaw):                       # no deviation
+        # print("newest_yaw_response ", newest_yaw_response)
+        # print("yaw ", yaw)
+        if newest_yaw_response == int(yaw):                             # no deviation
             pass
         else:                                                           # deviation
             is_deviating = True
 
+        newest_yaw_response = int(newest_yaw_response)
+
         # change yaw
         if is_deviating:
+            from_yaw = newest_yaw_response + 180
+            to_yaw = yaw + 180
+
+            if from_yaw < to_yaw:
+                diff = to_yaw - from_yaw
+                if diff < 180:
+                    yaw_per_sec = abs(diff / delay)
+                else:
+                    yaw_per_sec = -abs((360-diff) / delay)
+            else:
+                diff = from_yaw - to_yaw
+                if diff < 180:
+                    yaw_per_sec = -abs(diff / delay)
+                else:
+                    yaw_per_sec = abs((360 - diff) / delay)
+
+            if yaw_per_sec < -100:
+                yaw_per_sec = -100
+            elif yaw_per_sec > 100:
+                yaw_per_sec = 100
+
             # Gamle kode der virkede
-            new_yawk = int(start_yaw) - newest_yaw_response
-            yaw_per_sec = (new_yawk / delay)
+            # new_yawk = int(yaw) - newest_yaw_response
+            # yaw_per_sec = (new_yawk / delay)
+            #new_yawk = 180 - abs(int(yaw)) + 180 - abs(newest_yaw_response)
+            #if new_yawk > 180:
+            #    yaw_per_sec = 360 - new_yawk
+            #else:
+            #    yaw_per_sec = new_yawk
+
+
+
             is_deviating = False
-            print(newest_yaw_response)
+            # print(int(yaw), newest_yaw_response, new_yawk)
+
             '''
-            yaw_per_sec = 180 - abs(start_yaw) + 180 - abs(newest_yaw_response)
+            yaw_per_sec = 180 - abs(yaw) + 180 - abs(newest_yaw_response)
             if yaw_per_sec > 100:
                 yaw_per_sec = 100
             elif yaw_per_sec < -100:
@@ -132,25 +171,27 @@ def correct_yaw(flight_time):
 
         rc_string = "rc 0 80 0 " + str(yaw_per_sec)
 
-        print("The new rc string: " + rc_string + "\t\t old yaw: " + str(start_yaw))
+        # print("The new rc string: " + rc_string + "\t\t old yaw: " + str(yaw))
         the_thread(rc_string)
 
         time.sleep(delay)
 
 
-def search_turns(cmd, flight_time, left_right):
+def search_turns(degrees_pr_sec, flight_time):
     start_time = time.time()
 
+    cmd = "rc 0 100 0 "
     left_right_str = ""
 
-    if left_right:
+    if degrees_pr_sec > 0:
+        cmd = cmd + str(degrees_pr_sec)
         left_right_str = "left"
     else:
+        cmd = cmd + str(degrees_pr_sec)
         left_right_str = "right"
 
     while (time.time() - start_time) < flight_time:
         the_thread(cmd)
-        # print(str(semi_circle - (time.time() - start_time)) + " seconds left of this " + left_right_str + " turn")
 
 
 def instantiate():
@@ -174,6 +215,14 @@ def instantiate():
     cmd = "rc 0 0 0 0".encode(encoding="utf-8")
     sent = tello_sock.sendto(cmd, tello_address)
 
+    time.sleep(2)
+
+    # cmd = "takeoff".encode(encoding="utf-8")
+    # sent = tello_sock.sendto(cmd, tello_address)
+
+    # cmd = "ccw 360".encode(encoding="utf-8")
+    # sent = tello_sock.sendto(cmd, tello_address)
+
     print("Drone's been initialized")
     print("Three seconds to takeoff!")
     time.sleep(1)
@@ -184,4 +233,4 @@ def instantiate():
 
     the_thread("takeoff")
     print("We are airborne!!!")
-    time.sleep(3)
+    time.sleep(5)

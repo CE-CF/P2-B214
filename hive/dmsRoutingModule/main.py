@@ -135,12 +135,13 @@ deg_85 = np.array([[57.0436002010424, 9.941992504764456],  # approx 85 degrees
                    [57.04332179604662, 9.941749287658181],
                    [57.04343269009751, 9.940075589296312]])
 
-soccer_arr = np.array([[57.01819713287610, 9.950639157489012],
-                       [57.01898532643292, 9.951475516739412],
-                       [57.01865997809893, 9.952447804183203],
-                       [57.01786777011994, 9.951616604931064]])
+soccer_arr = np.array([[57.01790968504875, 9.952207436114897],
+                       [57.01814477939277, 9.952435387608425],
+                       [57.01804259003947, 9.952628518877036],
+                       [57.017833800022906, 9.952494389395032]])
 
-soccer_rb = [57.01898671673149, 9.952689316888373]
+soccer_rb = [57.01786594422335, 9.952036864294133]
+#soccer_rb = [57.01773774865883, 9.952373791864979]
 
 
 def run():
@@ -148,7 +149,7 @@ def run():
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-    sohn = Routing(soccer_arr, 0.0002, 30)
+    sohn = Routing(soccer_arr, 0.00002, 3)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
 
@@ -164,12 +165,12 @@ def run():
                  sohn.get_path_functions(),
                  1)
 
-    # search_route( path width (meters) - pass obj.get_path_width as parameter,
+    # search_route( path width (meters) - if default pass obj.get_path_width as parameter,
     #               path limit points
     #               origo global points
     #               path functions
 
-    search_route(5,
+    search_route(3,
                  sohn.get_path_limit_points(),
                  sohn.get_origo(),
                  sohn.get_path_functions())

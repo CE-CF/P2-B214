@@ -1,7 +1,8 @@
-from .dronecommands import instantiate, the_thread, correct_yaw, search_turns, yaw_reset
+from .dronecommands import instantiate, the_thread, correct_yaw, search_turns, yaw_reset, get_yaw
 
 from routingpackage.distanceinmeters import DistanceInMeters
 import math
+import time
 # from ..routingpackage.findroutefunctions import run
 import numpy as np
 
@@ -9,7 +10,7 @@ drone_speed = 1
 
 
 def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions, d_speed):
-    global drone_speed
+    global drone_speed, yaw_reset
     if d_speed != 0:
         drone_speed = d_speed
 
@@ -22,6 +23,7 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
     route_starting_point[1] = y
     '''
     instantiate()
+
     '''
     A third point is being created that has the same x-coordinate as the relay-box, 
     but larger in the y-coordinate. This creates a point straight north from the 
@@ -59,14 +61,22 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
     if relay_box_local_position[0] > route_starting_point[0]:
         # Rotate counterclockwise
         rotation_ccw = "ccw " + str(int(round(angle_to_first_point)))
+        # print(rotation_ccw)
         left = True
+        the_thread("stop")
+        time.sleep(2)
         the_thread(rotation_ccw)
+        time.sleep(2)
 
     elif relay_box_local_position[0] < route_starting_point[0]:
         # Rotate clockwise
         rotation_cw = "cw " + str(int(round(angle_to_first_point)))
+        # print(rotation_cw)
         right = True
+        the_thread("stop")
+        time.sleep(2)
         the_thread(rotation_cw)
+        time.sleep(2)
 
     else:
         # Fly straight up
@@ -81,17 +91,18 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
 
     # RESET YAW HERE !!!!!!!!!!!!!
 
-    yaw_reset = True
+    start_yaw = get_yaw()
 
     temp_arr = [[relay_box_local_position[1] + origo[1], relay_box_local_position[0] + origo[0]],
                 [route_starting_point[1] + origo[1], route_starting_point[0] + origo[0]]]
     # print(temp_arr)
     distance_to_first_point = DistanceInMeters.calculate_distance(temp_arr[0], temp_arr[1])
 
-    # print(distance_to_first_point)
-    # correct_yaw(distance_to_first_point) !!!!!!!!!!!!!!!!!!!! UNCOMMENT PLZ
+    print("straight ( yaw=" + str(start_yaw) + ", flight_time=" + str(distance_to_first_point) + " )")
+    correct_yaw(start_yaw, distance_to_first_point) # !!!!!!!!!!!!!!!!!!!! UNCOMMENT PLZ
 
     # Stop and hover at the first point
+    # print("stop")
     the_thread("stop")
     '''
     To determine the angle between the y-axis and the first line,
@@ -107,37 +118,49 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions,
 
     # Angle towards the second point
     angle_to_second_point = np.degrees(np.arccos(np.dot(unit_vector_first_point_1, unit_vector_first_point_2)))
-
+    # print(path_limit_points[0][0])
+    # print(path_limit_points[1][0])
     if path_limit_points[0][0] < path_limit_points[1][0]:
         # Rotate back the same amount as before plus the extra angle to align with the route
         if left == True:
             total_angle = angle_to_first_point + angle_to_second_point
             rotation_back_cw = "cw " + str(int(round(total_angle)))
+            # print(rotation_back_cw)
             the_thread(rotation_back_cw)
         elif right == True:
+            # back_to_north = - angle_to_first_point
+            # total_angle = abs(-angle_to_first_point+angle_to_second_point)
             total_angle = angle_to_first_point - angle_to_second_point
-            rotation_back_cw = "cw " + str(int(round(total_angle)))
+            rotation_back_cw = "ccw " + str(int(round(total_angle)))
+            # print(rotation_back_cw)
             the_thread(rotation_back_cw)
     else:
         # Rotate back the same amount as before plus the extra angle to align with the route
         if left == True:
             total_angle = angle_to_first_point - angle_to_second_point
             rotation_back_ccw = "ccw " + str(int(round(total_angle)))
+            # print(rotation_back_ccw)
             the_thread(rotation_back_ccw)
         elif right == True:
             total_angle = angle_to_first_point + angle_to_second_point
             rotation_back_ccw = "ccw " + str(int(round(total_angle)))
+            # print(rotation_back_ccw)
             the_thread(rotation_back_ccw)
-
-
+    time.sleep(2)
     # Now the drone should be ready to fly straight to the second point
-    # RESET YAW HERE
-    yaw_reset = True
 
 
 def search_route(path_width, path_limit_points, origo, path_functions):
+    print("SEARCH ROUTE FUNCTION...")
     global drone_speed
-    yaw_reset = False
+    drone_yaw_1 = int(get_yaw())
+    if drone_yaw_1 < 0:
+        drone_yaw_2 = abs(drone_yaw_1 - 180)
+    else:
+        drone_yaw_2 = -abs(drone_yaw_1 - 180)
+    print("yaaaaawww 1: ", drone_yaw_1, "yeehaaaw 2: ", drone_yaw_2)
+    #print("yaw one way    ", drone_yaw_1)
+    #print("yaw other way  ", drone_yaw_2)
     which_way = None  # true = left, false = right
     path_num = None
     for i in range(len(path_limit_points)):
@@ -145,6 +168,9 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             path_num = 1
         else:
             path_num = math.floor(i / 2) + 1
+
+        print("path_num ", path_num)
+
         if (i % 2) == 0:  # when path_limit_point[i] is the point in the beginning of a straight flight
             # fly straight
             temp_arr = [[path_limit_points[i][1] + origo[1], path_limit_points[i][0] + origo[0]],
@@ -155,10 +181,14 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             # distance in meters divided by speed in meters per second = flight time in seconds
             flight_time = dist / drone_speed
 
-            # dist = DistanceInMeters.calculate_distance(path_limit_points[i], path_limit_points[i + 1]) dont uncomment this
-            # correct_yaw(flight_time)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            # correct_yaw(, flight_time)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            print("straight ( yaw=angle, flight_time=" + str(flight_time) + " )")
+            if (path_num - 1) % 2:
+                #print("straight ( yaw=" + str(drone_yaw_1) + ", flight_time=" + str(flight_time) + " )")
+                correct_yaw(drone_yaw_2, flight_time)
+            else:
+                #print("straight ( yaw=" + str(drone_yaw_2) + ", flight_time=" + str(flight_time) + " )")
+                correct_yaw(drone_yaw_1, flight_time)
 
             if not (i+2) == len(path_limit_points):      # if there is a point after the turn .... (i+2) because this only runs when i%2==0
                 # figure out which way to turn next
@@ -167,7 +197,7 @@ def search_route(path_width, path_limit_points, origo, path_functions):
                     # if the next path has a function with higher intersection value
                     if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
                         # print(str(path_functions[math.floor(i / 2)][1]) + " < " + str(path_functions[(math.floor(i / 2) + 1)][1]))
-                        print("Going on path number ", path_num, " turning left now")
+                        # print("Going on path number ", path_num, " turning left now")
                         # print("lefttt")
                         which_way = True
                     else:
@@ -227,14 +257,14 @@ def search_route(path_width, path_limit_points, origo, path_functions):
 
             # 180 degrees divided by the time it takes to complete the 180-turn outputs the
             # yaw the drone should turn with each second ... the "yaw per second"
-            degrees_pr_sec = str(int(round(180 / flight_time)))
+            degrees_pr_sec = int(round(180 / flight_time))
 
             if which_way:  # if which_way is set to true then turn left
-                print("turn_left( degrees_pr_sec=" + str(degrees_pr_sec) + ", flight_time=" + str(flight_time) + " )")
-                # search_turns("rc 0 100 0 -" + degrees_pr_sec, flight_time, True)  !!!!! UNCOMMENT THESE !!! #######
+                #print("turn_left( degrees_pr_sec=" + str(degrees_pr_sec) + ", flight_time=" + str(flight_time) + " )")
+                search_turns(-degrees_pr_sec, flight_time) # !!!!! UNCOMMENT THESE !!! #######
             if not which_way:  # if which_way is set to false then turn right
-                print("turn_right( degrees_pr_sec=" + str(degrees_pr_sec) + ", flight_time=" + str(flight_time) + " )")
-                # search_turns("rc 0 100 0 " + degrees_pr_sec, flight_time, False)  !!!!! UNCOMMENT THESE !!! #######
+                #print("turn_right( degrees_pr_sec=" + str(degrees_pr_sec) + ", flight_time=" + str(flight_time) + " )")
+                search_turns(degrees_pr_sec, flight_time) # !!!!! UNCOMMENT THESE !!! #######
 
 
 def go_home():
