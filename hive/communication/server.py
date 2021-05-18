@@ -1,11 +1,7 @@
-# Full imports
-import re
 import logging
-import threading
-
-# Partial imports
 from abc import ABC, abstractmethod
 from datetime import datetime
+from enum import Enum
 from socket import (
     AF_INET,
     SHUT_RDWR,
@@ -15,30 +11,17 @@ from socket import (
     SOL_SOCKET,
     socket,
 )
+from threading import Lock, Thread
 from typing import List
 
-# Hive imports
 from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
-from hive.exceptions.packet_exceptions import DecodeErrorChecksum
 
-# Communication imports
 from .packet import HiveT, HiveU, Packet
 
-# ====================
-# LOGGING RELATED
-# Change logging level when done
 logging.basicConfig(filename="server.log", level=logging.DEBUG)
 
-# ========================================================
-# ========================================================
-# ████████ ██   ██ ██████  ███████  █████  ██████  ███████
-#    ██    ██   ██ ██   ██ ██      ██   ██ ██   ██ ██
-#    ██    ███████ ██████  █████   ███████ ██   ██ ███████
-#    ██    ██   ██ ██   ██ ██      ██   ██ ██   ██      ██
-#    ██    ██   ██ ██   ██ ███████ ██   ██ ██████  ███████
-# ========================================================
-# ========================================================
-class UDPPacketHandler(threading.Thread):
+
+class UDPPacketHandler(Thread):
     def __init__(
         self,
         thread_id: int,
@@ -111,12 +94,18 @@ class UDPPacketHandler(threading.Thread):
             self.log_info(
                 "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
             )
-            self.target(packet, CONN_TYPE_UDP)
+            self.target(packet, self.conn_sock, CONN_TYPE_UDP)
         self.log_info("ENDED")
 
 
-class TCPClientHandler(threading.Thread):
-    """Class used to handle TCP packets on another thread"""
+class TCPClientHandler(Thread):
+    """The thread designed to handle TCP Clients"""
+
+    _client_name = "test"
+
+    @property
+    def client_name(self):
+        return self._client_name
 
     def __init__(
         self,
@@ -124,7 +113,7 @@ class TCPClientHandler(threading.Thread):
         client_conn: socket,
         client_addr: tuple,
         target,
-        router: _Router,
+        router,
     ):
         super().__init__()
         self.thread_id = thread_id
@@ -133,24 +122,10 @@ class TCPClientHandler(threading.Thread):
         self.target = target
         self.router = router
 
-    def recvall(self, conn):
-        """Receive all of incoming packet
-
-        :returns: Message in bytes
-
-        """
-        msg = b""
-        while True:
-            data_part = conn.recv(BUFFER_SIZE)
-            msg += data_part
-            if len(data_part) < BUFFER_SIZE:
-                break
-        return bytes(msg)
-
-    def reply_heart(self, conn):
-        packet = HiveT(p_data="OK")
-        msg_bytes = HiveT.encode_packet(packet)
-        conn.send(msg_bytes)
+        # Setup thread server
+        self._thread_server = socket(AF_INET, SOCK_STREAM)
+        self._thread_server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        self._thread_server.bind(("", 0))
 
     def log_info(self, msg: str):
         """Logging helper
@@ -176,81 +151,86 @@ class TCPClientHandler(threading.Thread):
         )
         logging.warning(log_format)
 
-    def create_thread_server(self):
-        new_server = socket(AF_INET, SOCK_STREAM)
-        new_server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        new_server.bind(("", 0))
-        return new_server
+    def recvall(self):
+        """Receive all of incoming packet
+
+        :returns: Message in bytes
+
+        """
+        msg = b""
+        while True:
+            data_part = self.client_conn.recv(BUFFER_SIZE)
+            msg += data_part
+            if len(data_part) < BUFFER_SIZE:
+                break
+        return bytes(msg)
+
+    def recvpacket(self):
+        msg = self.recvall()
+        return HiveT.decode_packet(msg)
 
     def forward(self, packet: HiveT):
-        self.conn.send(HiveT.encode_packet(packet))
+        self.client_conn.send(HiveT.encode_packet(packet))
 
-    @property
-    def client_name(self):
-        return self._client_name
-
-    @client_name.setter
-    def client_name(self, name):
-        self._client_name = name
-
-    def run(self):
-        # log thread start
-        self.log_info("STARTED")
-
-        # log connection details
-        self.log_info(
-            f"""Connection Information:
-\t\t\t\t\t\t\t- Client Address: {self.client_addr[0]}:{self.client_addr[1]}"""
-        )
-
-        # Receive initial heartbeat
-        message = self.recvall(self.client_conn)
-        packet = HiveT.decode_packet(message)
-
-        if packet.p_type == 3:
-            self.log_info("Received initial heartbeat")
-        else:
-            self.log_warning(
-                "Initial packet not heartbeat, proceding anyway since"
-                + " connection is there!"
-            )
-
-        # Create new server
-        thread_server = self.create_thread_server()
-        new_port = thread_server.getsockname()[1]
-
-        # Send thread server info for client migration
+    def migrate(self):
+        # Send migration information
+        self.log_info("Starting migration")
+        new_port = self._thread_server.getsockname()[1]
         mig_data_str = "CMD:MIGRATE;P:{port};".format(port=new_port)
         mig_packet = HiveT(p_dest=self.client_addr[0], p_data=mig_data_str)
+        mig_packet.dump(log=False)
         self.client_conn.send(HiveT.encode_packet(mig_packet))
 
-        # Begin transfer
+        # Close connection for original connection
+        self.log_info("Shutting down original connection")
         self.client_conn.shutdown(SHUT_RDWR)
         self.client_conn.close()
-        self.log_info(f"TRANSFER {self.client_addr} -> {new_port}")
 
-        thread_server.listen(1)
-        self.conn, self.addr = thread_server.accept()
+        self.log_info("Listening for migrated connection")
+        self._thread_server.listen(1)
+        self.client_conn, self.client_addr = self._thread_server.accept()
+        self.log_info("Migration accepted")
+        self.log_info(f"New client information: {self.client_addr}")
 
-        msg = self.recvall(self.conn)
-        packet = HiveT.decode_packet(msg)
+    def run(self):
+        self.log_info("STARTED")
+        self.log_info(
+            f"Client info: {self.client_addr[0]}:{self.client_addr[1]}"
+        )
+
+        packet = self.recvpacket()
+        self._client_name = packet.p_data
+        self.log_info(f"Client name: {self.client_name}")
+
+        self.migrate()
+        self.log_info("Updating routers lookup table")
+        self.router.update_table()
+
+        packet = self.recvpacket()
+        p_dump = packet.dump(to_stdout=False)
+        log_string = ""
+        for k in p_dump:
+            log_string += f"[{k.upper()}]: {p_dump[k]}"
+            log_string += "\n\t\t\t\t\t\t\t"
+
+        self.log_info(
+            "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
+        )
+        connected = False
         if packet.p_data == "OK":
-            self.log_info("TRANSFER done!")
+            print("TRANSFER DONE!")
+            packet = HiveT(3, self.client_addr[0], "DONE")
+            self.client_conn.send(HiveT.encode_packet(packet))
             connected = True
         else:
-            self.log_warning("TRANSFER failed")
+            print("TRANSFER FAILED!")
             connected = False
 
-        # Start new thread server loop
         while connected:
-            # Packet handling
             try:
-                msg = self.recvall(self.conn)
-                recv_packet = HiveT.decode_packet(msg)
-                if type(recv_packet) is HiveT:
-
-                    recv_packet.src = self.addr
-                    p_dump = recv_packet.dump(to_stdout=False)
+                packet = self.recvpacket()
+                if type(packet) is HiveT:
+                    p_dump = packet.dump(to_stdout=False)
                     log_string = ""
                     for k in p_dump:
                         log_string += f"[{k.upper()}]: {p_dump[k]}"
@@ -261,115 +241,161 @@ class TCPClientHandler(threading.Thread):
                         + "\n\t\t\t\t\t\t\t"
                         + log_string
                     )
-                    if recv_packet.p_type == 3:
-                        self.reply_heart(self.conn)
-                    else:
-                        self.target(recv_packet, self.conn, mode=CONN_TYPE_TCP)
+                    # Catch packet by router here
+                    routemsg = self.router.route(packet)
+                    if routemsg is RoutingMSG.SELF_IS_DEST:
+                        packet.src = self.client_addr
+                        self.target(
+                            packet, self.client_conn, mode=CONN_TYPE_TCP
+                        )
+                    elif routemsg is (
+                        RoutingMSG.FORWARDED or RoutingMSG.DRONE_IS_DEST
+                    ):
+                        self.client_conn.send(
+                            HiveT.encode_packet(
+                                HiveT(3, self.client_addr[0], "MSG:FORWARDED;")
+                            )
+                        )
+                    elif routemsg is RoutingMSG.DEST_NOT_FOUND:
+                        self.client_conn.send(
+                            HiveT.encode_packet(
+                                HiveT(
+                                    3,
+                                    self.client_addr[0],
+                                    "ERROR:404;",
+                                )
+                            )
+                        )
+
                 else:
                     connected = False
 
-            except ConnectionResetError:
-                self.conn.shutdown(SHUT_RDWR)
-                self.conn.close()
+            except ConnectionRefusedError:
+                self.client_conn.shutdown(SHUT_RDWR)
+                self.client_conn.close()
                 connected = False
 
-        # log thread end
         self.log_info("ENDED")
 
 
-class _Router:
-    def __init__(self):
-        self.populate_dest_table()
+class RoutingMSG(Enum):
+    FORWARDED = 1
+    DEST_NOT_FOUND = 2
+    SELF_IS_DEST = 3
+    DRONE_IS_DEST = 4
+
+
+class Router:
+    @property
+    def clientlist(self):
+        return self._clientlist
+
+    def __init__(self, srv_ip):
+        self._clientlist: List[TCPClientHandler] = []
+        self.lock = Lock()
+        self.srv_ip = srv_ip
 
     def is_destination(self):
         if type(self.packet) == HiveT:
-            if self.packet.p_dest == self.srv_sock:
+            print("in is_destination")
+            if self.packet.p_dest.exploded == self.srv_ip:
                 return True
             else:
                 return False
         else:
             return False
 
-    def add_client(self, client: TCPlientHandler):
-        
-        
-    def populate_dest_table(self):
+    def update_table(self):
+        self.log_info("Updating lookup table")
+        self.lock.acquire()
         self.dest_table = {}
-        for x in self.client_handlers:
+        for x in self.clientlist:
             self.dest_table[x.client_name] = {
-                "address": x.addr[0],
-                "port": x.addr[1],
+                "address": x.client_addr[0],
+                "port": x.client_addr[1],
                 "handler": x,
             }
+        log_string = ""
+        for x in self.dest_table:
+            log_string += "\n=============================================\n"
+            log_string += f"\t\t\tClient: {x}\n"
+            log_string += f"\t\t\tAddress: {self.dest_table[x]['address']}\n"
+            log_string += f"\t\t\tPort: {self.dest_table[x]['port']}\n"
+            log_string += (
+                "\t\t\tThread-ID:"
+                + f"{self.dest_table[x]['handler'].thread_id}\n"
+            )
+            log_string += "\n=============================================\n"
+        self.log_info(log_string)
+        self.lock.release()
 
-    def find_dest(self):  # returns destination handler
+    def log_info(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
+        log_format = f"[ ROUTER | TIME {datetime.now()} ]: {msg}"
+        logging.info(log_format)
+
+    def log_warning(self, msg: str):
+        """Logging helper
+
+        :param msg:
+        :type msg: str
+
+        """
+        log_format = f"[ ROUTER | TIME {datetime.now()} ]: {msg}"
+        logging.warning(log_format)
+
+    def add_client(self, client: TCPClientHandler):
+        self._clientlist.append(client)
+
+    def find_dest(self):
+        """Finds the destination for packet in destination table
+
+        :returns: client key in destination table
+
+        """
         for x in self.dest_table:
             if self.dest_table[x]["address"] == self.packet.p_dest.exploded:
-                print(f"Destination found in client: {x}")
+                self.log_info(f"Destination found in client: {x}")
                 return x
 
     def route(self, packet):
         """Routes the supplied packet to its final destination,
         based on the destination table
 
-        :param packet: 
+        :param packet:
         :type packet: HiveT
         :returns: bool
 
         """
         self.packet = packet
-
+        self.log_info(
+            f"Received packet with destination: {self.packet.p_dest.exploded}"
+        )
+        self.lock.acquire()
         if self.is_destination():
-            return True
+            self.log_info("Server is destination of packet")
+            self.lock.release()
+            return RoutingMSG.SELF_IS_DEST
+        elif self.find_dest() is None:
+            self.log_info("Destination not found")
+            self.lock.release
+            return RoutingMSG.DEST_NOT_FOUND
         else:
             dest_key = self.find_dest()
+            self.log_info(f"Forwarding packet to destination: {dest_key} ")
             c_handler = self.dest_table[dest_key]["handler"]
             c_handler.forward(self.packet)
-            return False
+            self.lock.release()
+            return RoutingMSG.FORWARDED
 
 
-# ================================
-# ================================
-#  ██████  ██████  ██████  ███████
-# ██      ██    ██ ██   ██ ██
-# ██      ██    ██ ██   ██ █████
-# ██      ██    ██ ██   ██ ██
-#  ██████  ██████  ██████  ███████
-# ================================
-# ================================
 class Server(ABC):
-    """Base class for hive servers
-
-    Attributes:
-     srv_port_tcp: Integer :: TCP socket port
-     srv_port_udp: Integer :: UDP socket port
-     srv_socket_tcp: socket object :: Socket object for the TCP connection
-     srv_socket_udp: socket object :: Socket object for the UDP connection
-
-    Methods:
-     reply_heart(conn) :: Sends a heartbleead reply
-     start() :: Starts the server and executes the run method
-     run(packet: Packet) :: Abstract method used to handle the received packets
-                            Override this in subclass
-
-    """
-
-    # Attributes
-    # ===
-    # UDP
-    # ---
-    _srv_port_udp = None
-    _srv_socket_udp = None
-
-    # TCP
-    # ---
-    _srv_port_tcp = None
-    _srv_socket_tcp = None
-    _max_clients_tcp = 2
-    _conns_counter_tcp = 0
-
-    # Constructor
-    def __init__(self, tcp_port=1337, udp_port=6969):
+    def __init__(self, tcp_port=1337, udp_port=6969, srv_ip="127.0.0.1"):
         self.srv_port_tcp = tcp_port
         self.srv_socket_tcp = socket(AF_INET, SOCK_STREAM)
         self.srv_socket_tcp.bind(("", self.srv_port_tcp))
@@ -377,9 +403,12 @@ class Server(ABC):
         self.srv_port_udp = udp_port
         self.srv_socket_udp = socket(AF_INET, SOCK_DGRAM)
         self.srv_socket_udp.bind(("", self.srv_port_udp))
+        self.conn_counter_tcp = 0
+
+        self.router = Router(srv_ip)
 
     @abstractmethod
-    def run(self, packet: Packet, conn, mode: bool):
+    def run(self, packet: Packet, conn: socket, mode: bool):
         """The \"loop\" function for the Server class. All necessary packet
         handling should be done in here.
         *Note* A check should be implemented to differentiate between UDP based
@@ -392,54 +421,34 @@ class Server(ABC):
         """
         pass
 
-    def _accept_tcp(self):
-        return self.srv_socket_tcp.accept()
-
     def start_tcp(self):
-        log_string = f"TCP Listener on port: {self.srv_port_tcp}"
-        print(log_string)
-        logging.info(log_string)
         while True:
             self.srv_socket_tcp.listen(1)
-            conn_tcp, addr_tcp = self._accept_tcp()
-            # Begin multithreading TCP
-            # ---
-            self.conns_counter_tcp += 1
+            conn, addr = self.srv_socket_tcp.accept()
+            self.conn_counter_tcp += 1
             tcpthread = TCPClientHandler(
-                self.conns_counter_tcp,
-                conn_tcp,
-                addr_tcp,
-                self.run,
-                self.max_clients_tcp,
+                self.conn_counter_tcp, conn, addr, self.run, self.router
             )
+            self.router.add_client(tcpthread)
+            self.router.update_table()
             tcpthread.start()
 
     def start(self):
-        """Starts the server and handles errors, executes the abstract run
-        method.
-
-        :returns:
-
-        """
-
         try:
-            # Boilerplate server code
-            # ---
-            print("Server started")
-            # Start tcp main thread
-            tcpmain = threading.Thread(target=self.start_tcp)
+            print("Starting server")
+            # Start main tcp thread here
+            print(f"TCP Listener on port: {self.srv_port_tcp}")
+            tcpmain = Thread(target=self.start_tcp)
             tcpmain.daemon = True
             tcpmain.start()
 
-            # Begin multithreading UDP
-            # ---
+            # Start UDP thread
             print(f"UDP Listener on port: {self.srv_port_udp}")
             udpthread = UDPPacketHandler(1, self.run, self.srv_socket_udp)
             udpthread.start()
 
             tcpmain.join()
             udpthread.join()
-        # "Catch" exceptions
         except IndexError:
             print("Stopping server")
             self.srv_socket_tcp.shutdown(SHUT_RDWR)
@@ -452,53 +461,3 @@ class Server(ABC):
             self.srv_socket_tcp.close()
             self.srv_socket_udp.shutdown(SHUT_RDWR)
             self.srv_socket_udp.close()
-        except DecodeErrorChecksum:
-            pass
-
-    @property
-    def max_clients_tcp(self):
-        return self._max_clients_tcp
-
-    @max_clients_tcp.setter
-    def max_clients_tcp(self, cmax: int = 2):
-        self._max_clients_tcp = cmax
-
-    @property
-    def conns_counter_tcp(self):
-        return self._conns_counter_tcp
-
-    @conns_counter_tcp.setter
-    def conns_counter_tcp(self, i: int):
-        self._conns_counter_tcp = i
-
-    @property
-    def srv_socket_tcp(self):
-        return self._srv_socket_tcp
-
-    @srv_socket_tcp.setter
-    def srv_socket_tcp(self, sock: socket):
-        self._srv_socket_tcp = sock
-
-    @property
-    def srv_socket_udp(self):
-        return self._srv_socket_udp
-
-    @srv_socket_udp.setter
-    def srv_socket_udp(self, socket: socket):
-        self._srv_socket_udp = socket
-
-    @property
-    def srv_port_tcp(self):
-        return self._srv_port_tcp
-
-    @srv_port_tcp.setter
-    def srv_port_tcp(self, server_port):
-        self._srv_port_tcp = server_port
-
-    @property
-    def srv_port_udp(self):
-        return self._srv_port_udp
-
-    @srv_port_udp.setter
-    def srv_port_udp(self, server_port):
-        self._srv_port_udp = server_port
