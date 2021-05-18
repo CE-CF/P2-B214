@@ -20,19 +20,38 @@ class HiveU(Packet):
     This is the class for the UDP based packets in the Hive system.
     """
 
-    def __init__(self, ident: int, seq: int, data: bytes):
+    def __init__(self, ident: int, ptype, seq: int, data: bytes):
         self.identifier = ident
         self.seq = seq
+        self.ptype = ptype
         self.data = data
 
     # --------
     # Properties
     _identifier: int = 0
     _seq: int = 0
+    _ptype: int = 0
     _data: bytes = bytes()
 
     # -------------------
     # Getters and setters
+    @property
+    def ptype(self):
+        return self._ptype
+
+    @ptype.setter
+    def ptype(self, ptype):
+        if type(ptype) is str:
+            self._ptype = {
+                "cmd": 0,
+                "state": 1,
+                "video": 2,
+            }[ptype]
+        elif type(ptype) is int and ptype in [0, 1, 2]:
+            self._ptype = ptype
+        else:
+            raise PacketTypeError
+
     @property
     def identifier(self):
         return self._identifier
@@ -78,6 +97,7 @@ class HiveU(Packet):
         packet_bytearray = bytearray()
         packet_bytearray.append(self.identifier)
         packet_bytearray.append(self.seq)
+        packet_bytearray.append(self.ptype)
         packet_bytearray += bytearray(self.data)
 
         return bytes(packet_bytearray)
@@ -88,8 +108,9 @@ class HiveU(Packet):
     def decode(msg):
         ident = msg[0]
         seq = msg[1]
-        data = msg[2:]
-        return HiveU(ident, seq, data)
+        ptype = msg[2]
+        data = msg[3:]
+        return HiveU(ident, ptype, seq, data)
 
 
 class HiveT(Packet):
