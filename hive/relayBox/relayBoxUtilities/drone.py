@@ -16,7 +16,7 @@ class Drone():
             self.sock.bind(self.rb)
             self.listenThread = self.listen()
         else:
-            print("Drone object was not created.")
+            print("Drone object was not created, port was not open")
 
     def testSocket(self, socket_ip, socket_port, bind_port):
         """ Test to see if a socket is open """
@@ -39,9 +39,6 @@ class Drone():
         #a_socket.shutdown(socket.SHUT_RDWR)
 
         return output
-
-
-        
 
     def ping(self):
         """
@@ -81,13 +78,6 @@ class Drone():
                 self.sock.close()
                 print("Error receiving: " + str(e))
                 break
-    
-    def listen(self):
-        """Creates udp response listener"""
-        receiveThread = threading.Thread(target=self.receive)
-        receiveThread.daemon = True
-        receiveThread.start()
-        return receiveThread
 
     def closeConnection(self):
         """ Closes socket and listener"""

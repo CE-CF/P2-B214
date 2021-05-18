@@ -11,7 +11,6 @@ class TestServer(Server):
         packet.dump()
         print(self.router.dest_table)
 
-
 if __name__ == "__main__":
     server = TestServer()
 

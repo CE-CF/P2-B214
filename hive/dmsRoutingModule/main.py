@@ -135,12 +135,20 @@ deg_85 = np.array([[57.0436002010424, 9.941992504764456],  # approx 85 degrees
                    [57.04332179604662, 9.941749287658181],
                    [57.04343269009751, 9.940075589296312]])
 
+soccer_arr = np.array([[57.01819713287610, 9.950639157489012],
+                       [57.01898532643292, 9.951475516739412],
+                       [57.01865997809893, 9.952447804183203],
+                       [57.01786777011994, 9.951616604931064]])
+
+soccer_rb = [57.01898671673149, 9.952689316888373]
+
+
 def run():
     # Routing(  2D-array of global coordinates specifying the corners of the map,
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-    sohn = Routing(odin_arr, 0.00002, 2)
+    sohn = Routing(soccer_arr, 0.0002, 30)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
 
@@ -152,7 +160,7 @@ def run():
 
     get_to_route(sohn.get_path_limit_points(),
                  sohn.get_origo(),
-                 odin_relay_box,
+                 soccer_rb,
                  sohn.get_path_functions(),
                  1)
 

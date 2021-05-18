@@ -11,3 +11,4 @@ rb_app.py
 server.log
 *.log
 *.log
+*.log

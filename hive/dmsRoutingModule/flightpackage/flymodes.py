@@ -158,8 +158,9 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             # dist = DistanceInMeters.calculate_distance(path_limit_points[i], path_limit_points[i + 1]) dont uncomment this
             # correct_yaw(flight_time)     # !!!!!!!!!!! uncomment this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            if not (i + 2) == len(
-                    path_limit_points):  # if there is a point after the turn .... (i+2) because this only runs when i%2==0
+            print("straight ( yaw=angle, flight_time=" + str(flight_time) + " )")
+
+            if not (i+2) == len(path_limit_points):      # if there is a point after the turn .... (i+2) because this only runs when i%2==0
                 # figure out which way to turn next
                 # print(math.floor(i / 2) + 1)
                 if path_limit_points[i][0] < path_limit_points[i + 1][0]:  # if the x-value increases as the drone flies
@@ -167,6 +168,36 @@ def search_route(path_width, path_limit_points, origo, path_functions):
                     if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
                         # print(str(path_functions[math.floor(i / 2)][1]) + " < " + str(path_functions[(math.floor(i / 2) + 1)][1]))
                         print("Going on path number ", path_num, " turning left now")
+                        # print("lefttt")
+                        which_way = True
+                    else:
+                        # print("righttt")
+                        which_way = False
+                else:  # else if the x-value decreases as the drone flies
+                    # if the next path has a function with lower intersection value
+                    if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
+                        # print("right")
+                        which_way = False
+                    else:
+                        # print("left")
+                        which_way = True
+                # print(which_way)
+            else:                       # if there is no point after the turn then the drone should return home
+                break
+
+        else:  # when path_limit_point[i] is the point leading into a turn
+            # if there is a point after the turn .... (i+2) because this only runs when i%2==0
+
+            """
+            if not (i + 2) == len(
+                    path_limit_points):
+                # figure out which way to turn next
+                # print(math.floor(i / 2) + 1)
+                if path_limit_points[i][0] < path_limit_points[i + 1][0]:  # if the x-value increases as the drone flies
+                    # if the next path has a function with higher intersection value
+                    if path_functions[math.floor(i / 2)][1] < path_functions[(math.floor(i / 2) + 1)][1]:
+                        # print(str(path_functions[math.floor(i / 2)][1]) + " < " + str(path_functions[(math.floor(i / 2) + 1)][1]))
+                        print("lefttt")
                         which_way = True
                     else:
                         print("Going on path number ", path_num, " turning right now")
@@ -185,6 +216,8 @@ def search_route(path_width, path_limit_points, origo, path_functions):
         else:  # when path_limit_point[i] is the point leading into a turn
             last_path_num = path_num + 1
             print("going on path ", last_path_num)
+            """
+
             # the drone flies with 1 m/s which means that the value of semi_circle is the time it takes for the drone
             # to complete its turn
             semi_circle_dist = (path_width / 2) * math.pi
@@ -197,9 +230,11 @@ def search_route(path_width, path_limit_points, origo, path_functions):
             degrees_pr_sec = str(int(round(180 / flight_time)))
 
             if which_way:  # if which_way is set to true then turn left
-                search_turns("rc 0 100 0 -" + degrees_pr_sec, flight_time, True)
+                print("turn_left( degrees_pr_sec=" + str(degrees_pr_sec) + ", flight_time=" + str(flight_time) + " )")
+                # search_turns("rc 0 100 0 -" + degrees_pr_sec, flight_time, True)  !!!!! UNCOMMENT THESE !!! #######
             if not which_way:  # if which_way is set to false then turn right
-                search_turns("rc 0 100 0 " + degrees_pr_sec, flight_time, False)
+                print("turn_right( degrees_pr_sec=" + str(degrees_pr_sec) + ", flight_time=" + str(flight_time) + " )")
+                # search_turns("rc 0 100 0 " + degrees_pr_sec, flight_time, False)  !!!!! UNCOMMENT THESE !!! #######
 
 
 def go_home():
