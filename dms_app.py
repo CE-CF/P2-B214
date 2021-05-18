@@ -25,7 +25,6 @@ class DmsServer(Server):
         if mode is CONN_TYPE_TCP:
             # TCP CODE HERE
             packet.dump()
-            print("ved dump")
             if packet.p_type == 0 or packet.p_type == 1:
                 print("før insert")
                 # Waypoint code here
@@ -44,8 +43,16 @@ class DmsServer(Server):
                 # Wrong packet type
                 pass
         elif mode is CONN_TYPE_UDP:
-            print("udp")
             # UDP CODE HERE
+            if packet.ptype == 0:
+                # DRONE CMD
+                pass
+            elif packet.ptype == 1:
+                # STATE STRING
+                pass
+            elif packet.ptype == 2:
+                # VIDEO
+                pass
             pass
 
 
