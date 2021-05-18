@@ -7,6 +7,7 @@ from hive.dataBase.tableHandlers.route import Route
 class DmsServer(Server):
     def __init__(self):
         super().__init__(9000, 9241)
+        self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
 
     def eval_cmd(self, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
@@ -46,12 +47,21 @@ class DmsServer(Server):
             # UDP CODE HERE
             if packet.ptype == 0:
                 # DRONE CMD
-                pass
+                if packet.seq < self.seq_dic["cmd"]:
+                    pass
+
             elif packet.ptype == 1:
                 # STATE STRING
-                pass
+                if packet.seq < self.seq_dic["state"]:
+                    pass
+
             elif packet.ptype == 2:
                 # VIDEO
+                if packet.seq < self.seq_dic["video"]:
+                    pass
+
+            else:
+                # Wrong packet type
                 pass
             pass
 
