@@ -787,3 +787,175 @@ INFO:root:[ TIME 2021-05-18 14:59:37.386609 ]: Packet received content:
 							[DATA]: Spis ild; Tobias;
 							
 INFO:root:[ TIME 2021-05-18 14:59:37.386609 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:06:08.908332 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:06:08.911318 ]: Received migration info: 60524
+INFO:root:[ TIME 2021-05-18 15:06:08.911318 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:06:08.912333 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:06:08.913326 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:06:24.878583 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b"\\\xb1\x97@\xe7\n\xaf<\xb0';Lo\x90\xf3\xe9\xcc\xa8X\x01\x15\x80\xd2L\xa7\xce\xafP\xf0-~F"
+							[DEST]: 192.168.137.103
+							[DATA]: forward 50; turn r;
+							
+INFO:root:[ TIME 2021-05-18 15:06:24.878583 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:06:34.893639 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\x16\x83\x15\xbe\ro\xd4\x99\xc5\r/"M\x89C\xe7~\x92\x9e\x95\xef\x98{\xb0M\x95\xd4\x9b\x8c\xcb\x8c\x98'
+							[DEST]: 192.168.137.103
+							[DATA]: Spis ild; Tobias;
+							
+INFO:root:[ TIME 2021-05-18 15:06:34.893639 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:21:18.173511 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:21:18.177492 ]: Received migration info: 60597
+INFO:root:[ TIME 2021-05-18 15:21:18.177492 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:21:18.178512 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:21:18.178512 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:21:33.870223 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b"\\\xb1\x97@\xe7\n\xaf<\xb0';Lo\x90\xf3\xe9\xcc\xa8X\x01\x15\x80\xd2L\xa7\xce\xafP\xf0-~F"
+							[DEST]: 192.168.137.103
+							[DATA]: forward 50; turn r;
+							
+INFO:root:[ TIME 2021-05-18 15:21:33.871221 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:21:43.880959 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\x16\x83\x15\xbe\ro\xd4\x99\xc5\r/"M\x89C\xe7~\x92\x9e\x95\xef\x98{\xb0M\x95\xd4\x9b\x8c\xcb\x8c\x98'
+							[DEST]: 192.168.137.103
+							[DATA]: Spis ild; Tobias;
+							
+INFO:root:[ TIME 2021-05-18 15:21:43.881981 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:28:53.321165 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:28:53.323159 ]: Received migration info: 60625
+INFO:root:[ TIME 2021-05-18 15:28:53.324165 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:28:53.324165 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:28:53.325165 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:29:51.762271 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:29:51.788287 ]: Received migration info: 60640
+INFO:root:[ TIME 2021-05-18 15:29:51.789294 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:29:51.789294 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:29:51.790294 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:30:44.865964 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:30:44.867954 ]: Received migration info: 60657
+INFO:root:[ TIME 2021-05-18 15:30:44.868960 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:30:44.869953 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:30:44.869953 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:32:37.281499 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:32:37.284488 ]: Received migration info: 60673
+INFO:root:[ TIME 2021-05-18 15:32:37.285496 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:32:37.286497 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:32:37.286497 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:35:21.833120 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:35:21.835126 ]: Received migration info: 60737
+INFO:root:[ TIME 2021-05-18 15:35:21.835126 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:35:21.836120 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:35:21.836120 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:36:29.859566 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:36:29.861567 ]: Received migration info: 60790
+INFO:root:[ TIME 2021-05-18 15:36:29.861567 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:36:29.862582 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:36:29.862582 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:37:48.583055 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:37:48.584064 ]: Received migration info: 60800
+INFO:root:[ TIME 2021-05-18 15:37:48.585057 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:37:48.585057 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:37:48.585057 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:39:17.451842 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:39:17.453842 ]: Received migration info: 60815
+INFO:root:[ TIME 2021-05-18 15:39:17.454842 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:39:17.455830 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:39:17.455830 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:39:48.579667 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:39:48.582656 ]: Received migration info: 60830
+INFO:root:[ TIME 2021-05-18 15:39:48.583649 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:39:48.583649 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:39:48.583649 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:42:27.004734 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:42:27.007739 ]: Received migration info: 60853
+INFO:root:[ TIME 2021-05-18 15:42:27.008746 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:42:27.009737 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:42:27.009737 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:44:28.612289 ]: STARTED
+INFO:root:[ TIME 2021-05-18 15:44:28.616289 ]: Received migration info: 60889
+INFO:root:[ TIME 2021-05-18 15:44:28.616289 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-18 15:44:28.617291 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-18 15:44:28.618290 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:44:39.369702 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b"\\\xb1\x97@\xe7\n\xaf<\xb0';Lo\x90\xf3\xe9\xcc\xa8X\x01\x15\x80\xd2L\xa7\xce\xafP\xf0-~F"
+							[DEST]: 192.168.137.103
+							[DATA]: forward 50; turn r;
+							
+INFO:root:[ TIME 2021-05-18 15:44:39.370705 ]: PULSE: False
+INFO:root:[ TIME 2021-05-18 15:44:44.381675 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\x16\x83\x15\xbe\ro\xd4\x99\xc5\r/"M\x89C\xe7~\x92\x9e\x95\xef\x98{\xb0M\x95\xd4\x9b\x8c\xcb\x8c\x98'
+							[DEST]: 192.168.137.103
+							[DATA]: Spis ild; Tobias;
+							
+INFO:root:[ TIME 2021-05-18 15:44:44.382675 ]: PULSE: False

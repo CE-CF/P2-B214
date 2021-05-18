@@ -2814,3 +2814,530 @@ INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 14:59:12.371701 ]: Packet received co
 							
 INFO:root:[ ROUTER | TIME 2021-05-18 14:59:12.371701 ]: Received packet with destination: 127.0.0.1
 INFO:root:[ ROUTER | TIME 2021-05-18 14:59:12.371701 ]: Server is destination of packet
+INFO:root:[ ROUTER | TIME 2021-05-18 15:06:08.908332 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:06:08.909333 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60360
+			Thread-ID:1
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60523
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.909333 ]: STARTED
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.910325 ]: Client info: 127.0.0.1:60523
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.910325 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.910325 ]: Starting migration
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.911318 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.911318 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.911318 ]: Migration accepted
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.912333 ]: New client information: ('127.0.0.1', 60525)
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.912333 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:06:08.912333 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:06:08.912333 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60525
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:08.912333 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:06:09.863070 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xf8Z \x19yH\xf1q\xb2\xf9\xe0\xb3y\xe2\n\x80g.iwa\x08\x9b\xbfHF\xb8\x800\x9f|\xeb'
+							[DEST]: 127.0.0.1
+							[DATA]: CMD:ADD_DRONE;RelayBoxDrone1:192.168.137.3;
+							
+INFO:root:[ ROUTER | TIME 2021-05-18 15:06:09.863070 ]: Received packet with destination: 127.0.0.1
+INFO:root:[ ROUTER | TIME 2021-05-18 15:06:09.864070 ]: Server is destination of packet
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:21:15.485851 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:21:18.174493 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:21:18.174493 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60596
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.175511 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.175511 ]: Client info: 127.0.0.1:60596
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.176512 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.176512 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.177492 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.177492 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.177492 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.177492 ]: New client information: ('127.0.0.1', 60598)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.177492 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:21:18.177492 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:21:18.178512 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60598
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.178512 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:21:18.862981 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xf8Z \x19yH\xf1q\xb2\xf9\xe0\xb3y\xe2\n\x80g.iwa\x08\x9b\xbfHF\xb8\x800\x9f|\xeb'
+							[DEST]: 127.0.0.1
+							[DATA]: CMD:ADD_DRONE;RelayBoxDrone1:192.168.137.3;
+							
+INFO:root:[ ROUTER | TIME 2021-05-18 15:21:18.862981 ]: Received packet with destination: 127.0.0.1
+INFO:root:[ ROUTER | TIME 2021-05-18 15:21:18.862981 ]: Server is destination of packet
+INFO:root:[ ROUTER | TIME 2021-05-18 15:28:53.322165 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:28:53.322165 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60598
+			Thread-ID:1
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60624
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.322165 ]: STARTED
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.322165 ]: Client info: 127.0.0.1:60624
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.322165 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.323159 ]: Starting migration
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.323159 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.323159 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.324165 ]: Migration accepted
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.324165 ]: New client information: ('127.0.0.1', 60626)
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.324165 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:28:53.324165 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:28:53.324165 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60626
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:28:53.324165 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ ROUTER | TIME 2021-05-18 15:29:51.762271 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:29:51.762271 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60626
+			Thread-ID:2
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60639
+			Thread-ID:3
+
+=============================================
+
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.763265 ]: STARTED
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.763265 ]: Client info: 127.0.0.1:60639
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.763265 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.763265 ]: Starting migration
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.788287 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.788287 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.789294 ]: Migration accepted
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.789294 ]: New client information: ('127.0.0.1', 60641)
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.789294 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:29:51.789294 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:29:51.789294 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60641
+			Thread-ID:3
+
+=============================================
+
+INFO:root:[ THREAD-TCP 3 | TIME 2021-05-18 15:29:51.789294 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:30:43.276598 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:30:44.865964 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:30:44.866953 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60656
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.866953 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.866953 ]: Client info: 127.0.0.1:60656
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.866953 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.866953 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.867954 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.867954 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.868960 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.868960 ]: New client information: ('127.0.0.1', 60658)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.868960 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:30:44.868960 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:30:44.868960 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60658
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:30:44.869953 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:32:35.280868 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:32:37.281499 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:32:37.282495 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60672
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.282495 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.283489 ]: Client info: 127.0.0.1:60672
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.283489 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.283489 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.284488 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.284488 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.285496 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.285496 ]: New client information: ('127.0.0.1', 60674)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.285496 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:32:37.285496 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:32:37.285496 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60674
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:32:37.285496 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:35:19.964507 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:35:21.833120 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:35:21.833120 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60736
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.834141 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.834141 ]: Client info: 127.0.0.1:60736
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.834141 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.834141 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.835126 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.835126 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.835126 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.835126 ]: New client information: ('127.0.0.1', 60738)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.836120 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:35:21.836120 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:35:21.836120 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60738
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:35:21.836120 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:36:27.811545 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:36:29.859566 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:36:29.859566 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60789
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.860567 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.860567 ]: Client info: 127.0.0.1:60789
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.860567 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.860567 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.861567 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.861567 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.861567 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.861567 ]: New client information: ('127.0.0.1', 60791)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.861567 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:36:29.861567 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:36:29.861567 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60791
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:36:29.862582 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ ROUTER | TIME 2021-05-18 15:37:48.583055 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:37:48.583055 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60791
+			Thread-ID:1
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60799
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.583055 ]: STARTED
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.583055 ]: Client info: 127.0.0.1:60799
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.583055 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.583055 ]: Starting migration
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.584064 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.584064 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.585057 ]: Migration accepted
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.585057 ]: New client information: ('127.0.0.1', 60801)
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.585057 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:37:48.585057 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:37:48.585057 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60801
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:37:48.585057 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:39:15.950771 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:17.452843 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:17.452843 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60814
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.452843 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.452843 ]: Client info: 127.0.0.1:60814
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.452843 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.453842 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.453842 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.453842 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.454842 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.454842 ]: New client information: ('127.0.0.1', 60816)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.454842 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:17.454842 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:17.454842 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60816
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:17.454842 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:39:46.411756 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:48.580651 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:48.580651 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60829
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.581651 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.581651 ]: Client info: 127.0.0.1:60829
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.581651 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.581651 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.582656 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.582656 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.583649 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.583649 ]: New client information: ('127.0.0.1', 60831)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.583649 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:48.583649 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:39:48.583649 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60831
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:39:48.583649 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-18 15:42:25.301788 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-18 15:42:27.004734 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:42:27.005745 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60852
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.005745 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.006739 ]: Client info: 127.0.0.1:60852
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.006739 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.006739 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.007739 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.007739 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.008746 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.008746 ]: New client information: ('127.0.0.1', 60854)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.008746 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:42:27.008746 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:42:27.008746 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60854
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-18 15:42:27.008746 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ ROUTER | TIME 2021-05-18 15:44:28.613288 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:44:28.613288 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60854
+			Thread-ID:1
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 60888
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.614290 ]: STARTED
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.614290 ]: Client info: 127.0.0.1:60888
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.614290 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.614290 ]: Starting migration
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.616289 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.616289 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.616289 ]: Migration accepted
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.617291 ]: New client information: ('127.0.0.1', 60890)
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.617291 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:44:28.617291 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-18 15:44:28.617291 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 60890
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:28.617291 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-18 15:44:29.358272 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xf8Z \x19yH\xf1q\xb2\xf9\xe0\xb3y\xe2\n\x80g.iwa\x08\x9b\xbfHF\xb8\x800\x9f|\xeb'
+							[DEST]: 127.0.0.1
+							[DATA]: CMD:ADD_DRONE;RelayBoxDrone1:192.168.137.3;
+							
+INFO:root:[ ROUTER | TIME 2021-05-18 15:44:29.358272 ]: Received packet with destination: 127.0.0.1
+INFO:root:[ ROUTER | TIME 2021-05-18 15:44:29.359272 ]: Server is destination of packet

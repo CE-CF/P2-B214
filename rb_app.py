@@ -1,5 +1,4 @@
 import socket
-import ipaddress
 import threading
 from threading import Lock
 from time import sleep
@@ -30,7 +29,6 @@ class RbClient(Client):
         :type data: str
         :returns: Dictionary containing data
         """
-
         d = {}
         delim1 = ";"
         delim2 = ":"
@@ -47,13 +45,14 @@ class RbClient(Client):
 
     @threaded
     def listener_state(self):
+        """Creates a thread that listens and forwards tello state"""
         state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         state_host = ''
         state_port = 8890
         state_address = (state_host, state_port)
         state_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         state_sock.bind(state_address)
-        stateSequenceNum = 0
+        stateSequenceNum = 1
 
         while (type(self.state) is Airborne):
             data, drone = state_sock.recvfrom(2048)
@@ -74,13 +73,14 @@ class RbClient(Client):
     
     @threaded
     def listener_stream(self):
+        """" Creates a thread that listens for video stream and forward frames """
         video_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         video_host = ''
         video_port = 1111
         video_address = (video_host, video_port)
         video_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         video_sock.bind(video_address)
-        videoSequenceNum = 0
+        videoSequenceNum = 1
         
         while (type(self.state) is Airborne):
             data, drone = video_sock.recvfrom(2048)
@@ -116,9 +116,6 @@ class RbClient(Client):
     def run(self, packet):
 
         if (type(self.state) is Active):
-                     
-            print("MODE: TCP")
-            # TCP CODE HERE
             packet.dump()
 
             if packet.p_type == 0 or packet.p_type == 1:
@@ -127,7 +124,6 @@ class RbClient(Client):
 
             elif packet.p_type == 2:
                 # Drone cmd code here
-                #pass
                 self.change(Airborne)
             elif packet.p_type == 3:
                 # Server/client cmd code here
@@ -153,10 +149,9 @@ class RbClient(Client):
             self.listener_state()
             self.listener_stream()
             #drone.send("streamon", 1)
-        
-            print(str(packet.p_dest))
-            print(data)
+            print('Package received from dms to {0} with {1}'.format(str(packet.p_dest),data))
             #drone.send(data)
+            #drone.send("streamoff", 1)
             #drone.closeConnection()
             self.change(Active)
 
@@ -170,7 +165,6 @@ class RbClient(Client):
                 if (len(activeDroneList) == self.connDrones):
                     print('There are {} active drones'.format(len(activeDroneList))+"\n")
                     droneData = DroneCheck.activeDronePacket(activeDroneList)
-                    print(droneData)
                     self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
                     self.change(Active)
                     break
