@@ -1,5 +1,6 @@
 import threading
 import socket
+import ipaddress
 from time import sleep
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.communication.client import Client
@@ -9,11 +10,12 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import Off, On, Inactive, Act
 
 class RbClient(Client):
     def __init__(self):
+        self.srv_ip = "127.0.0.1"
         super().__init__(self.srv_ip, tcp_port=9000, udp_port=9241)
         self.state = Off()
-        self.srv_ip = "127.0.0.1"
         self.hotSpotIP = "192.168.137" # First 3 octets of the hotspot IP
         self.connDrones = 1
+        self.response_arr = []
     
     def threaded(fn):
         def wrapper(*args, **kwargs):
@@ -48,7 +50,7 @@ class RbClient(Client):
         state_port = 8890
         state_address = (state_host, state_port)
         state_sock.bind(state_address)
-        response_arr = []
+        sequenceNum = 0
 
         while True:
             data, server = state_sock.recvfrom(2046)
@@ -57,9 +59,10 @@ class RbClient(Client):
             elif data == b'error':
                 print("error")
             else:
-                self.send(data.decode(encoding="utf-8"))
-                response_arr.append(self.data_parser(data.decode(encoding="utf-8")))
-                return response_arr
+                b_sender = ipaddress.IPv4Address(server[0]).packed
+                self.send(b_sender[3], 1, sequenceNum, data)
+                sequenceNum += 1
+                self.response_arr.append(self.data_parser(data.decode(encoding="utf-8")))
     
     def lisetener_stream(self):
 

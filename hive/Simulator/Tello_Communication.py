@@ -1,3 +1,4 @@
+import threading
 from threading import Thread
 from socket import socket, AF_INET, SOCK_DGRAM, timeout
 import traceback
@@ -6,8 +7,10 @@ class Tello_Communication(Thread):
 
     def __init__(self):
         super().__init__()
+        self.Host = ''           # Symbolic name meaning all available interfaces
         self.Running = True
         self.Tello = []
+        self.Connected_Address = None
 
 
     """
@@ -24,7 +27,7 @@ class Tello_Communication(Thread):
             if Array_Len != 1:
                 return "error"
             else:
-                return "ok"
+                return "command"
         elif Command_Array[0] == "takeoff":
             if Array_Len != 1:
                 return "error"
@@ -187,6 +190,7 @@ class Tello_Communication(Thread):
                     Speed_y = float(Command_Array[2])
                     Speed_z = float(Command_Array[3])
                     Yaw = float(Command_Array[4])
+                    #print(f'\t Speed is: {Speed_x}, {Speed_y}, {Speed_z}, {Yaw}')
                     Result = self.Tello[Drone_ID].RC(Speed_x, Speed_y, Speed_z, Yaw)
                     return (Result*"ok" + (not Result)*"error")
                 except (TypeError or ValueError):
@@ -258,6 +262,16 @@ class Tello_Communication(Thread):
         else:
             return Result
     '''
+
+    def Send_State(self):
+        State_Port = 8890
+        State_Socket = socket(AF_INET,SOCK_DGRAM)
+        State_Socket.bind((self.Host, State_Port))
+        if type(self.Connected_Address) == type("String"):
+            for i in range(len(self.Tello)):
+                State_String = self.Tello[i].Get_State()
+                State_Socket.sendto(bytes(State_String, 'UTF-8'), self.Connected_Address)
+
     def Sort_Command(self, Command: str, Socket:socket, SendTo):
         Command_Array = Command.split(": ")
         Result = None
@@ -265,32 +279,42 @@ class Tello_Communication(Thread):
         print(f'\tCommand Array is: {Command_Array}')
         print(f'\tCommand Array 0 is: {Command_Array[0]}')
         for i in range(len(self.Tello)):
-            print(f'\tTello IP is : {self.Tello[i].IP_Address}')
+            #print(f'\tTello IP is : {self.Tello[i].IP_Address}')
             if self.Tello[i].IP_Address == Command_Array[0]:
                 print(f"\tfound a drone in {self.Tello[i].IP_Address}")
                 Result = self.Receive_Command(Command_Array[1], i)
                 IP_Found = True
+                break
             else:
                 continue
         print(f'Result is: {Result}')
         if not IP_Found:
             Result = "error ip not found"
+        elif Result == "command":
+            self.Connected_Address = SendTo
+            Result = "ok"
         elif Result == None:
             Result = "error"
         Socket.sendto(bytes(Result, 'UTF-8'), SendTo)
 
 
     def run(self):
-        Host = ''           # Symbolic name meaning all available interfaces
+        #Host = ''           # Symbolic name meaning all available interfaces
         #HOST = "192.168.56.1"
-        Port = 8889         # Arbitrary non-privileged port
+        Command_Port = 8889         # Arbitrary non-privileged port
+        State_Port = 8890
         Buffer_Size = 1024  # Receive Buffer size (power of 2)
 
         Command_Socket = socket(AF_INET,SOCK_DGRAM) # IPv4, UDP
-        Command_Socket.bind((Host, Port))    # Bind sockect to the address
+        Command_Socket.bind((self.Host, Command_Port))    # Bind sockect to the address
         Command_Socket.settimeout(1)
+
         print('UDP server running...')
-        print('Listening for incoming connections in port '+str(Port))
+        print('Listening for incoming connections in port '+str(Command_Port))
+        print("Starting state thread")
+        State_Thread = threading.Thread(target=self.Send_State)
+        State_Thread.start()
+        print("State thread started")
 
         while self.Running:
             try:
