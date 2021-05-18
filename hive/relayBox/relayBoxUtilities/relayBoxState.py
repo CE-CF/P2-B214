@@ -29,12 +29,17 @@ class On(RelayBoxState):
 class Active(RelayBoxState):
    """ State of being in active mode after the criteria has been met """
    name = "active"
-   allowed = ['off']
+   allowed = ['off', 'airborne']
 
 class Inactive(RelayBoxState):
    """ State of being inactive after powered on until criteria has been met """
    name = "inactive"
    allowed = ['active','off']
+
+class Airborne(RelayBoxState):
+   """ State of drones being in flight """
+   name = "airborne"
+   allowed = ['active', 'off']
 
 """
 class testClass():

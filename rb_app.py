@@ -1,12 +1,13 @@
-import threading
 import socket
 import ipaddress
+import threading
+from threading import Lock
 from time import sleep
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.communication.client import Client
 from hive.relayBox.relayBoxUtilities.drone import Drone
 from hive.relayBox.relayBoxUtilities.droneChecker import DroneChecker
-from hive.relayBox.relayBoxUtilities.relayBoxState import Off, On, Inactive, Active
+from hive.relayBox.relayBoxUtilities.relayBoxState import Off, On, Inactive, Active, Airborne
 
 class RbClient(Client):
     def __init__(self):
@@ -16,6 +17,7 @@ class RbClient(Client):
         self.hotSpotIP = "192.168.137" # First 3 octets of the hotspot IP
         self.connDrones = 1
         self.response_arr = []
+        self.lock = Lock()
     
     def threaded(fn):
         def wrapper(*args, **kwargs):
@@ -49,22 +51,50 @@ class RbClient(Client):
         state_host = ''
         state_port = 8890
         state_address = (state_host, state_port)
+        state_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         state_sock.bind(state_address)
-        sequenceNum = 0
+        stateSequenceNum = 0
 
-        while True:
-            data, server = state_sock.recvfrom(2046)
+        while (type(self.state) is Airborne):
+            data, drone = state_sock.recvfrom(2048)
             if data == b'ok':
                 print("ok")
             elif data == b'error':
                 print("error")
             else:
-                b_sender = ipaddress.IPv4Address(server[0]).packed
-                self.send(b_sender[3], 1, sequenceNum, data)
-                sequenceNum += 1
+                SplitIP = str(drone[0]).split('.')
+                LastIP = SplitIP[-1]
+                self.send_udp(LastIP, 1, stateSequenceNum, data)
+                stateSequenceNum += 1
+                self.lock.acquire()
                 self.response_arr.append(self.data_parser(data.decode(encoding="utf-8")))
+                self.lock.release()
+        state_sock.close()
+        print("Stopped listening for state")
     
-    def lisetener_stream(self):
+    @threaded
+    def listener_stream(self):
+        video_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        video_host = ''
+        video_port = 1111
+        video_address = (video_host, video_port)
+        video_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        video_sock.bind(video_address)
+        videoSequenceNum = 0
+        
+        while (type(self.state) is Airborne):
+            data, drone = video_sock.recvfrom(2048)
+            if data == b'ok':
+                print("ok")
+            elif data == b'error':
+                print("error")
+            else:
+                SplitIP = str(drone[0]).split('.')
+                LastIP = SplitIP[-1]
+                self.send_udp(LastIP, 2, videoSequenceNum, data)
+                videoSequenceNum += 1
+        video_sock.close()
+        print("Stopped listening for stream")
 
     def eval_cmd(self, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
@@ -93,19 +123,12 @@ class RbClient(Client):
 
             if packet.p_type == 0 or packet.p_type == 1:
                 # Enter route code here
-                data = packet.data_parser()
-                b_dest = packet.p_dest.packed # Used to generate a port number for drone connection
-                    
-                drone_port = 8889
-                rb_port = 9000+b_dest[3]
-                
-                drone = Drone(str(packet.p_dest), drone_port, rb_port)
-                drone.send(data)
-                drone.closeConnection()
+                pass
 
             elif packet.p_type == 2:
                 # Drone cmd code here
-                pass
+                #pass
+                self.change(Airborne)
             elif packet.p_type == 3:
                 # Server/client cmd code here
                 cmd_dict = packet.data_parser()
@@ -118,7 +141,25 @@ class RbClient(Client):
 
         # Husk at når der skal sendes data fra drone til dms, skal dataen wrappes
         # i en udp pakke, der skal være en sequence generator hver gang man modtager en pakke.
-                
+        if (type(self.state) is Airborne):
+            
+            data = packet.data_parser()
+            b_dest = packet.p_dest.packed # Used to generate a port number for drone connection
+            
+            drone_port = 8889
+            rb_port = 9000+b_dest[3]
+            
+            #drone = Drone(str(packet.p_dest), drone_port, rb_port)
+            self.listener_state()
+            self.listener_stream()
+            #drone.send("streamon", 1)
+        
+            print(str(packet.p_dest))
+            print(data)
+            #drone.send(data)
+            #drone.closeConnection()
+            self.change(Active)
+
         if (type(self.state) is Inactive):
             print("State inactive if statement")
             DroneCheck = DroneChecker(self.hotSpotIP)

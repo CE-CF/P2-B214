@@ -10,8 +10,8 @@ class DroneChecker():
     
     def ping(self):
         alive = []
-        rangeFrom = 215
-        rangeTo = 230
+        rangeFrom = 2
+        rangeTo = 5
         print('Pinging all hosts on {0}.{1}-{2}'.format(self.host,rangeFrom,rangeTo))
         
         with open(os.devnull, "wb") as limbo:
