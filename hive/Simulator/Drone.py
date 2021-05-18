@@ -9,7 +9,7 @@ class Drone():
                  Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT,
                  Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP,
                  Joystick_xAxis = "Axis 0", Joystick_yAxis = "Axis 1"):
-        self.Pos = self.Pos_x, self.Pos_y = [Start_x, Start_y]
+        self.Pos = self.Pos_x, self.Pos_y, self.Pos_z = [Start_x, Start_y, 50]
         # Drone's rectangle object. Used as the place to draw the drone, and as it's collision box.
         # The arguments are it's position and it's size
         self.Rect = pygame.Rect(Start_x - Camera.Offset_x, Start_y - Camera.Offset_y, 16, 16)
@@ -37,6 +37,7 @@ class Drone():
         # x and y speed of drone. Used to move the drone's position
         self.Speed_x = 0
         self.Speed_y = 0
+        self.Speed_z = 0
         # I think these are not used anymore. Remenants of the old collision algorithsm
         #self.Colided_Left = False
         #self.Colided_Right = False
@@ -155,16 +156,21 @@ class Drone():
     # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):
         # Checks if the rectangles collided horizontally
+        Result = False
         self.Update_Rect()                          # Update this drone's rectangle position
         Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
         self.Pos_x -= self.Speed_x * Collision      # Go back to the previous position horizontally if collided
+        Result = Result or Collision
         # Checks if the rectangles collided vertically
         self.Update_Rect()                          # Update this drone's rectangle to the new position
         Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
         self.Pos_x += self.Speed_x * Collision      # Negate the horizontal back movemenet if collided
         self.Pos_y -= self.Speed_y * Collision      # Go back to the previous position vertically if collided
+        Result = Result or Collision
         # Checks if the rectangles collided both horizontally and vertically
         self.Update_Rect()                          # Update this drone's rectangle to the new position
         Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
         self.Pos_x -= self.Speed_x * Collision      # Go back to the previous position horizontally again if collided
+        Result = Result or Collision
+        return Result
 

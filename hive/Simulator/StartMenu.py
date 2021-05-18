@@ -6,6 +6,7 @@ class StartMenu():
     def __init__(self):
         # The resolution values that can be chosen from
         self.Resolution_Values = [(640, 480), (1080, 640), (1600, 900), (1920, 1080)]
+        self.FPS_Values = ('30', '60', '120', '240')
 
     # Makes the list and dictionary that are used to change the resolution of the simulator
     def Creat_Resolution_Lists(self, Resolution_Values):    # Argument(An n by 2 list with the wanted resolutions)
@@ -32,6 +33,13 @@ class StartMenu():
             print(f'ScreenSize is: {GC.ScreenSize}')
             print(f'ScreenWidth is: {GC.ScreenWidth}')
             print(f'ScreenHeight is: {GC.ScreenHeight}')
+    def Change_FPS(self, FPS):
+        try:
+            GC.FPS = int(FPS)
+            print(f'FPS changed to {GC.FPS}')
+        except TypeError or ValueError:
+            GC.FPS = 60
+            print("Type or Value Error. FPS is now 60")
     #
     def Change_TelloMode(self):
         GC.TelloMode = self.TelloMode_Bool.get()
@@ -57,10 +65,14 @@ class StartMenu():
         self.root = tkinter.Tk()                        # Create main tkinter window
         Main_Frame = tkinter.Frame(self.root)           # Create a frame inside the root window
         Speed_Frame = tkinter.Frame(Main_Frame)         # Create a frame for the speed spinbox inside the main frame
+        Resolution_Frame = tkinter.Frame(Main_Frame)
+        FPS_Frame = tkinter.Frame(Main_Frame)
         # Tkinter widgets use tkinter objects that have to be created
         # These following line create the objects for each of the widgets and sets them
         Resolution = tkinter.StringVar(Main_Frame)
         Resolution.set(self.Resolution_List[1])
+        FPS = tkinter.StringVar(Main_Frame)
+        FPS.set(self.FPS_Values[1])
         self.TelloMode_Bool = tkinter.BooleanVar()
         self.TelloMode_Bool.set(False)
         self.FullScreen_Bool = tkinter.BooleanVar()
@@ -73,8 +85,11 @@ class StartMenu():
                                                  offvalue = False, onvalue = True, command = self.Change_TelloMode)
         FullScreen_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Full Screen", variable = self.FullScreen_Bool,
                                                   offvalue = False, onvalue = True, command = self.Change_FullScreen)
-        Resolution_Option = tkinter.OptionMenu(Main_Frame, Resolution, *self.Resolution_List,
+        Resolution_Label = tkinter.Label(Resolution_Frame, text="Resolution")
+        Resolution_Option = tkinter.OptionMenu(Resolution_Frame, Resolution, *self.Resolution_List,
                                                command = self.Change_Resolution)
+        FPS_Label = tkinter.Label(FPS_Frame, text="Frames Per Second")
+        FPS_Option = tkinter.OptionMenu(FPS_Frame, FPS, *self.FPS_Values, command = self.Change_FPS)
         Speed_Label = tkinter.Label(Speed_Frame, text="Drone's Speed")
         self.Speed_Spinbox = tkinter.Spinbox(Speed_Frame,text="Speed", from_=0, to=10, increment=0.1,
                                              width=5, command = self.Change_Speed)
@@ -84,7 +99,12 @@ class StartMenu():
         Speed_Frame.pack()
         Speed_Label.pack(side=tkinter.LEFT)
         self.Speed_Spinbox.pack(side=tkinter.RIGHT)
-        Resolution_Option.pack()
+        Resolution_Frame.pack()
+        Resolution_Label.pack(side=tkinter.LEFT)
+        Resolution_Option.pack(side=tkinter.RIGHT)
+        FPS_Frame.pack()
+        FPS_Label.pack(side=tkinter.LEFT)
+        FPS_Option.pack(side=tkinter.RIGHT)
         TelloMode_Checkbox.pack()
         FullScreen_Checkbox.pack()
         Run_Button.pack()

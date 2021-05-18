@@ -308,8 +308,8 @@ class TelloDrone():
 
     def RC_Handler(self):
         if not self.RC_Stop or self.Landed:
-            self.Speed_x = self.Current_Speed*self.RC_Ratio_s*cos(self.Yaw*(pi/180))-self.RC_Ratio_f*sin(self.Yaw*(pi/180))
-            self.Speed_y = self.Current_Speed*self.RC_Ratio_s*sin(self.Yaw*(pi/180))+self.RC_Ratio_f*cos(self.Yaw*(pi/180))
+            self.Speed_x = self.Current_Speed*(self.RC_Ratio_s*cos(self.Yaw*(pi/180))-self.RC_Ratio_f*sin(self.Yaw*(pi/180)))
+            self.Speed_y = self.Current_Speed*(self.RC_Ratio_s*sin(self.Yaw*(pi/180))+self.RC_Ratio_f*cos(self.Yaw*(pi/180)))
             self.Speed_z = self.Current_Speed*self.RC_Ratio_z
             self.Pos_x += self.Speed_x
             self.Pos_y += self.Speed_y
@@ -353,6 +353,10 @@ class TelloDrone():
         State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{self.Yaw};vgx:{self.Speed_x};vgy:{self.Speed_y};vgz:{self.Speed_z};templ:12.2;temph:14.2;tof:{Dist};h:{self.Pos_z};bat:55;baro:22;time:{Run_Time};agx:0;agy:0;agz:0;\r\n"
         return State
 
+    def Get_Pos(self):
+        Pos = f'{self.IP_Address}: x:{self.Pos_x}, y:{self.Pos_y}, z:{self.Pos_z}'
+        return Pos
+
     def Command_Handler(self, Events):
         #print("Command Handler working")
         for e in Events:
@@ -393,19 +397,26 @@ class TelloDrone():
     # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):
         # Checks if the rectangles collided horizontally
+        Result = False
         self.Update_Rect()                          # Update this drone's rectangle position
         Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
         self.Pos_x -= self.Speed_x * Collision      # Go back to the previous position horizontally if collided
+        Result = Result or Collision
+        #print(f'Collision result 1 is: {Result}')
         # Checks if the rectangles collided vertically
         self.Update_Rect()                          # Update this drone's rectangle to the new position
         Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
         self.Pos_x += self.Speed_x * Collision      # Negate the horizontal back movemenet if collided
         self.Pos_y -= self.Speed_y * Collision      # Go back to the previous position vertically if collided
+        Result = Result or Collision
+        #print(f'Collision result 2 is: {Result}')
         # Checks if the rectangles collided both horizontally and vertically
         self.Update_Rect()                          # Update this drone's rectangle to the new position
         Collision = self.Rect.colliderect(Rect)     # Check if it collides with the argument rectangle
         self.Pos_x -= self.Speed_x * Collision      # Go back to the previous position horizontally again if collided
-
+        Result = Result or Collision
+        #print(f'Collision result final is: {Result}')
+        return Result
 '''
 Command = "streamon 22"
 Command_Split = Command.split(" ")
