@@ -153,6 +153,9 @@ class Game():
         for i in range(len(self.Drones)):
             RectColor = (0,0,0)*(not self.DronesCollided[i]) + (255,0,0)*self.DronesCollided[i]
             pygame.draw.rect(self.Screen, RectColor,self.Drones[i].Rect,2)
+            Num_Text = pygame.font.SysFont("Arial", 16).render(str(i), False, RectColor)
+            Num_Pos = (self.Drones[i].Rect.left - 8, self.Drones[i].Rect.top -  16)
+            self.Screen.blit(Num_Text, Num_Pos)
             self.Screen.blit(self.Drones[i].Image, self.Drones[i].Rect)
         #print(self.DronesCollided)
 
@@ -175,7 +178,7 @@ class Game():
                                            #f'SX={int(self.Drones[i].Speed_x)}, '
                                            #f'SY={int(self.Drones[i].Speed_y)}, '
                                            #f'SZ={int(self.Drones[i].Speed_z)}, '
-                                           f'Collided={self.DronesCollided[i]}')
+                                           f'Collided={("True"*self.DronesCollided[i]) + ("False"*(not self.DronesCollided[i]))}')
                 DroneInfoText = pygame.font.SysFont("Arial", 16).render(DroneInfoStr, False, TextColor)
                 self.Screen.blit(DroneInfoText, (0,32 + 16*i))
             else:

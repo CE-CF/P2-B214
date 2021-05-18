@@ -353,6 +353,10 @@ class TelloDrone():
         State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{self.Yaw};vgx:{self.Speed_x};vgy:{self.Speed_y};vgz:{self.Speed_z};templ:12.2;temph:14.2;tof:{Dist};h:{self.Pos_z};bat:55;baro:22;time:{Run_Time};agx:0;agy:0;agz:0;\r\n"
         return State
 
+    def Get_Pos(self):
+        Pos = f'{self.IP_Address}: x:{self.Pos_x}, y:{self.Pos_y}, z:{self.Pos_z}'
+        return Pos
+
     def Command_Handler(self, Events):
         #print("Command Handler working")
         for e in Events:
