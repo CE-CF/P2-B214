@@ -1,13 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import showinfo
-from PIL import ImageTk, Image
-import ImageHandler
-import mapHandler
-import ObjectHandler
+
+from PIL import Image, ImageTk
+
+import .ImageHandler
+import .mapHandler
+import .ObjectHandler
+
 
 class App(ttk.Frame):
-    def __init__(self, container):
+    def __init__(self, container, client):
         super().__init__(container)
 
         self.__create_widgets()
