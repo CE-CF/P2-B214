@@ -89,7 +89,7 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict)
                 if (self.forsøg == 0):
-                    dest = '192.168.137.178'
+                    dest = '192.168.137.171'
                     data = ["takeoff;land;"]
                     message = HiveT("drone", dest, data[self.forsøg])
                     message = HiveT.encode_packet(message)

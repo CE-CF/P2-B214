@@ -150,17 +150,17 @@ class RbClient(Client):
             drone_port = 8889
             rb_port = 9000+b_dest[3]
             
-            #drone = Drone(str(packet.p_dest), drone_port, rb_port)
-            #self.listener_state()
-            #self.listener_stream()
+            drone = Drone(str(packet.p_dest), drone_port, rb_port)
+            self.listener_state()
+            self.listener_stream()
             print("Her kommer command")
-            #drone.send("command", 1)
-            #drone.send("streamon", 1)
+            drone.send("command", 1)
+            drone.send("streamon", 1)
             print('Package received from dms to {0} with {1}'.format(str(packet.p_dest),data))
-            #for x in range (len(data)):
-                #drone.send(data[x], 1)
-            #drone.send("streamoff", 1)
-            #drone.closeConnection()
+            for x in range (len(data)):
+                drone.send(data[x], 5)
+            drone.send("streamoff", 1)
+            drone.closeConnection()
             droneData = self.DroneCheck.activeDronePacketUpdate(self.activeDroneList, 'active')
             print('Ved skift fra airborne til active {}'.format(droneData))
             self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS

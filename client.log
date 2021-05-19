@@ -2311,3 +2311,20 @@ INFO:root:[ TIME 2021-05-19 14:18:17.938545 ]: Packet received content:
 							[DATA]: forsøg;3;
 							
 INFO:root:[ TIME 2021-05-19 14:18:17.939546 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:26:38.221093 ]: STARTED
+INFO:root:[ TIME 2021-05-19 14:26:38.224096 ]: Received migration info: 54319
+INFO:root:[ TIME 2021-05-19 14:26:38.225094 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-19 14:26:38.227094 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-19 14:26:38.227094 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:26:39.888844 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\x81W\xd6\xdc\xe0\x84e\x10 L\xaa\xd3?\xa3\x19\xca^l \x00\x96F\x99yh\x15Pb\x84I\x10t'
+							[DEST]: 192.168.137.171
+							[DATA]: takeoff;land;
+							
+INFO:root:[ TIME 2021-05-19 14:26:39.888844 ]: PULSE: False

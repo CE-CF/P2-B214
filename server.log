@@ -7405,3 +7405,55 @@ INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:18:17.917309 ]: Packet received co
 							
 INFO:root:[ ROUTER | TIME 2021-05-19 14:18:17.917309 ]: Received packet with destination: 127.0.0.1
 INFO:root:[ ROUTER | TIME 2021-05-19 14:18:17.918309 ]: Server is destination of packet
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:26:35.159106 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:38.221093 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:38.222093 ]: 
+=============================================
+			Client: test
+			Address: 127.0.0.1
+			Port: 54318
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.222093 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.222093 ]: Client info: 127.0.0.1:54318
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.223094 ]: Client name: LAPTOP-97GV1LEI
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.223094 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.224096 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.224096 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.225094 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.225094 ]: New client information: ('127.0.0.1', 54320)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.225094 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:38.225094 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:38.226094 ]: 
+=============================================
+			Client: LAPTOP-97GV1LEI
+			Address: 127.0.0.1
+			Port: 54320
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:38.226094 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:39.860838 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"R\x1c\xad^qN\xf5\x0b\xad\x06\x06r+'8n\x14\x85\x89y\\\xd8n\xddu\xcbMLs\x8c%\x03"
+							[DEST]: 127.0.0.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:39.861852 ]: Received packet with destination: 127.0.0.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:39.861852 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:39.890613 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"'\x04\x84\x89\xa3\xaf\xd3\\\x90\xe7\xa3\xae\xb3\x8d\xdf\x16\xea\x94\xb5v \x0f43\xac\t\x97\x94\xc25\xa2B"
+							[DEST]: 127.0.0.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:39.890613 ]: Received packet with destination: 127.0.0.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:26:39.891615 ]: Server is destination of packet
