@@ -12,14 +12,6 @@ class DmsServer(Server):
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.forsøg = 0
 
-    def getKeysByValue(dictOfElements, valueToFind):
-        listOfKeys = list()
-        listOfItems = dictOfElements.items()
-        for item  in listOfItems:
-            if item[1] == valueToFind:
-                listOfKeys.append(item[0])
-        return  listOfKeys
-
     def eval_cmd(self, data, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
         args = {}
