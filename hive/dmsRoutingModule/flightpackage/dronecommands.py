@@ -30,7 +30,6 @@ def get_yaw():
 def recv():
     count = 0
     while True:
-        count = count + 1
         data, server = sock.recvfrom(2046)
         if data == b'ok':
             print("ok")
@@ -38,10 +37,11 @@ def recv():
             print("error")
         else:
             response_arr.append(data_parser(data.decode(encoding="utf-8")))
-            # print(response_arr[-1])
+            # print(response_arr[-1])   sometimes response array dont append if this is not uncommented??
 
         if count == 0:
-            print(response_arr[0])
+            print("drone yaw at takeoff", response_arr[0])
+        count = count + 1
 
 
 def data_parser(data):
@@ -103,6 +103,7 @@ yaw_reset = False
 
 def correct_yaw(yaw, flight_time):
     yaw = int(yaw)
+    drone_speed = 100
     delay = 1
     start_time = time.time()
     correct_yaw_start = int(response_arr[-1])                           # is defined only when function is called
@@ -110,6 +111,9 @@ def correct_yaw(yaw, flight_time):
     new_yawk = None
     yaw_per_sec = 0
     while (time.time() - start_time) < flight_time:                     # if the drone flies at 1 m/s then this works
+        if flight_time - (time.time() - start_time) < 2:
+            print()
+            drone_speed = 40
         #  print(str(flight_time - (time.time() - start_time)) + " seconds left before turning")
         newest_yaw_response = int(response_arr[-1])                     # is redefined after each loop
         # check yaw status
@@ -154,8 +158,6 @@ def correct_yaw(yaw, flight_time):
             #else:
             #    yaw_per_sec = new_yawk
 
-
-
             is_deviating = False
             # print(int(yaw), newest_yaw_response, new_yawk)
 
@@ -169,7 +171,7 @@ def correct_yaw(yaw, flight_time):
         else:
             yaw_per_sec = 0
 
-        rc_string = "rc 0 80 0 " + str(yaw_per_sec)
+        rc_string = "rc 0 " + str(drone_speed) + " 0 " + str(yaw_per_sec)
 
         # print("The new rc string: " + rc_string + "\t\t old yaw: " + str(yaw))
         the_thread(rc_string)
@@ -180,7 +182,7 @@ def correct_yaw(yaw, flight_time):
 def search_turns(degrees_pr_sec, flight_time):
     start_time = time.time()
 
-    cmd = "rc 0 100 0 "
+    cmd = "rc 0 50 0 "
     left_right_str = ""
 
     if degrees_pr_sec > 0:
@@ -203,18 +205,14 @@ def instantiate():
     recvThread = threading.Thread(target=recv)
     recvThread.start()
 
-    # time.sleep(2)
-
     print("Instantiation commenced")
 
     cmd = "command".encode(encoding="utf-8")
     sent = tello_sock.sendto(cmd, tello_address)
-
     time.sleep(2)
 
     cmd = "rc 0 0 0 0".encode(encoding="utf-8")
     sent = tello_sock.sendto(cmd, tello_address)
-
     time.sleep(2)
 
     # cmd = "takeoff".encode(encoding="utf-8")
