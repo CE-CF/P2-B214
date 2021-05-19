@@ -5,9 +5,9 @@ from tkinter.messagebox import showinfo
 
 from PIL import Image, ImageTk
 
-from .mapHandler import Map
 from .ObjectHandler import *
 from .SearchArea import LimitPoint
+
 
 
 class Canvas:
@@ -20,6 +20,10 @@ class Canvas:
         self.canvas.grid(column=0, row=0, columnspan=5, rowspan=5)
         self.canvas.bind("<Button-1>", self.limitPoint)
         self.PointDenominator = ["A", "B", "C", "D"]
+
+        self.info = tk.Label(root, text="Hello World")
+        self.info.grid(column=0, row=6, columnspan=5)
+        self.UpdateInfo()
 
     def limitPoint(self, event):
         """Adds a point to the map, which limits the search area"""
@@ -36,7 +40,7 @@ class Canvas:
                 )
             )
             Points[len(Points) - 1].drawPoint(self.canvas)
-            print(str(Map.CalculateCoordinates(event.x, event.y)))
+            print(str(Map[0].CalculateCoordinates(event.x, event.y)))
 
     def update(self):
         self.img = ImageTk.PhotoImage(file="map.png")
@@ -151,3 +155,6 @@ class Canvas:
                 "Error",
                 "Please make sure you have entered 4 points before estimation.",
             )
+
+    def UpdateInfo(self):
+        self.info["text"] = "Afstand fra kant til kant: " + str(Map[0].calcScale()) + " m"

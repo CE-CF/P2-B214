@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from .GUI_route import App
+from GUI.GUI_route import App
 
 
 class MainFrame(tk.Tk):
@@ -26,7 +26,7 @@ class MainFrame(tk.Tk):
 
     def __create_widgets(self):
         # Create input frame
-        rando_frame = App(self, self.client)
+        rando_frame = App(self)
         rando_frame.pack()
 
 

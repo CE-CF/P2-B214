@@ -1,8 +1,8 @@
 from math import cos, pi
-
+from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as dim
 import config
 import requests
-
+import numpy as np
 
 class Map:
     def __init__(self):
@@ -10,6 +10,8 @@ class Map:
         self.lat = 55.669703
         self.long = 12.019524
         self.zoom = 13
+        self.maptype = "roadmap"
+        self.mapdecider = 0
         self.key = config.SECRET
 
     def setCoordinates(self, lat, long):
@@ -29,6 +31,8 @@ class Map:
             + str(self.size)
             + "x"
             + str(self.size)
+            + "&maptype="
+            + self.maptype
             + "&style=feature:poi|visibility:off&style=feature:landscape.natural.landcover|visibility:simplified"
             + "&key="
             + str(self.key)
@@ -48,8 +52,28 @@ class Map:
         self.zoom += 1
         self.requestMap()
         canvas.update()
+        canvas.UpdateInfo()
 
     def ZoomOut(self, canvas):
         self.zoom -= 1
         self.requestMap()
         canvas.update()
+        canvas.UpdateInfo()
+
+
+    def setMapType(self, canvas):
+        self.mapdecider = (self.mapdecider + 1) % 2
+        if self.mapdecider == 0:
+            self.maptype = "roadmap"
+        elif self.mapdecider == 1:
+            self.maptype = "satellite"
+        else:
+            print("There has been a mistake")
+        self.requestMap()
+        canvas.update()
+
+    def calcScale(self):
+        left_side = np.array(self.CalculateCoordinates(0, 620))
+        right_side = np.array(self.CalculateCoordinates(620, 620))
+        return round(dim.calculate_distance(left_side, right_side), 2)
+
