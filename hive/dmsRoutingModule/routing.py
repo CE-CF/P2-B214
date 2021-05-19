@@ -49,8 +49,8 @@ class Routing(Coordinates):
         self.functions = find_functions(self.local_c)
 
         # print('{0:f}'.format(self.functions[3][0]))
-        print("functions:")
-        print(self.functions)
+        # print("functions:")
+        # print(self.functions)
 
         # we append the plot-object of the borders and points to the plots-array(red lines, blue dots)
         # this way we can save the plots and show them at the same time - less inefficient...

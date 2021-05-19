@@ -15,14 +15,15 @@ class TestServer(Server):
     def run(self, packet: Packet, conn, mode):
         packet.dump()
         print(self.router.dest_table)
-        sleep(15)
+        sleep(10)
         message = HiveT("drone", self.dest, self.data)
         message = HiveT.encode_packet(message)
         conn.send(message)
-        sleep(10)
+        sleep(5)
         message2 = HiveT("drone", self.dest, self.data2)
         message2 = HiveT.encode_packet(message2)
         conn.send(message2)
+        
 if __name__ == "__main__":
     server = TestServer()
 

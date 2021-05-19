@@ -106,10 +106,10 @@ def point_furthest_away(local_c, func, index, origo_c):
                 second_longest_dist = dist
                 second_longest_dist_index = i
 
-    print("longest line : " + str(longest_dist_index))
-    print("longest_dist : " + str(longest_dist))
-    print("second longest line : " + str(second_longest_dist_index))
-    print("second_longest_dist : " + str(second_longest_dist))
+    # print("longest line : " + str(longest_dist_index))
+    # print("longest_dist : " + str(longest_dist))
+    # print("second longest line : " + str(second_longest_dist_index))
+    # print("second_longest_dist : " + str(second_longest_dist))
     return longest_dist_index, second_longest_dist_index, longest_dist, perp_func_slope
 
 

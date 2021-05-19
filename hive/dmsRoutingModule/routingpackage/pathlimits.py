@@ -91,6 +91,7 @@ class PathLimits:
                                          + intersection_functions[2-j][1]
                         point_array.append([x_intersection, y_intersection])
                         s.set_plot(Plot([[x_intersection, y_intersection]], 0, 'b', False))
+        # print(point_array)
         return point_array
 
     def run(s):
