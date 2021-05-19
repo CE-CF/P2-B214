@@ -1,4 +1,5 @@
 from .error import Error
+from binascii import hexlify
 
 
 class EncodeError(Error):
@@ -37,7 +38,7 @@ class DecodeErrorChecksum(DecodeError):
         super().__init__(self.message)
 
     def __str__(self):
-        return f"Expected checksum: {self.expected}\nReceived checksum: {self.checksum}"
+        return f"Expected checksum: {hexlify(self.expected)}\nReceived checksum: {hexlify(self.checksum)}"
 
 
 class PacketTypeError(Error):
