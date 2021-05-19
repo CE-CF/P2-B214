@@ -150,7 +150,7 @@ class RbClient(Client):
             drone_port = 8889
             rb_port = 9000+b_dest[3]
             
-            drone = Drone(str(packet.p_dest), drone_port, rb_port)
+            #drone = Drone(str(packet.p_dest), drone_port, rb_port)
             #self.listener_state()
             #self.listener_stream()
             print("Her kommer command")

@@ -2229,3 +2229,85 @@ INFO:root:[ TIME 2021-05-19 13:46:03.435530 ]: Packet received content:
 							[DATA]: forsøg;3;
 							
 INFO:root:[ TIME 2021-05-19 13:46:03.435530 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:01:27.717971 ]: STARTED
+INFO:root:[ TIME 2021-05-19 14:01:27.721979 ]: Received migration info: 54060
+INFO:root:[ TIME 2021-05-19 14:01:27.722973 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-19 14:01:27.723966 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-19 14:01:27.723966 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:01:59.585383 ]: STARTED
+INFO:root:[ TIME 2021-05-19 14:01:59.588379 ]: Received migration info: 54064
+INFO:root:[ TIME 2021-05-19 14:01:59.588379 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-19 14:01:59.590384 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-19 14:01:59.590384 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:02:21.398590 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xc9EMAX\\\x91!\xf5\x07|\x13&0\x83}\x9a\xff\x18!y\x9b^\xa0\x88\xd8\x98\x9f\xb1\xdeV\xc2'
+							[DEST]: 192.168.137.178
+							[DATA]: forsøg;1;
+							
+INFO:root:[ TIME 2021-05-19 14:02:21.398590 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:02:21.428437 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xe3nrIA}\xb4\x1b\xe5\xe5\xb7\xa1\xa9\xff\x8eZ\xe1.\x03\x00\xe1`\x83@^\xd3\x15\xe5\xbb\x1c\xc7\xfd'
+							[DEST]: 192.168.137.178
+							[DATA]: forsøg;2;
+							
+INFO:root:[ TIME 2021-05-19 14:02:21.428437 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:02:21.455282 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\x08\xb4\xf5h\x97\xf6\xb7my\x8dt\x95\xf5\xdc\xc0\xc4k\xda\x9b\xee\xaa\xc1e1^\xbcK0wF\x08&'
+							[DEST]: 192.168.137.178
+							[DATA]: forsøg;3;
+							
+INFO:root:[ TIME 2021-05-19 14:02:21.455282 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:15:13.733960 ]: STARTED
+INFO:root:[ TIME 2021-05-19 14:15:13.736946 ]: Received migration info: 54195
+INFO:root:[ TIME 2021-05-19 14:15:13.736946 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-19 14:15:13.738947 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-19 14:15:13.738947 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:18:16.012340 ]: STARTED
+INFO:root:[ TIME 2021-05-19 14:18:16.016350 ]: Received migration info: 54213
+INFO:root:[ TIME 2021-05-19 14:18:16.017343 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-19 14:18:16.018351 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-19 14:18:16.018351 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:18:17.897180 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xc9EMAX\\\x91!\xf5\x07|\x13&0\x83}\x9a\xff\x18!y\x9b^\xa0\x88\xd8\x98\x9f\xb1\xdeV\xc2'
+							[DEST]: 192.168.137.178
+							[DATA]: forsøg;1;
+							
+INFO:root:[ TIME 2021-05-19 14:18:17.897180 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:18:17.917309 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xe3nrIA}\xb4\x1b\xe5\xe5\xb7\xa1\xa9\xff\x8eZ\xe1.\x03\x00\xe1`\x83@^\xd3\x15\xe5\xbb\x1c\xc7\xfd'
+							[DEST]: 192.168.137.178
+							[DATA]: forsøg;2;
+							
+INFO:root:[ TIME 2021-05-19 14:18:17.917309 ]: PULSE: False
+INFO:root:[ TIME 2021-05-19 14:18:17.938545 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\x08\xb4\xf5h\x97\xf6\xb7my\x8dt\x95\xf5\xdc\xc0\xc4k\xda\x9b\xee\xaa\xc1e1^\xbcK0wF\x08&'
+							[DEST]: 192.168.137.178
+							[DATA]: forsøg;3;
+							
+INFO:root:[ TIME 2021-05-19 14:18:17.939546 ]: PULSE: False

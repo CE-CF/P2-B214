@@ -88,6 +88,16 @@ class DmsServer(Server):
                 cmd_dict = packet.data_parser()
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict)
+                if (self.forsøg == 0):
+                    dest = '192.168.137.178'
+                    data = ["takeoff;land;"]
+                    message = HiveT("drone", dest, data[self.forsøg])
+                    message = HiveT.encode_packet(message)
+                    print('Er det her det sker? forsøg {}'.format(self.forsøg))
+                    self.forsøg += 1
+                    print(message)
+                    conn.send(message)
+                """
                 dest = '192.168.137.178'
                 data = ["forsøg;1;","forsøg;2;","forsøg;3;","forsøg;4;"]
                 message = HiveT("drone", dest, data[self.forsøg])
@@ -96,6 +106,7 @@ class DmsServer(Server):
                 self.forsøg += 1
                 print(message)
                 conn.send(message)
+                """
             else:
                 # Wrong packet type
                 pass
