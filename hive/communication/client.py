@@ -297,11 +297,15 @@ class Client(ABC):
             # ---
             self.run(packet)
 
+    def recv_udp(self):
+        bytes_addr = self.client_sock.recvfrom(BUFFER_SIZE)
+        return bytes_addr[0], bytes_addr[1]
+
     def udp_flow(self):
         self.run(packet=None)
         while True:
             # Receive msg
-            msg = self.recvall()
+            msg, addr = self.recv_udpllc()
             packet = HiveU.decode(msg)
 
             # Log client info

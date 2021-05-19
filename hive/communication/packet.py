@@ -338,13 +338,11 @@ class HiveT(Packet):
             packet_data = packet_bytes[37:]
 
             # Check if any errors occured
-            if (
-                HiveT.calc_checksum(
-                    bytes(packet_type), bytes(packet_dest), bytes(packet_data)
-                )
-                != packet_checksum
-            ):
-                raise DecodeErrorChecksum(packet_bytes)
+            exp_check = HiveT.calc_checksum(
+                bytes(packet_type), bytes(packet_dest), bytes(packet_data)
+            )
+            if exp_check != packet_checksum:
+                raise DecodeErrorChecksum(packet_checksum, exp_check)
             else:
                 return HiveT(packet_type, packet_dest, packet_data.decode())
         except IndexError:
@@ -372,6 +370,7 @@ class HiveT(Packet):
         checksum.update(packet_type)
         checksum.update(packet_dest)
         checksum.update(packet_data)
+        print(checksum.hexdigest())
 
         # Return bytes object of checksum
         return checksum.digest()

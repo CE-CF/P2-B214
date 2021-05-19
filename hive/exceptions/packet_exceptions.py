@@ -10,15 +10,15 @@ class EncodeError(Error):
 class EncodeErrorPacket(EncodeError):
     """Raised if the packet is not correct"""
 
-    def __init__(self, packet, message="There was a problem with the supplied packet"):
+    def __init__(
+        self, packet, message="There was a problem with the supplied packet"
+    ):
         self.packet = packet
         self.message = message
         super().__init__(self.message)
 
     def __str__(self):
-        return (
-            f"Packet content: {self.packet}; Type:{type(self.packet)} -> {self.message}"
-        )
+        return f"Packet content: {self.packet}; Type:{type(self.packet)} -> {self.message}"
 
 
 class DecodeError(Error):
@@ -28,13 +28,16 @@ class DecodeError(Error):
 class DecodeErrorChecksum(DecodeError):
     """Raiesd if the bytes cannot be decoded correctly"""
 
-    def __init__(self, rcv_bytes, message="Error in packet, checksum error"):
-        self.rcv_bytes = rcv_bytes
+    def __init__(
+        self, checksum, expected, message="Error in packet, checksum error"
+    ):
+        self.checksum = checksum
+        self.expected = expected
         self.message = message
         super().__init__(self.message)
 
     def __str__(self):
-        return f"Bytes: {self.rcv_bytes} -> {self.message}"
+        return f"Expected checksum: {self.expected}\nReceived checksum: {self.checksum}"
 
 
 class PacketTypeError(Error):

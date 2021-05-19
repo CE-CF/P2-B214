@@ -15,6 +15,7 @@ from threading import Lock, Thread
 from typing import List
 
 from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
+from hive.exceptions.packet_exceptions import DecodeErrorChecksum
 
 from .packet import HiveT, HiveU, Packet
 
@@ -77,7 +78,6 @@ class UDPPacketHandler(Thread):
 
     def run(self):
         self.log_info("STARTED")
-        # msg = self.recvall()
         while True:
             msg, addr = self._accept_udp()
             packet = HiveU.decode(msg)
@@ -269,7 +269,6 @@ class TCPClientHandler(Thread):
 
                 else:
                     connected = False
-
             except ConnectionRefusedError:
                 self.client_conn.shutdown(SHUT_RDWR)
                 self.client_conn.close()
