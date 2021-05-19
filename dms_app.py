@@ -27,9 +27,6 @@ class DmsServer(Server):
             droneState = data['STATE']
             droneList = droneList[2:]
             droneIDList = droneIDList[2:]
-
-            print(droneList)
-            print(droneIDList)
             droneTableList = fetchall('hive.drone')
             counter = 0
             
