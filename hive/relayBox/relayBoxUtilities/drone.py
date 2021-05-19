@@ -4,6 +4,7 @@ import subprocess  # For executing a shell command
 import socket
 import threading
 import time
+import sys
 
 class Drone():
     def __init__(self, droneID, dronePort, rbPort):
@@ -14,7 +15,6 @@ class Drone():
             self.rb = ('', rbPort)
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.bind(self.rb)
-            self.listenThread = self.listen()
         else:
             print("Drone object was not created, port was not open")
 
@@ -57,7 +57,7 @@ class Drone():
     def send(self, message, delay):
         """Try to send CMD to drone, otherwise print exception"""
         try:
-            self.sock.sendto(message.encode(), self.drone)
+            self.sock.sendto(message.encode(encoding="utf-8"), self.drone)
             print("Sending message: " + message)
         except Exception as e:
             print("Error sending: " + str(e))
@@ -81,7 +81,6 @@ class Drone():
 
     def closeConnection(self):
         """ Closes socket and listener"""
-        self.listenThread.join()
         self.sock.close()
         self.sock.shutdown(socket.SHUT_RDWR)
         print("Connection closed")

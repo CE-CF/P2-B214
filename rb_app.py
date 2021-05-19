@@ -17,6 +17,8 @@ class RbClient(Client):
         self.connDrones = 1
         self.response_arr = []
         self.lock = Lock()
+        self.activeDroneList = []
+        self.DroneCheck = DroneChecker(self.hotSpotIP)
     
     def threaded(fn):
         def wrapper(*args, **kwargs):
@@ -117,13 +119,16 @@ class RbClient(Client):
 
         if (type(self.state) is Active):
             packet.dump()
-
+        
             if packet.p_type == 0 or packet.p_type == 1:
                 # Enter route code here
                 pass
 
             elif packet.p_type == 2:
                 # Drone cmd code here
+                droneData = self.DroneCheck.activeDronePacketUpdate(self.activeDroneList, 'airborne')
+                print('Ved skift fra active til airborne {}'.format(droneData))
+                self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
                 self.change(Airborne)
             elif packet.p_type == 3:
                 # Server/client cmd code here
@@ -145,26 +150,30 @@ class RbClient(Client):
             drone_port = 8889
             rb_port = 9000+b_dest[3]
             
-            #drone = Drone(str(packet.p_dest), drone_port, rb_port)
-            self.listener_state()
-            self.listener_stream()
+            drone = Drone(str(packet.p_dest), drone_port, rb_port)
+            #self.listener_state()
+            #self.listener_stream()
+            print("Her kommer command")
+            #drone.send("command", 1)
             #drone.send("streamon", 1)
             print('Package received from dms to {0} with {1}'.format(str(packet.p_dest),data))
-            #drone.send(data)
+            #for x in range (len(data)):
+                #drone.send(data[x], 1)
             #drone.send("streamoff", 1)
             #drone.closeConnection()
+            droneData = self.DroneCheck.activeDronePacketUpdate(self.activeDroneList, 'active')
+            print('Ved skift fra airborne til active {}'.format(droneData))
+            self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
             self.change(Active)
 
-        if (type(self.state) is Inactive):
-            print("State inactive if statement")
-            DroneCheck = DroneChecker(self.hotSpotIP)
-            
+        if (type(self.state) is Inactive):            
             while True:   
-                activeDroneList = DroneCheck.ping()
+                self.activeDroneList = self.DroneCheck.ping()
                 
-                if (len(activeDroneList) == self.connDrones):
-                    print('There are {} active drones'.format(len(activeDroneList))+"\n")
-                    droneData = DroneCheck.activeDronePacket(activeDroneList)
+                if (len(self.activeDroneList) == self.connDrones):
+                    print('There are {} active drones'.format(len(self.activeDroneList))+"\n")
+                    droneData = self.DroneCheck.activeDronePacketAdd(self.activeDroneList, 'active')
+                    print('Ved skift fra inactive til active {}'.format(droneData))
                     self.send_message(3, self.srv_ip, droneData) # Send active drone data to the DMS
                     self.change(Active)
                     break

@@ -41,7 +41,7 @@ class TableHandler:
         
         counter = 1
         route_data = 0
-        for x in self.routeCor:
+        for x in route:
                     for y in x:
                         route_data += 1
         route_data *= 2

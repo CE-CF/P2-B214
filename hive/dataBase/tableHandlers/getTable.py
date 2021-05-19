@@ -26,16 +26,10 @@ def fetchall(table):
                 for x in range(len(column_names)):
                     if (x == 0):    
                         dataDict[column_names[x]] = row[x]
-                        print(row[x])  
-                        print("---------------------") 
                     else:
                         if (row[x] != None):
                             dataDict[column_names[x]] = row[x]
-                            print(column_names[x],": ", row[x])
                 output.append(dataDict.copy())
-                print("\n Dictionary output: ")
-                print(output[counter])
-                print("\n ")
                 counter+=1 
                                          
                 

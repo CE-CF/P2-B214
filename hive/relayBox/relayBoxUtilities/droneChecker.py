@@ -10,8 +10,8 @@ class DroneChecker():
     
     def ping(self):
         alive = []
-        rangeFrom = 2
-        rangeTo = 5
+        rangeFrom = 170
+        rangeTo = 175
         print('Pinging all hosts on {0}.{1}-{2}'.format(self.host,rangeFrom,rangeTo))
         
         with open(os.devnull, "wb") as limbo:
@@ -28,7 +28,7 @@ class DroneChecker():
         return alive
                 
 
-    def activeDronePacket(self, ActiveDrones):
+    def activeDronePacketAdd(self, ActiveDrones, state=None):
         droneName = "RelayBoxDrone"
         outputList = []
         outputString = ""
@@ -37,7 +37,21 @@ class DroneChecker():
         for x in range (len(ActiveDrones)):
             outputList.append('{0}{1}:{2}'.format(droneName,(x+1),ActiveDrones[x]))
         
-        outputString = "CMD:ADD_DRONE;"+(';'.join(outputList))+";"
+        CMDSTATE = 'CMD:ADD_DRONE;STATE:{0};'.format(state)
+        outputString = CMDSTATE+(';'.join(outputList))+";"
+        
+        return outputString
+    
+    def activeDronePacketUpdate(self, ActiveDrones, state=None):
+        droneName = "RelayBoxDrone"
+        outputList = []
+        outputString = ""
 
+
+        for x in range (len(ActiveDrones)):
+            outputList.append('{0}{1}:{2}'.format(droneName,(x+1),ActiveDrones[x]))
+        
+        CMDSTATE = 'CMD:UPDATE_DRONE;STATE:{0};'.format(state)
+        outputString = CMDSTATE+(';'.join(outputList))+";"
         
         return outputString

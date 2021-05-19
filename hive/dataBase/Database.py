@@ -2,9 +2,9 @@ from tableHandlers import *
 
 """
 ### drone ###
-PythonDrone = drone.Drone('PythonDrone', 'Online', 87.654321, 12.345678)
+PythonDrone = drone.Drone('PythonTest', '0.0.0.0', 'Offline', 87.654321, 12.345678)
 PythonDrone.insert()
-PythonDrone = drone.Drone('PythonDrone', 'Updating', 87.654321, 12.345678)
+PythonDrone = drone.Drone('PythonTest', '0.0.0.0', 'Offline', 87.654321, 12.345678)
 PythonDrone.update()
 PythonDrone.delete() 
 
