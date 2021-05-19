@@ -8,7 +8,7 @@ from time import sleep
 
 class DmsServer(Server):
     def __init__(self):
-        super().__init__(9000, 9241)
+        super().__init__(9000, 9241, srv_ip="192.168.137.1")
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.forsøg = 0
 

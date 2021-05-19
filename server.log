@@ -7457,3 +7457,696 @@ INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:26:39.890613 ]: Packet received co
 							
 INFO:root:[ ROUTER | TIME 2021-05-19 14:26:39.890613 ]: Received packet with destination: 127.0.0.1
 INFO:root:[ ROUTER | TIME 2021-05-19 14:26:39.891615 ]: Server is destination of packet
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:32:04.982518 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:32:47.756060 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:32:47.757072 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49072
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.757072 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.757072 ]: Client info: 192.168.137.103:49072
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.758065 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.758065 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.759084 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.759084 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.764085 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.764085 ]: New client information: ('192.168.137.103', 59524)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.765073 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:32:47.765073 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:32:47.765073 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 59524
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:32:47.765073 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:33:00.049946 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:33:00.049946 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:33:00.049946 ]: Destination not found
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:33:00.066350 ]: ENDED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:36:30.136657 ]: Updating lookup table
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:36:48.595384 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:36:58.228233 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:36:58.228233 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49084
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.229221 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.229221 ]: Client info: 192.168.137.103:49084
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.229221 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.230221 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.230221 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.231221 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.235234 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.236228 ]: New client information: ('192.168.137.103', 55724)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.236228 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:36:58.236228 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:36:58.237235 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 55724
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:36:58.237235 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:37:10.422263 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:37:10.423251 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:37:10.423251 ]: Destination not found
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:37:10.438431 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:41:56.244672 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:41:58.083462 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:41:58.084475 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49106
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.084475 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.085474 ]: Client info: 192.168.137.103:49106
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.085474 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.086474 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.086474 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.087481 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.123518 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.124526 ]: New client information: ('192.168.137.103', 50734)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.124526 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:41:58.125527 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:41:58.125527 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 50734
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:41:58.126519 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:42:10.343600 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:42:10.344607 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:42:10.344607 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:42:10.410487 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:42:10.410487 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:42:10.411682 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:43:17.644730 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:48:08.795129 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:20.596146 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:20.597169 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49130
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.597169 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.598157 ]: Client info: 192.168.137.103:49130
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.598157 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.598157 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.599162 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.599162 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.605169 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.605169 ]: New client information: ('192.168.137.103', 57168)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.605169 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:20.605169 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:20.605169 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 57168
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:20.605169 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:32.798138 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:32.798138 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:32.798138 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:48:32.826147 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:32.827148 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:48:32.827148 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:49:15.640787 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:49:46.525190 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:36.720062 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:36.720062 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49146
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.721064 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.721064 ]: Client info: 192.168.137.103:49146
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.722062 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.722062 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.723062 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.723062 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.726069 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.726069 ]: New client information: ('192.168.137.103', 35714)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.727069 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:36.727069 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:36.727069 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 35714
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:36.728070 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:48.970723 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:48.970723 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:48.970723 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:50:49.000741 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:49.000741 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:50:49.000741 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:12.025648 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xabL\xf9\x8f\xf1\x95\xa5\x81\x15H\x95\x1cM\xe3`\xbcq8\x8a'\x9e\xd8p\xaeXb\xc3\x8b\x8f_\xd0\x8c"
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:51:12.025648 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:51:12.035128 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:20.758736 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:51:57.006515 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:51:59.223126 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:51:59.224131 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49152
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.225114 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.225114 ]: Client info: 192.168.137.103:49152
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.226119 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.226119 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.227127 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.227127 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.234199 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.234199 ]: New client information: ('192.168.137.103', 38594)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.234199 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:51:59.234199 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:51:59.235193 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 38594
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:51:59.235193 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:52:11.438606 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:52:11.439630 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:52:11.439630 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:52:11.511185 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:52:11.511185 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:52:11.511185 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:52:34.497981 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xabL\xf9\x8f\xf1\x95\xa5\x81\x15H\x95\x1cM\xe3`\xbcq8\x8a'\x9e\xd8p\xaeXb\xc3\x8b\x8f_\xd0\x8c"
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:52:34.497981 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:52:34.510407 ]: Server is destination of packet
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:54:28.600574 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:29.143119 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:29.144141 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49160
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.145141 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.145141 ]: Client info: 192.168.137.103:49160
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.146129 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.146129 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.147136 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.147136 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.155605 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.155605 ]: New client information: ('192.168.137.103', 46582)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.156608 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:29.156608 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:29.156608 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 46582
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:29.157159 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:41.360376 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:41.361395 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:41.361395 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:54:41.425277 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:41.426300 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:54:41.426300 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:55:04.458758 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xabL\xf9\x8f\xf1\x95\xa5\x81\x15H\x95\x1cM\xe3`\xbcq8\x8a'\x9e\xd8p\xaeXb\xc3\x8b\x8f_\xd0\x8c"
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:55:04.459758 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:55:04.469382 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:55:06.666456 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:56:04.876224 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:29.879100 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:29.879974 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49174
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.879974 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.879974 ]: Client info: 192.168.137.103:49174
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.882104 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.883115 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.884121 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.884121 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.894817 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.894817 ]: New client information: ('192.168.137.103', 36718)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.895821 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:29.895821 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:29.895821 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 36718
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:29.896445 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:42.106244 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:42.107255 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:42.107255 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:56:42.155337 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:42.156361 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:56:42.156361 ]: Server is destination of packet
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:18.465160 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:18.465160 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 36718
+			Thread-ID:1
+
+=============================================
+
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49178
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.466170 ]: STARTED
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.466170 ]: Client info: 192.168.137.103:49178
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.468176 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.468176 ]: Starting migration
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.494222 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.494222 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.519374 ]: Migration accepted
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.519374 ]: New client information: ('192.168.137.103', 58914)
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.519374 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:18.519374 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:18.519374 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 58914
+			Thread-ID:2
+
+=============================================
+
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:18.521382 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:30.748975 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:30.748975 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:30.756886 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 2 | TIME 2021-05-19 14:58:50.056302 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 14:58:56.598505 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:58.663119 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:58.664130 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49186
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.664130 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.664130 ]: Client info: 192.168.137.103:49186
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.665131 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.665131 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.666126 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.666126 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.675783 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.675783 ]: New client information: ('192.168.137.103', 55274)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.675783 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:58.676805 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 14:58:58.676805 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 55274
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:58:58.676805 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:59:10.880204 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:59:10.881228 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:59:10.881228 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 14:59:10.946611 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 14:59:10.946611 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 14:59:10.946611 ]: Server is destination of packet
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 15:02:07.346973 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:08.121960 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:08.121960 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49206
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.122962 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.122962 ]: Client info: 192.168.137.103:49206
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.123962 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.123962 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.124970 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.124970 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.129031 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.129031 ]: New client information: ('192.168.137.103', 39134)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.129031 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:08.129964 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:08.129964 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 39134
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:08.130972 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:20.346924 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:20.347933 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:20.347933 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:20.393078 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:20.393078 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:20.393078 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:02:43.442828 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xabL\xf9\x8f\xf1\x95\xa5\x81\x15H\x95\x1cM\xe3`\xbcq8\x8a'\x9e\xd8p\xaeXb\xc3\x8b\x8f_\xd0\x8c"
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:43.442828 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 15:02:43.452430 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:34.015544 ]: ENDED
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 15:03:46.568494 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 15:03:47.676413 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:03:47.676413 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49210
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.677399 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.677399 ]: Client info: 192.168.137.103:49210
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.677399 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.677399 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.678407 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.678407 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.683402 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.683402 ]: New client information: ('192.168.137.103', 40032)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.683402 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:03:47.683402 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:03:47.683402 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 40032
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:03:47.684400 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-UDP 1 | TIME 2021-05-19 15:04:32.669066 ]: STARTED
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:18.476767 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:18.477792 ]: 
+=============================================
+			Client: test
+			Address: 192.168.137.103
+			Port: 49220
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.478777 ]: STARTED
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.478777 ]: Client info: 192.168.137.103:49220
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.479784 ]: Client name: c3lphie-laptop
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.479784 ]: Starting migration
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.480784 ]: Shutting down original connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.480784 ]: Listening for migrated connection
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.483778 ]: Migration accepted
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.484779 ]: New client information: ('192.168.137.103', 54868)
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.484779 ]: Updating routers lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:18.484779 ]: Updating lookup table
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:18.484779 ]: 
+=============================================
+			Client: c3lphie-laptop
+			Address: 192.168.137.103
+			Port: 54868
+			Thread-ID:1
+
+=============================================
+
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:18.485786 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'J\x88\xe9b\rN\x96\x8e\x01I@\xdfp^~\x13\x9e\xe9\xa1~\x0e\x82\xbd<\xa6*@\x8acUQ\xa6'
+							[DEST]: 127.0.0.1
+							[DATA]: OK
+							
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:30.709471 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'KH"\xe3\xfa\x19B\xb2.(\xd0\xee\x85<0\x14\xdcf\x8d[~N\x92\xea\x11\xee`"6\x1ey\x17'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:ADD_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:30.709471 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:30.709471 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:30.757470 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\x10;\xb8wb4a$\x87a\xc8)\xa6\x16!\x05|n\xa0\x03n4\x89\x05"S\xd0z\xa1\xb7/\xd6'
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:airborne;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:30.758053 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:30.758053 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:05:53.791111 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b"\xabL\xf9\x8f\xf1\x95\xa5\x81\x15H\x95\x1cM\xe3`\xbcq8\x8a'\x9e\xd8p\xaeXb\xc3\x8b\x8f_\xd0\x8c"
+							[DEST]: 192.168.137.1
+							[DATA]: CMD:UPDATE_DRONE;STATE:active;RelayBoxDrone1:192.168.137.171;
+							
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:53.791111 ]: Received packet with destination: 192.168.137.1
+INFO:root:[ ROUTER | TIME 2021-05-19 15:05:53.791111 ]: Server is destination of packet
+INFO:root:[ THREAD-TCP 1 | TIME 2021-05-19 15:06:11.559398 ]: ENDED
