@@ -178,7 +178,7 @@ class Client(ABC):
             self.client_sock.connect((self.srv_ip, self.srv_port_udp))
 
     def send_udp(self, ident, ptype, seq, data):
-        packet = HiveU(ident, ptype, seq, data.encode())
+        packet = HiveU(ident, ptype, seq, data)
         self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
@@ -305,7 +305,7 @@ class Client(ABC):
         self.run(packet=None)
         while True:
             # Receive msg
-            msg, addr = self.recv_udpllc()
+            msg, addr = self.recv_udp()
             packet = HiveU.decode(msg)
 
             # Log client info

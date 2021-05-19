@@ -1,4 +1,6 @@
 import hashlib
+from binascii import hexlify
+from threading import Lock
 import ipaddress
 from abc import ABC, abstractmethod
 
@@ -338,6 +340,8 @@ class HiveT(Packet):
             packet_data = packet_bytes[37:]
 
             # Check if any errors occured
+            lock = Lock()
+
             exp_check = HiveT.calc_checksum(
                 bytes(packet_type), bytes(packet_dest), bytes(packet_data)
             )
