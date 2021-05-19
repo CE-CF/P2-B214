@@ -16,10 +16,10 @@ thick_arr = np.array([[57.061873611380946, 9.874398700298244],
                       [57.07404859674405, 9.837558984710995],
                       [57.07226714106329, 9.859468601277795]])
 
-odin_arr = np.array([[57.03971588980338, 9.947138200266934],
-                     [57.03972749621221, 9.947269769279707],
-                     [57.039808785497414, 9.947246843440466],
-                     [57.039800183465196, 9.947113241135392]])
+odin_arr = np.array([[57.03971214528992, 9.9471389504982],
+                     [57.03978507672801, 9.9471133530025],
+                     [57.03978728771742, 9.9472126415827],
+                     [57.03972236108952, 9.9472286931091]])
 
 round_array = np.array([[57.03992190045029, 9.94593276958847],
                         [57.03492190045028, 9.95593276958846],
@@ -68,7 +68,8 @@ round_arr_9 = np.array([[57.04469923110424, 9.940858604764456],
 
 big_relay_box = [57.028239241386345, 9.949700557143565]
 
-odin_relay_box = [57.03967438804014, 9.9472223949503]
+odin_relay_box = [57.03970014484475, 9.947191148930434]
+odin_relay_box_2 = [57.03974701430543, 9.947174416535168]
 
 deg_5 = np.array([[57.04469923110424, 9.94018639764456],  # approx 5 degrees
                   [57.04431983058689, 9.942146254577343],
@@ -145,11 +146,15 @@ soccer_rb = [57.01786594422335, 9.952036864294133]
 
 
 def run():
+
+    custom_path_width = 2               # leave the value 0 and it's calculated using the drone FOV specified
+
     # Routing(  2D-array of global coordinates specifying the corners of the map,
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-    sohn = Routing(soccer_arr, 0.00002, 3)
+
+    sohn = Routing(odin_arr, 0.00002, custom_path_width)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
 
@@ -161,7 +166,7 @@ def run():
 
     get_to_route(sohn.get_path_limit_points(),
                  sohn.get_origo(),
-                 soccer_rb,
+                 odin_relay_box,
                  sohn.get_path_functions(),
                  1)
 
@@ -170,11 +175,12 @@ def run():
     #               origo global points
     #               path functions
 
-    search_route(3,
+    search_route(custom_path_width,
                  sohn.get_path_limit_points(),
                  sohn.get_origo(),
                  sohn.get_path_functions())
 
+    go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
     # search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
 
     # instantiate()
