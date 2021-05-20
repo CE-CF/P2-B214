@@ -8,7 +8,7 @@ from time import sleep
 
 class DmsServer(Server):
     def __init__(self):
-        super().__init__(9000, 9241, srv_ip="192.168.137.1")
+        super().__init__(9000, 9241, srv_ip="192.168.137.1") #, srv_ip="192.168.137.1"
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.forsøg = 0
 
@@ -78,7 +78,7 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict)
                 if (self.forsøg == 0):
-                    dest = '192.168.137.171'
+                    dest = '192.168.137.15' #'192.168.137.171'
                     data = ["takeoff;land;"]
                     message = HiveT("drone", dest, data[self.forsøg])
                     message = HiveT.encode_packet(message)

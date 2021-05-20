@@ -8,10 +8,10 @@ class DroneChecker:
         self.host_ip = self.host.split(".")
         self.ip_range = 252
 
-    def ping(self):
+    def ping(self, *range):
         alive = []
-        rangeFrom = 170
-        rangeTo = 175
+        rangeFrom = range[0]
+        rangeTo = range[1]
         print(
             "Pinging all hosts on {0}.{1}-{2}".format(
                 self.host, rangeFrom, rangeTo

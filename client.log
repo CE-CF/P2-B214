@@ -2328,3 +2328,76 @@ INFO:root:[ TIME 2021-05-19 14:26:39.888844 ]: Packet received content:
 							[DATA]: takeoff;land;
 							
 INFO:root:[ TIME 2021-05-19 14:26:39.888844 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:27:03.436372 ]: STARTED
+INFO:root:[ TIME 2021-05-20 08:27:03.440368 ]: Received migration info: 58611
+INFO:root:[ TIME 2021-05-20 08:27:03.440368 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-20 08:27:03.441373 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-20 08:27:03.442372 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:27:49.629777 ]: STARTED
+INFO:root:[ TIME 2021-05-20 08:27:49.632777 ]: Received migration info: 58626
+INFO:root:[ TIME 2021-05-20 08:27:49.632777 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-20 08:27:49.633778 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-20 08:27:49.634778 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:31:35.503006 ]: STARTED
+INFO:root:[ TIME 2021-05-20 08:31:35.506002 ]: Received migration info: 64478
+INFO:root:[ TIME 2021-05-20 08:31:35.506002 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-20 08:31:35.509017 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-20 08:31:35.509017 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:32:02.407018 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xdb\xc5ehi\x05\xee\x96\xe4=J)ye\x84\xf1|m\x85t\xa4\xef^\x165\x04\xa4\xa7#\x00\x83a'
+							[DEST]: 192.168.137.223
+							[DATA]: takeoff;land;
+							
+INFO:root:[ TIME 2021-05-20 08:32:02.408025 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:35:17.654225 ]: STARTED
+INFO:root:[ TIME 2021-05-20 08:35:17.657224 ]: Received migration info: 64502
+INFO:root:[ TIME 2021-05-20 08:35:17.658230 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-20 08:35:17.659970 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-20 08:35:17.659970 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:35:21.887068 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xdb\xc5ehi\x05\xee\x96\xe4=J)ye\x84\xf1|m\x85t\xa4\xef^\x165\x04\xa4\xa7#\x00\x83a'
+							[DEST]: 192.168.137.223
+							[DATA]: takeoff;land;
+							
+INFO:root:[ TIME 2021-05-20 08:35:21.888077 ]: PULSE: False
+WARNING:root:[ TIME 2021-05-20 08:36:03.598335 ]: Connection refused retrying in 5
+WARNING:root:[ TIME 2021-05-20 08:36:10.656058 ]: Connection refused retrying in 5
+INFO:root:[ TIME 2021-05-20 08:36:17.196238 ]: STARTED
+INFO:root:[ TIME 2021-05-20 08:36:17.199239 ]: Received migration info: 64520
+INFO:root:[ TIME 2021-05-20 08:36:17.200225 ]: Sending heartbeat to new connection
+INFO:root:[ TIME 2021-05-20 08:36:17.201242 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'\xe2\x81\xdb\xf4Aa\x87\x0f\x81}\xd6H\xf7`\n\x08\xc7\xba601z\x8fJ\xa7\xc7\xf0\x04\x9c\x8bL\xce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-20 08:36:17.201242 ]: PULSE: False
+INFO:root:[ TIME 2021-05-20 08:36:21.394119 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'\xdb\xc5ehi\x05\xee\x96\xe4=J)ye\x84\xf1|m\x85t\xa4\xef^\x165\x04\xa4\xa7#\x00\x83a'
+							[DEST]: 192.168.137.223
+							[DATA]: takeoff;land;
+							
+INFO:root:[ TIME 2021-05-20 08:36:21.394119 ]: PULSE: False
