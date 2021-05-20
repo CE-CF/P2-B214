@@ -22,7 +22,6 @@ def find_longest_line(global_c):
     for i in range(len(global_c_correct_order)):
         adj_i = (i + 1) % 4
         length = DistanceInMeters.calculate_distance(global_c_correct_order[i], global_c_correct_order[adj_i])
-        # print(str(length) + "   " + str(global_c_correct_order[i]) + " , " + str(global_c_correct_order[adj_i]))
         if length > longest_line:
             longest_line = length
             longest_line_index = i
@@ -106,6 +105,7 @@ def point_furthest_away(local_c, func, index, origo_c):
                 second_longest_dist = dist
                 second_longest_dist_index = i
 
+    # TEST PRINTS
     # print("longest line : " + str(longest_dist_index))
     # print("longest_dist : " + str(longest_dist))
     # print("second longest line : " + str(second_longest_dist_index))
@@ -130,10 +130,6 @@ def find_path_width(longest_dist, ud_path_width):  # user defined path width
     return path_width, number_of_paths
 
 
-def ph():
-    pass
-
-
 # the path_width (found previously) isn't enough for us to calculate the path functions
 # it only tells us the distance between the two functions, not the vertical distance (y-axis intersection differences)
 # so. we need the new y-axis intersections
@@ -150,33 +146,8 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
     arr = []
     pon = 0
 
-    if -1 > perp_func_slope > 1:
-        pon = math.sqrt(((x_ratio / perp_func_slope) ** 2) + (y_ratio ** 2))
-    else:
-        pon = math.sqrt((x_ratio ** 2) + ((perp_func_slope * y_ratio) ** 2))
-
     angle = abs(math.degrees(atan2(perp_func_slope, 1)))
-    # print("angle " + str(angle))
-    # print("slope " + str(perp_func_slope))
-
-    # print('{0:f}'.format(pon * path_width))
-
-    semicircle = math.pi / 180
-    #print('pi     ' + str(semicircle * angle))
-
     scaler = 1 - (angle / 90)
-
-    # pon2 = ((cos(angle) * x_ratio) + (sin(angle) * y_ratio))
-    pon3 = (math.cos(semicircle * angle) * x_ratio) + (math.sin(semicircle * angle) * y_ratio)
-    pon4 = ((1 - scaler) * x_ratio) + (scaler * y_ratio)
-    # print('pon  ' + '{0:f}'.format(pon))
-    # print('pon2 ' + '{0:f}'.format(pon2))
-    # print("scaler " + str(scaler))
-
-    diff = abs(x_ratio - y_ratio)
-    new_scaler = 1 - abs(math.sin(math.radians(angle)))
-
-    # mid_thing = abs((scaler - (scaler / 2)) * y_ratio)
 
     weird_value = 0
     if scaler > 0.9:
@@ -201,23 +172,8 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
         weird_value = .7
 
     mid_thing = (0.5 - abs((scaler - 0.5))) * y_ratio * weird_value
-
+    diff = abs(x_ratio - y_ratio)
     bonbonbon = y_ratio + (diff * scaler) - mid_thing
-
-    # print("diff " + str(diff))
-    # print("new_scaler " + str(new_scaler))
-    # print("diff * new_scaler " + str(diff * new_scaler))
-    # print('{0:f}'.format(diff*new_scaler))
-    # print('cos angle ' + str(math.cos(math.radians(angle))))
-    # print('sin angle ' + str(math.sin(math.radians(angle))))
-
-    # print('{0:f}'.format(x_ratio))
-    # print('{0:f}'.format(y_ratio))
-
-    # print(bonbonbon)
-    # print('{0:f}'.format(bonbonbon))
-
-    # print("mid con " + str(mid_thing))
 
     path_border_intersection = (path_width * bonbonbon) / (math.sin(math.radians(90 - math.degrees(math.atan(func[0])))))
 
@@ -226,15 +182,11 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
     for i in range(2):  # loops through the two points that is not on the line and
         # y-coordinate intersection of the point's vertical projection onto the longest line
         y_coord_proj_of_point_on_func = func[0] * local_c[p_not_on_line[i]][0] + func[1]
-        # print(func[0], local_c[p_not_on_line[i]][0], func[1])
-        # print(str(y_coord_proj_of_point_on_func) + " < " + str(local_c[p_not_on_line[i]][1]))
 
         # if point is above function line
         if y_coord_proj_of_point_on_func < local_c[p_not_on_line[i]][1]:
-            # print("point is above:   +intersection")
             path_border_intersection = abs(path_border_intersection)
         else:  # if not the point is below the function line
-            # print("point is below:   -intersection")
             path_border_intersection = abs(path_border_intersection) * (-1)
 
     path_intersection = path_border_intersection / 2

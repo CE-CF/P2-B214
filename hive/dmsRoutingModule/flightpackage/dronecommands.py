@@ -46,11 +46,9 @@ def recv():
 
 def data_parser(data):
     """Parse incoming packet data for easier manipulation
-
     :param data:
     :type data: str
     :returns: Dictionary containing data
-
     """
 
     d = {}
@@ -78,15 +76,8 @@ def the_thread(cmd):
             tello_sock.shutdown(1)
             pass
 
-        s_time = time.time()
-
         cmd = cmd.encode(encoding="utf-8")
-        # sent = tello_sock.sendto("ccw 180".encode(encoding="utf-8"), tello_address)
         sent = tello_sock.sendto(cmd, tello_address)
-
-        # Send data
-        # while time.time() < (s_time + 1):
-        #    pass
 
     except KeyboardInterrupt:
         print('\n . . .\n')
@@ -96,9 +87,6 @@ def the_thread(cmd):
 
         tello_sock.close()
         tello_sock.shutdown(1)
-
-
-yaw_reset = False
 
 
 def correct_yaw(yaw, flight_time):
@@ -114,11 +102,10 @@ def correct_yaw(yaw, flight_time):
         if flight_time - (time.time() - start_time) < 2:
             print()
             drone_speed = 40
-        #  print(str(flight_time - (time.time() - start_time)) + " seconds left before turning")
+
         newest_yaw_response = int(response_arr[-1])                     # is redefined after each loop
+
         # check yaw status
-        # print("newest_yaw_response ", newest_yaw_response)
-        # print("yaw ", yaw)
         if newest_yaw_response == int(yaw):                             # no deviation
             pass
         else:                                                           # deviation
@@ -149,31 +136,11 @@ def correct_yaw(yaw, flight_time):
             elif yaw_per_sec > 100:
                 yaw_per_sec = 100
 
-            # Gamle kode der virkede
-            # new_yawk = int(yaw) - newest_yaw_response
-            # yaw_per_sec = (new_yawk / delay)
-            #new_yawk = 180 - abs(int(yaw)) + 180 - abs(newest_yaw_response)
-            #if new_yawk > 180:
-            #    yaw_per_sec = 360 - new_yawk
-            #else:
-            #    yaw_per_sec = new_yawk
-
             is_deviating = False
-            # print(int(yaw), newest_yaw_response, new_yawk)
-
-            '''
-            yaw_per_sec = 180 - abs(yaw) + 180 - abs(newest_yaw_response)
-            if yaw_per_sec > 100:
-                yaw_per_sec = 100
-            elif yaw_per_sec < -100:
-                yaw_per_sec = -100
-            '''
         else:
             yaw_per_sec = 0
 
         rc_string = "rc 0 " + str(drone_speed) + " 0 " + str(yaw_per_sec)
-
-        # print("The new rc string: " + rc_string + "\t\t old yaw: " + str(yaw))
         the_thread(rc_string)
 
         time.sleep(delay)
@@ -183,14 +150,7 @@ def search_turns(degrees_pr_sec, flight_time):
     start_time = time.time()
 
     cmd = "rc 0 50 0 "
-    left_right_str = ""
-
-    if degrees_pr_sec > 0:
-        cmd = cmd + str(degrees_pr_sec)
-        left_right_str = "left"
-    else:
-        cmd = cmd + str(degrees_pr_sec)
-        left_right_str = "right"
+    cmd = cmd + str(degrees_pr_sec)
 
     while (time.time() - start_time) < flight_time:
         the_thread(cmd)
@@ -198,10 +158,8 @@ def search_turns(degrees_pr_sec, flight_time):
 
 def instantiate():
     global sent, recvThread, event
-    # print('\r\n\r\nTello Python3 Demo.\r\n')
-    # print('Tello: command takeoff land flip forward back left right \r\n       up down cw ccw speed speed?\r\n')
 
-    # recvThread create
+
     recvThread = threading.Thread(target=recv)
     recvThread.start()
 
@@ -215,13 +173,8 @@ def instantiate():
     sent = tello_sock.sendto(cmd, tello_address)
     time.sleep(2)
 
-    # cmd = "takeoff".encode(encoding="utf-8")
-    # sent = tello_sock.sendto(cmd, tello_address)
-
-    # cmd = "ccw 360".encode(encoding="utf-8")
-    # sent = tello_sock.sendto(cmd, tello_address)
-
     print("Drone's been initialized")
+    time.sleep(1)
     print("Three seconds to takeoff!")
     time.sleep(1)
     print("Two seconds to takeoff!")

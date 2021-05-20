@@ -142,7 +142,7 @@ soccer_arr = np.array([[57.01790968504875, 9.952207436114897],
                        [57.017833800022906, 9.952494389395032]])
 
 soccer_rb = [57.01786594422335, 9.952036864294133]
-#soccer_rb = [57.01773774865883, 9.952373791864979]
+# soccer_rb = [57.01773774865883, 9.952373791864979]
 
 
 def run():
@@ -161,24 +161,24 @@ def run():
     # get_to_route( path limit points,
     #               origo global coordinates,
     #               relay box coordinates,
-    #               path functions,
-    #               drone speed (m/s) - default value 1 if 0 is passed as a parameter )
+    #               path functions  )
 
     get_to_route(sohn.get_path_limit_points(),
                  sohn.get_origo(),
                  odin_relay_box,
-                 sohn.get_path_functions(),
-                 1)
+                 sohn.get_path_functions())
 
     # search_route( path width (meters) - if default pass obj.get_path_width as parameter,
-    #               path limit points
-    #               origo global points
-    #               path functions
+    #               path limit points,
+    #               origo global points,
+    #               path functions,
+    #               drone speed (m/s) - default value 1 if 0 is passed as a parameter )
 
     search_route(custom_path_width,
                  sohn.get_path_limit_points(),
                  sohn.get_origo(),
-                 sohn.get_path_functions())
+                 sohn.get_path_functions(),
+                 0)
 
     go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
     # search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
