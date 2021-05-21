@@ -7,12 +7,13 @@ import numpy as np
 class Map:
     def __init__(self):
         self.size = 640
-        self.lat = 55.669703
-        self.long = 12.019524
-        self.zoom = 13
+        self.lat = 55.675548
+        self.long = 12.029142
+        self.zoom = 15
         self.maptype = "roadmap"
         self.mapdecider = 0
         self.key = config.SECRET
+        self.requestMap()
 
     def setCoordinates(self, lat, long):
         self.lat = lat

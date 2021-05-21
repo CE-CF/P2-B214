@@ -16,7 +16,6 @@ class LimitPoint:
     def drawPoint(self, canvas):
         self.Point = canvas.create_oval(self.x1, self.y1, self.x2, self.y2, fill=self.color)
         self.text = canvas.create_text(self.trueX, self.trueY, text=self.denonimator)
-        print("x:" + str(self.trueX) + " y: " + str(self.trueY))
 
     def setTruePoint(self):
         self.trueX = self.x2 - 8

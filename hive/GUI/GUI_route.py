@@ -33,21 +33,15 @@ class App(ttk.Frame):
             command=lambda: Map[0].setMapType(canvas),
         ).grid(column=6, row=2)
 
-        tk.Button(
-            self,
-            text="Scale",
-            command=lambda: Map[0].calcScale(),
-        ).grid(column=6, row=3)
-
         # Canvas Operators
         tk.Button(
             self, text="Clear", command=lambda: canvas.clearCanvas()
-        ).grid(column=1, row=8)
+        ).grid(column=1, row=12)
         tk.Button(
             self,
             text="Delete last point",
             command=lambda: canvas.deleteLatestPoint(),
-        ).grid(column=2, row=8)
+        ).grid(column=2, row=12)
         tk.Button(
             self, text="Estimate", command=lambda: canvas.estimate()
-        ).grid(column=3, row=8)
+        ).grid(column=3, row=12)
