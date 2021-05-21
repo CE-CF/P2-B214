@@ -1,8 +1,8 @@
 import hashlib
-from binascii import hexlify
-from threading import Lock
 import ipaddress
 from abc import ABC, abstractmethod
+from binascii import hexlify
+from threading import Lock
 
 from hive.exceptions.packet_exceptions import (
     DecodeErrorChecksum,
@@ -98,7 +98,8 @@ class HiveU(Packet):
     def encode(self):
         packet_bytearray = bytearray()
         packet_bytearray.append(self.identifier)
-        packet_bytearray.append(self.seq)
+        seq_bytes = self.seq.to_bytes(4, byteorder="big")
+        packet_bytearray += seq_bytes
         packet_bytearray.append(self.ptype)
         packet_bytearray += bytearray(self.data)
 
@@ -109,10 +110,11 @@ class HiveU(Packet):
     @staticmethod
     def decode(msg):
         ident = msg[0]
-        seq = msg[1]
-        ptype = msg[2]
-        data = msg[3:]
-        return HiveU(ident, ptype, seq, data)
+        seq = msg[1:4]
+        ptype = msg[5]
+        data = msg[6:]
+        seq_int = int.from_bytes(seq, byteorder="big")
+        return HiveU(ident, ptype, seq_int, data)
 
 
 class HiveT(Packet):
@@ -235,7 +237,7 @@ class HiveT(Packet):
         """
         dump_data = {
             "type": self.p_type,
-            "checksum": self.p_checksum,
+            "checksum": str(hexlify(self.p_checksum)),
             "dest": self.p_dest,
             "data": self.p_data,
         }
@@ -374,7 +376,6 @@ class HiveT(Packet):
         checksum.update(packet_type)
         checksum.update(packet_dest)
         checksum.update(packet_data)
-        print(checksum.hexdigest())
 
         # Return bytes object of checksum
         return checksum.digest()
