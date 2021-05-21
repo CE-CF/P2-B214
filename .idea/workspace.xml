@@ -5,14 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client.log" beforeDir="false" afterPath="$PROJECT_DIR$/client.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hive/GUI/GUI_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/GUI_base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI/GUI_route.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/GUI_route.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI/ImageHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/ImageHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI/ObjectHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/ObjectHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI/mapHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/mapHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/BackgroundFrameRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/BackgroundFrameRead.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/CameraWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/CameraWindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/DroneHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/DroneHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/GameScreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/GameScreen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hive/communication/packet.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/communication/packet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/opc_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/opc_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

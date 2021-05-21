@@ -8,26 +8,31 @@ import hive.GUI_Camera_Module.DroneHandler as DH
 from hive.GUI_Camera_Module.GameScreen import Game
 from hive.communication.packet import HiveU
 
-def eval_cmd(self, cmd_dict: dict):
-    cmd = cmd_dict["CMD"]
-    args = {}
-
-    for key in cmd_dict.keys():
-        if key != "CMD":
-            args[key] = cmd_dict[key]
-    if cmd == "ADD_DRONE":
-        pass
-    if cmd == "QOS":
-        pass
-    if cmd == "GET_DRONE":
-        print("I RECEIVED SOME DRONES")
-
-
 class OpcClientTCP(Client):
     def __init__(self, OPC_UDP):
-        super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000, other_client=OPC_UDP)
+        #super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000, other_client=OPC_UDP)
+        super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000)
 
-    def run(self, packet):
+    def eval_cmd(self, cmd_dict: dict):
+        print(f'Command Dict is: {cmd_dict}')
+        try:
+            cmd = cmd_dict["CMD"]
+            args = {}
+        except KeyError:
+            return
+
+        for key in cmd_dict.keys():
+            if key != "CMD":
+                args[key] = cmd_dict[key]
+        if cmd == "ADD_DRONE":
+            pass
+        if cmd == "QOS":
+            pass
+        if cmd == "GET_DRONE":
+            print("I RECEIVED SOME DRONES")
+
+
+    def run(self, packet: HiveU):
         packet.dump()
 
         if packet.p_type == 0 or packet.p_type == 1:
@@ -39,7 +44,11 @@ class OpcClientTCP(Client):
                 pass
         elif packet.p_type == 3:
                 # Server/client cmd code here
+                print("\tGoing through data parser")
                 cmd_dict = packet.data_parser()
+                print(f'\tParsed dict is: {cmd_dict}')
+                print("\tGone through data parser")
+                #data = packet.data_parser()
                 self.eval_cmd(cmd_dict)
                 # pass
         else:
