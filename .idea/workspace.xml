@@ -3,7 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="286bf7da-34d9-4510-82a0-201d09fc02b7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hive/GUI/GUI_route.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/GUI_route.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/DroneHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/DroneHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/GameScreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/GameScreen.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/VideoSorter.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/VideoSorter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opc_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/opc_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +43,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../SSU" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />

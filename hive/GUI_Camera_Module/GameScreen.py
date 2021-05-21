@@ -5,10 +5,9 @@ import CameraWindow as CW
 class Game:
 
     # Constructer for game object with it's resolution and other options
-    def __init__(self, DroneHandler: [DH.DroneHandler], VideoSorter, ScreenWidth = 960, ScreenHeight = 720,
+    def __init__(self, DroneHandler: [DH.DroneHandler], ScreenWidth = 960, ScreenHeight = 720,
                  FullScreen = False, Run = True, FPS = 60):
         pygame.init()   # Initialize all pygame modules
-        self.VS = VideoSorter
         self.DH = DroneHandler # Initialize the drone handler
         self.DH_Index = 0
         self.Camera_Windows = []
@@ -75,7 +74,6 @@ class Game:
     def close(self):
         pygame.display.quit()
         pygame.quit()
-        self.VS.Finish()
         for i in self.DH:
             i.Stop()
 

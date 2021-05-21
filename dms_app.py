@@ -130,8 +130,10 @@ class DmsServer(Server):
 
             elif packet.ptype == 1:
                 # STATE STRING
-                if packet.seq < self.seq_dic["state"]:
-                    pass
+                if packet.seq > self.seq_dic["state"]:
+                    self.seq_dic["state"] = packet.seq
+                    packet.dump()
+                    #pass
 
             elif packet.ptype == 2:
                 # VIDEO
