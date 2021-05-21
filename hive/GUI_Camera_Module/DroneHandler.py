@@ -1,4 +1,3 @@
-
 import threading
 import pygame
 from BackgroundFrameRead import BackgroundFrameRead

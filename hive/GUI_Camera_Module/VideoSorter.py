@@ -12,12 +12,14 @@ class VideoSorter(threading.Thread):
         super().__init__()
         self.IP = IP
         self.Port = Port
-        self.BuffSize = BuffSize
+        #self.BuffSize = BuffSize
+        self.LastSequence = 0
         self.Running = True
         self.Socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.Socket.bind((self.IP,self.Port))
-        self.Socket.settimeout(1)
+        #self.Socket.settimeout(1)
 
+    """
     # This function sorts the data and sends it to the correct local port
     def Send_The_Ting(self,r,a):
         try:
@@ -49,6 +51,20 @@ class VideoSorter(threading.Thread):
             except:
                 print("Some other error occured")
         self.Socket.close()
+    """
+    def Receive_Packet(self, Sequence, ID, Data):
+        if Sequence == self.LastSequence:
+            return
+        else:
+            try:
+                SendPort = int("22" + ID)
+                self.Socket.sendto(Data, ('127.0.0.1', SendPort))
+                self.LastSequence = Sequence
+            except OSError:
+                print("OSError Caught")
+                traceback.print_exc()
+                return
+
 
     # Ends the run thread
     def Finish(self):
