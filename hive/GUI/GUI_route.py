@@ -4,9 +4,9 @@ from tkinter.messagebox import showinfo
 
 from PIL import Image, ImageTk
 
-from GUI.ImageHandler import Canvas
-from GUI.mapHandler import Map
-from GUI.ObjectHandler import *
+from .ImageHandler import Canvas
+from .mapHandler import Map
+from .ObjectHandler import *
 
 
 class App(ttk.Frame):

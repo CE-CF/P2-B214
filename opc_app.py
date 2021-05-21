@@ -23,10 +23,14 @@ class OpcClientUDP(Client):
         self.LastSequence = 0
 
     def run(self, packet: HiveU):
-        if packet.ptype == 2:
-            #RPThread = threading.Thread(target=self.Receive_Packet, args=(packet.seq, packet.identifier, packet.data,))
-            #RPThread.start()
-            self.Receive_Packet(packet.seq, packet.identifier, packet.data)
+
+        try:
+            if packet.ptype == 2:
+                #RPThread = threading.Thread(target=self.Receive_Packet, args=(packet.seq, packet.identifier, packet.data,))
+                #RPThread.start()
+                self.Receive_Packet(packet.seq, packet.identifier, packet.data)
+        except AttributeError:
+            return
 
     def Receive_Packet(self, Sequence, ID, Data):
         if Sequence == self.LastSequence:
@@ -52,7 +56,7 @@ def main():
 
     UDP_Start_Thread = threading.Thread(target=OPC_UDP.start)
     UDP_Start_Thread.start()
-    Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID =222)]
+    Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID =222), DH.DroneHandler(OPC_UDP, Tello_ID =122)]
     MainGame = Game(Handlers)
     MainGame.Game_Loop()
 

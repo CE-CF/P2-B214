@@ -1,4 +1,4 @@
-import mapHandler
+from . import mapHandler
 
 Points = []
 Map = []

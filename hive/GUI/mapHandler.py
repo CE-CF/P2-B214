@@ -1,6 +1,6 @@
 from math import cos, pi
-from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as dim
-import config
+from hive.dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as dim
+from . import config
 import requests
 import numpy as np
 
