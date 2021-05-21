@@ -12,6 +12,26 @@ class DmsServer(Server):
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.forsøg = 0
 
+    def data_parser_battery(self, data):
+        """Parse incoming packet data for easier manipulation
+        :param data:
+        :type data: str
+        :returns: Dictionary containing data
+        """
+        d = {}
+        delim1 = ";"
+        delim2 = ":"
+        element = ""
+        for _, v in enumerate(data):
+            if v is not delim1:
+                element += v
+            else:
+                arr = element.split(delim2)
+                d[arr[0]] = arr[1]
+                element = ""
+
+        return d["bat"]
+
     def eval_cmd(self, data, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
         args = {}
@@ -38,11 +58,11 @@ class DmsServer(Server):
                         
                 if (counter > 0):
                     print("<<Drone exists>>")
-                    drone = Drone(droneList[i], droneIDList[i], droneState, 0.000000, 0.000000)
+                    drone = Drone(droneIDList[i], droneList[i], droneState, 0.000000, 0.000000)
                     drone.update()
                 else:
                     print("<<Drone does not exist>>")
-                    drone = Drone(droneList[i], droneIDList[i], droneState, 0.000000, 0.000000)
+                    drone = Drone(droneIDList[i], droneList[i], droneState, 0.000000, 0.000000)
                     drone.insert()
         
         if cmd == "UPDATE_DRONE":
@@ -52,8 +72,9 @@ class DmsServer(Server):
             droneList = droneList[2:]
             droneIDList = droneIDList[2:]
             for i in range (len(droneList)):
-                drone = Drone(droneList[i], droneIDList[i], droneState, 0.000000, 0.000000)
+                drone = Drone(droneIDList[i], droneList[i], droneState, 0.000000, 0.000000)
                 drone.update()
+                
         if cmd == "QOS":
             pass
         if cmd == "GET_DRONE":
@@ -77,6 +98,7 @@ class DmsServer(Server):
                 cmd_dict = packet.data_parser()
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict)
+                """
                 if (self.forsøg == 0):
                     dest = '192.168.137.15' #'192.168.137.171'
                     data = ["takeoff;land;"]
@@ -86,15 +108,6 @@ class DmsServer(Server):
                     self.forsøg += 1
                     print(message)
                     conn.send(message)
-                """
-                dest = '192.168.137.178'
-                data = ["forsøg;1;","forsøg;2;","forsøg;3;","forsøg;4;"]
-                message = HiveT("drone", dest, data[self.forsøg])
-                message = HiveT.encode_packet(message)
-                print('Er det her det sker? forsøg {}'.format(self.forsøg))
-                self.forsøg += 1
-                print(message)
-                conn.send(message)
                 """
             else:
                 # Wrong packet type
@@ -110,13 +123,16 @@ class DmsServer(Server):
                 # STATE STRING
                 if packet.seq > self.seq_dic["state"]:
                     self.seq_dic["state"] = packet.seq
+                    
                     packet.dump()
                     #pass
 
             elif packet.ptype == 2:
                 # VIDEO
                 if packet.seq < self.seq_dic["video"]:
-                    pass
+                    self.seq_dic["state"] = packet.seq
+                    self.forward()
+                    #pass
 
             else:
                 # Wrong packet type

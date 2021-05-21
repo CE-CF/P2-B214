@@ -105,13 +105,13 @@ class TableHandler:
         query_columns = ', '.join(ds_list)
 
         mySql_update_query = ''' UPDATE hive.%s SET %s, received = CURRENT_TIME WHERE %s ''' %(self.table, query_columns, where_statement)
-        
+        print(mySql_update_query)
         return mySql_update_query
 
     def delete_query(self, **insert):
         where_statement = ', '.join(['{} = {!r}'.format(k, w) for k, w in list(insert.items())[:1]])
         mySql_delete_query = ''' DELETE FROM hive.%s WHERE %s ''' %(self.table, where_statement)
-        
+        print(mySql_delete_query)
         return mySql_delete_query
     
 
