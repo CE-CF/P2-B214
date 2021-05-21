@@ -23,16 +23,12 @@ logging.basicConfig(filename="server.log", level=logging.DEBUG)
 
 
 class UDPPacketHandler(Thread):
-    def __init__(
-        self,
-        thread_id: int,
-        target,
-        conn_sock,
-    ):
+    def __init__(self, thread_id: int, target, conn_sock, router):
         super().__init__()
         self.thread_id = thread_id
         self.target = target
         self.conn_sock = conn_sock
+        self.router = router
 
     def log_info(self, msg: str):
         """Logging helper
@@ -72,6 +68,9 @@ class UDPPacketHandler(Thread):
                 break
         return bytes(msg)
 
+    def send(self, packet: HiveU, client_addr):
+        self.conn_sock.sendto(packet.encode(), client_addr)
+
     def _accept_udp(self):
         bytes_addr = self.conn_sock.recvfrom(BUFFER_SIZE)
         return bytes_addr[0], bytes_addr[1]
@@ -81,6 +80,7 @@ class UDPPacketHandler(Thread):
         while True:
             msg, addr = self._accept_udp()
             packet = HiveU.decode(msg)
+            self.router.broadcast_hiveu(packet)
             self.log_info(
                 f"""Connection Information:
 \t\t\t\t\t\t\t- Client Address: {addr}"""
@@ -199,12 +199,19 @@ class TCPClientHandler(Thread):
         )
 
         packet = self.recvpacket()
-        self._client_name = packet.p_data
+        packet.dump()
+
+        data = packet.data_parser()
+
+        self._client_name = data["NAME"]
         self.log_info(f"Client name: {self.client_name}")
 
         self.migrate()
         self.log_info("Updating routers lookup table")
         self.router.update_table()
+        if "UDP" in data:
+            print("Adding udp info")
+            self.router.add_udp_info(self.client_name, int(data["UDP"]))
 
         packet = self.recvpacket()
         p_dump = packet.dump(to_stdout=False)
@@ -291,12 +298,13 @@ class Router:
 
     def __init__(self, srv_ip):
         self._clientlist: List[TCPClientHandler] = []
+        self.udp_handler: UDPPacketHandler = None
         self.lock = Lock()
         self.srv_ip = srv_ip
+        self.dest_table = {}
 
     def is_destination(self):
         if type(self.packet) == HiveT:
-            print("in is_destination")
             if self.packet.p_dest.exploded == self.srv_ip:
                 return True
             else:
@@ -307,11 +315,9 @@ class Router:
     def update_table(self):
         self.log_info("Updating lookup table")
         self.lock.acquire()
-        self.dest_table = {}
         for x in self.clientlist:
             self.dest_table[x.client_name] = {
                 "address": x.client_addr[0],
-                "port": x.client_addr[1],
                 "handler": x,
             }
         log_string = ""
@@ -319,7 +325,6 @@ class Router:
             log_string += "\n=============================================\n"
             log_string += f"\t\t\tClient: {x}\n"
             log_string += f"\t\t\tAddress: {self.dest_table[x]['address']}\n"
-            log_string += f"\t\t\tPort: {self.dest_table[x]['port']}\n"
             log_string += (
                 "\t\t\tThread-ID:"
                 + f"{self.dest_table[x]['handler'].thread_id}\n"
@@ -351,6 +356,16 @@ class Router:
     def add_client(self, client: TCPClientHandler):
         self._clientlist.append(client)
 
+    def add_handler(self, handler: UDPPacketHandler):
+        self.udp_handler = handler
+
+    def add_udp_info(self, name, udp_port: int):
+        print(self.dest_table)
+        self.lock.acquire()
+        self.dest_table[name]["udp_port"] = udp_port
+        self.lock.release()
+        print(self.dest_table)
+
     def find_dest(self):
         """Finds the destination for packet in destination table
 
@@ -361,6 +376,35 @@ class Router:
             if self.dest_table[x]["address"] == self.packet.p_dest.exploded:
                 self.log_info(f"Destination found in client: {x}")
                 return x
+
+    def broadcast_hiveu(self, packet: HiveU):
+        if packet.ptype == 2:
+            self.lock.acquire()
+            print("Checking table")
+            for x in self.dest_table:
+                if "OPC" in x and "udp_port" in self.dest_table[x]:
+                    print(f"Found {x}")
+                    self.udp_handler.send(
+                        packet,
+                        (
+                            self.dest_table[x]["address"],
+                            self.dest_table[x]["udp_port"],
+                        ),
+                    )
+
+            self.lock.release()
+        elif packet.ptype == 0:
+            self.lock.acquire()
+            for x in self.dest_table:
+                if "Relaybox" in x:
+                    self.udp_handler.send(
+                        packet,
+                        (
+                            self.dest_table[x]["address"],
+                            self.dest_table[x]["udp_port"],
+                        ),
+                    )
+            self.lock.release()
 
     def route(self, packet):
         """Routes the supplied packet to its final destination,
@@ -443,7 +487,10 @@ class Server(ABC):
 
             # Start UDP thread
             print(f"UDP Listener on port: {self.srv_port_udp}")
-            udpthread = UDPPacketHandler(1, self.run, self.srv_socket_udp)
+            udpthread = UDPPacketHandler(
+                1, self.run, self.srv_socket_udp, self.router
+            )
+            self.router.add_handler(udpthread)
             udpthread.start()
 
             tcpmain.join()

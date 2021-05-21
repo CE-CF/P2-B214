@@ -37,10 +37,9 @@ class PathLimits:
                             ((s.longest_line_index + 2) % 4),
                             ((s.longest_line_index + 1) % 4)]
 
-        # print(original_indexes)
-
         return intersection_functions, original_indexes
 
+    # finds x-coordinate of intersection
     def find_x_intersection(s, func1, func2):
         if func1[0] - func2[0] == 0:
             return 0
