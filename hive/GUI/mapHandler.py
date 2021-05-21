@@ -7,8 +7,8 @@ import numpy as np
 class Map:
     def __init__(self):
         self.size = 640
-        self.lat = 55.675548
-        self.long = 12.029142
+        self.lat = 55.641457
+        self.long = 12.085081
         self.zoom = 15
         self.maptype = "roadmap"
         self.mapdecider = 0
