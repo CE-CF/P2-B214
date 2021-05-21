@@ -6,11 +6,12 @@ from hive.GUI.GUI_base import MainFrame
 
 import hive.GUI_Camera_Module.DroneHandler as DH
 from hive.GUI_Camera_Module.GameScreen import Game
+from hive.communication.packet import HiveU
 
 
 class OpcClientTCP(Client):
-    def __init__(self):
-        super().__init__("127.0.0.1", mode=CONN_TYPE_TCP, tcp_port=9000)
+    def __init__(self, OPC_UDP):
+        super().__init__("127.0.0.1", mode=CONN_TYPE_TCP, tcp_port=9000, other_client=OPC_UDP)
 
     def run(self, packet):
         pass
