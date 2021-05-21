@@ -1,4 +1,4 @@
-from CameraButton import CameraButton
+from .CameraButton import CameraButton
 import pygame
 import cv2
 

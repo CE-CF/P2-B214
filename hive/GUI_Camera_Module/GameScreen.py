@@ -1,6 +1,6 @@
 import pygame
-import DroneHandler as DH
-import CameraWindow as CW
+from . import DroneHandler as DH
+from . import CameraWindow as CW
 
 class Game:
 

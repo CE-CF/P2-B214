@@ -19,7 +19,7 @@ class BackgroundFrameRead:
         self.Old_Frame_Time = 0
         self.New_Frame_Time = 1
         self.FPS = 1
-        f = open('NoFrame.jpg', 'rb')
+        f = open('hive/GUI_Camera_Module/NoFrame.jpg', 'rb')
         image_bytes = f.read()
         self.PlaceholderFrame = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), -1)
         print("BackgroundFrameRead started")
