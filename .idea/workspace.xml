@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="286bf7da-34d9-4510-82a0-201d09fc02b7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/client.log" beforeDir="false" afterPath="$PROJECT_DIR$/client.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hive/GUI/GUI_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/GUI_base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hive/GUI/GUI_route.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI/GUI_route.py" afterDir="false" />
@@ -14,6 +15,10 @@
       <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/DroneHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/DroneHandler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hive/GUI_Camera_Module/GameScreen.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/GUI_Camera_Module/GameScreen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/opc_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/opc_app.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/hive/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/hive/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hive/dmsRoutingModule/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/hive/dmsRoutingModule/main.py" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

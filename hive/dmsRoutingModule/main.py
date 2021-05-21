@@ -153,7 +153,6 @@ def run():
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-
     sohn = Routing(odin_arr, 0.00002, custom_path_width)
     sohn.get_local_coordinates()
     sohn.analyze_coordinates()
@@ -162,7 +161,6 @@ def run():
     #               origo global coordinates,
     #               relay box coordinates,
     #               path functions  )
-
     get_to_route(sohn.get_path_limit_points(),
                  sohn.get_origo(),
                  odin_relay_box,
@@ -173,7 +171,6 @@ def run():
     #               origo global points,
     #               path functions,
     #               drone speed (m/s) - default value 1 if 0 is passed as a parameter )
-
     search_route(custom_path_width,
                  sohn.get_path_limit_points(),
                  sohn.get_origo(),
@@ -181,17 +178,6 @@ def run():
                  0)
 
     go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
-    # search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
-
-    # instantiate()
-
-    # print("go straight")
-
-    # correct_yaw(8)
-
-    # time.sleep(1)
-    # the_thread("land")
-    # print("TOUCHDOWN!!!")
 
 
 if __name__ == '__main__':

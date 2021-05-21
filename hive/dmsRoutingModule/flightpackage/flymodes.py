@@ -204,7 +204,7 @@ def search_route(path_width, path_limit_points, origo, path_functions, d_speed):
                       + str(flight_time) + " seconds")
                 correct_yaw(drone_yaw_1, flight_time)
 
-            # if there is a point after the turn .... (i+2) because this only runs when i%2==0
+            # if there is a point after the turn.... (i+2) because this only runs when i%2==0
             if not (i + 2) == len(path_limit_points):
                 # figure out which way to turn next
                 if path_limit_points[i][0] < path_limit_points[i + 1][0]:  # if the x-value increases as the drone flies
