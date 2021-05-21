@@ -1,14 +1,18 @@
+from time import sleep
+
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.communication.packet import HiveT, HiveU
 from hive.communication.server import Server
-from hive.dataBase.tableHandlers.route import Route
 from hive.dataBase.tableHandlers.drone import Drone
 from hive.dataBase.tableHandlers.getTable import fetchall
-from time import sleep
+from hive.dataBase.tableHandlers.route import Route
+
 
 class DmsServer(Server):
     def __init__(self):
-        super().__init__(9000, 9241, srv_ip="192.168.137.1") #, srv_ip="192.168.137.1"
+        super().__init__(
+            9000, 9241, srv_ip="192.168.137.1"
+        )  # , srv_ip="192.168.137.1"
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.forsøg = 0
 
@@ -21,38 +25,56 @@ class DmsServer(Server):
                 args[key] = cmd_dict[key]
 
         if cmd == "ADD_DRONE":
-            #pass
+            # pass
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
-            droneState = data['STATE']
+            droneState = data["STATE"]
             droneList = droneList[2:]
             droneIDList = droneIDList[2:]
-            droneTableList = fetchall('hive.drone')
+            droneTableList = fetchall("hive.drone")
             counter = 0
-            
-            for i in range (len(droneList)):
-                for j in range (len(droneTableList)):
-                 
-                    if droneTableList[j]['droneID'] == droneIDList[i]:
-                        counter +=1
-                        
-                if (counter > 0):
+
+            for i in range(len(droneList)):
+                for j in range(len(droneTableList)):
+
+                    if droneTableList[j]["droneID"] == droneIDList[i]:
+                        counter += 1
+
+                if counter > 0:
                     print("<<Drone exists>>")
-                    drone = Drone(droneList[i], droneIDList[i], droneState, 0.000000, 0.000000)
+                    drone = Drone(
+                        droneList[i],
+                        droneIDList[i],
+                        droneState,
+                        0.000000,
+                        0.000000,
+                    )
                     drone.update()
                 else:
                     print("<<Drone does not exist>>")
-                    drone = Drone(droneList[i], droneIDList[i], droneState, 0.000000, 0.000000)
+                    drone = Drone(
+                        droneList[i],
+                        droneIDList[i],
+                        droneState,
+                        0.000000,
+                        0.000000,
+                    )
                     drone.insert()
-        
+
         if cmd == "UPDATE_DRONE":
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
-            droneState = data['STATE']
+            droneState = data["STATE"]
             droneList = droneList[2:]
             droneIDList = droneIDList[2:]
-            for i in range (len(droneList)):
-                drone = Drone(droneList[i], droneIDList[i], droneState, 0.000000, 0.000000)
+            for i in range(len(droneList)):
+                drone = Drone(
+                    droneList[i],
+                    droneIDList[i],
+                    droneState,
+                    0.000000,
+                    0.000000,
+                )
                 drone.update()
         if cmd == "QOS":
             pass
@@ -77,12 +99,12 @@ class DmsServer(Server):
                 cmd_dict = packet.data_parser()
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict)
-                if (self.forsøg == 0):
-                    dest = '192.168.137.15' #'192.168.137.171'
+                if self.forsøg == 0:
+                    dest = "192.168.137.15"  #'192.168.137.171'
                     data = ["takeoff;land;"]
                     message = HiveT("drone", dest, data[self.forsøg])
                     message = HiveT.encode_packet(message)
-                    print('Er det her det sker? forsøg {}'.format(self.forsøg))
+                    print("Er det her det sker? forsøg {}".format(self.forsøg))
                     self.forsøg += 1
                     print(message)
                     conn.send(message)
