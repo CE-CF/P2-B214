@@ -11,7 +11,6 @@ class Map:
         self.long = 12.019524
         self.zoom = 13
         self.maptype = "roadmap"
-        self.mapdecider = 0
         self.key = config.SECRET
 
     def setCoordinates(self, lat, long):
@@ -33,7 +32,7 @@ class Map:
             + str(self.size)
             + "&maptype="
             + self.maptype
-            + "&style=feature:poi|visibility:off&style=feature:landscape.natural.landcover|visibility:simplified"
+            + "&style=feature:poi|visibility:off"
             + "&key="
             + str(self.key)
         )
@@ -62,13 +61,10 @@ class Map:
 
 
     def setMapType(self, canvas):
-        self.mapdecider = (self.mapdecider + 1) % 2
-        if self.mapdecider == 0:
-            self.maptype = "roadmap"
-        elif self.mapdecider == 1:
+        if self.maptype == "roadmap":
             self.maptype = "satellite"
         else:
-            print("There has been a mistake")
+            self.maptype = "roadmap"
         self.requestMap()
         canvas.update()
 
