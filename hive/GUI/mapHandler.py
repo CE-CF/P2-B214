@@ -42,8 +42,9 @@ class Map:
 
     def CalculateCoordinates(self, x, y):
         """
-        A function to calculate coordinates from pixel coordinates by Ivan Shukshin
-        https://stackoverflow.com/questions/47106276/converting-pixels-to-latlng-coordinates-from-google-static-image
+        Description: A function for calculating global coordinates from pixel coordinates
+        Credit: Ivan Shukshin
+        Link: https://stackoverflow.com/questions/47106276/converting-pixels-to-latlng-coordinates-from-google-static-image
         """
         pixel_degree_x = 360 / 2 ** (self.zoom + 8)
         pixel_degree_y = 360 / 2 ** (self.zoom + 8) * cos(self.lat * pi / 180)
