@@ -7,11 +7,12 @@ import numpy as np
 class Map:
     def __init__(self):
         self.size = 640
-        self.lat = 55.669703
-        self.long = 12.019524
+        self.lat = 55.675468
+        self.long = 12.029094
         self.zoom = 13
         self.maptype = "roadmap"
         self.key = config.SECRET
+        self.requestMap()
 
     def setCoordinates(self, lat, long):
         self.lat = lat
@@ -40,6 +41,10 @@ class Map:
             img.write(image.content)
 
     def CalculateCoordinates(self, x, y):
+        """
+        A function to calculate coordinates from pixel coordinates by Ivan Shukshin
+        https://stackoverflow.com/questions/47106276/converting-pixels-to-latlng-coordinates-from-google-static-image
+        """
         pixel_degree_x = 360 / 2 ** (self.zoom + 8)
         pixel_degree_y = 360 / 2 ** (self.zoom + 8) * cos(self.lat * pi / 180)
         point_lat = self.lat - pixel_degree_y * (y - self.size / 2)
