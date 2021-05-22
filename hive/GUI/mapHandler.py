@@ -7,11 +7,10 @@ import numpy as np
 class Map:
     def __init__(self):
         self.size = 640
-        self.lat = 55.641457
-        self.long = 12.085081
-        self.zoom = 15
+        self.lat = 55.675468
+        self.long = 12.029094
+        self.zoom = 13
         self.maptype = "roadmap"
-        self.mapdecider = 0
         self.key = config.SECRET
         self.requestMap()
 
@@ -42,6 +41,10 @@ class Map:
             img.write(image.content)
 
     def CalculateCoordinates(self, x, y):
+        """
+        A function to calculate coordinates from pixel coordinates by Ivan Shukshin
+        https://stackoverflow.com/questions/47106276/converting-pixels-to-latlng-coordinates-from-google-static-image
+        """
         pixel_degree_x = 360 / 2 ** (self.zoom + 8)
         pixel_degree_y = 360 / 2 ** (self.zoom + 8) * cos(self.lat * pi / 180)
         point_lat = self.lat - pixel_degree_y * (y - self.size / 2)
@@ -63,13 +66,10 @@ class Map:
 
 
     def setMapType(self, canvas):
-        self.mapdecider = (self.mapdecider + 1) % 2
-        if self.mapdecider == 0:
-            self.maptype = "roadmap"
-        elif self.mapdecider == 1:
+        if self.maptype == "roadmap":
             self.maptype = "satellite"
         else:
-            print("There has been a mistake")
+            self.maptype = "roadmap"
         self.requestMap()
         canvas.update()
 

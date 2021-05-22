@@ -15,7 +15,7 @@ class Canvas:
         self.img = ImageTk.PhotoImage(Image.open("map.png"))
         self.canvas = tk.Canvas(root, height=620, width=620)
         self.image_container = self.canvas.create_image(
-            300, 300, image=self.img
+            0, 0, image=self.img
         )
         self.canvas.grid(column=0, row=0, columnspan=5, rowspan=10)
         self.canvas.bind("<Button-1>", self.limitPoint)
