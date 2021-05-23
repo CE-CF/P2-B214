@@ -7,6 +7,11 @@ from routingpackage.distanceinmeters import DistanceInMeters
 from flightpackage.dronecommands import instantiate, the_thread, correct_yaw
 from flightpackage.flymodes import get_to_route, search_route, go_home
 
+# These two booleans should be changed when the user chooses either waypoint mode or search route mode on the GUI
+waypoint_route = False
+calculate_route = False
+
+
 big_array = np.array([[57.02848118809145, 9.948913866684594],
                       [57.02867865592206, 9.949934871541862],
                       [57.02895776307729, 9.949560854500227],
@@ -152,56 +157,56 @@ waypoint_arr = np.array([[57.06593344368505, 9.935326097229042],
 
 
 def run():
+    if waypoint_route:
+        get_to_next_point(True, waypoint_arr)
+        go_back_to_start(waypoint_arr)
 
-    # get_to_next_point(True, waypoint_arr)
-    # go_back_to_start(waypoint_arr)
+    elif calculate_route:
+        custom_path_width = 0               # leave the value 0 and it's calculated using the drone FOV specified
 
+        # Routing(  2D-array of global coordinates specifying the corners of the map,
+        #           plot padding,
+        #           user defined path width in meters - used for testing
+        #               - leave the value 0 and it's calculated using the drone FOV specified)
 
-    custom_path_width = 0               # leave the value 0 and it's calculated using the drone FOV specified
+        # sohn = Routing(thick_arr, 0.00002, custom_path_width)
+        # sohn.get_local_coordinates()
+        # sohn.analyze_coordinates()
 
-    # Routing(  2D-array of global coordinates specifying the corners of the map,
-    #           plot padding,
-    #           user defined path width in meters - used for testing
-    #               - leave the value 0 and it's calculated using the drone FOV specified)
+        # get_to_route( path limit points,
+        #               origo global coordinates,
+        #               relay box coordinates,
+        #               path functions  )
 
-    # sohn = Routing(thick_arr, 0.00002, custom_path_width)
-    # sohn.get_local_coordinates()
-    # sohn.analyze_coordinates()
+        # get_to_route(sohn.get_path_limit_points(),
+        #             sohn.get_origo(),
+        #             odin_relay_box,
+        #             sohn.get_path_functions())
 
-    # get_to_route( path limit points,
-    #               origo global coordinates,
-    #               relay box coordinates,
-    #               path functions  )
+        # search_route( path width (meters) - if default pass obj.get_path_width as parameter,
+        #               path limit points,
+        #               origo global points,
+        #               path functions,
+        #               drone speed (m/s) - default value 1 if 0 is passed as a parameter )
 
-    # get_to_route(sohn.get_path_limit_points(),
-    #             sohn.get_origo(),
-    #             odin_relay_box,
-    #             sohn.get_path_functions())
+        # search_route(custom_path_width,
+        #             sohn.get_path_limit_points(),
+        #             sohn.get_origo(),
+        #             sohn.get_path_functions(),
+        #             0)
 
-    # search_route( path width (meters) - if default pass obj.get_path_width as parameter,
-    #               path limit points,
-    #               origo global points,
-    #               path functions,
-    #               drone speed (m/s) - default value 1 if 0 is passed as a parameter )
+        # go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
+        # search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
 
-    # search_route(custom_path_width,
-    #             sohn.get_path_limit_points(),
-    #             sohn.get_origo(),
-    #             sohn.get_path_functions(),
-    #             0)
+        # instantiate()
 
-    # go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
-    # search_route(sohn.get_path_width(), sohn.get_path_limit_points(), sohn.get_origo(), sohn.get_path_functions())
+        # print("go straight")
 
-    # instantiate()
+        # correct_yaw(8)
 
-    # print("go straight")
-
-    # correct_yaw(8)
-
-    # time.sleep(1)
-    # the_thread("land")
-    # print("TOUCHDOWN!!!")
+        # time.sleep(1)
+        # the_thread("land")
+        # print("TOUCHDOWN!!!")
 
 
 if __name__ == '__main__':
