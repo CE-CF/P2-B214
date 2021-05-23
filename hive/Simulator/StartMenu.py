@@ -5,7 +5,7 @@ class StartMenu():
 
     def __init__(self):
         # The resolution values that can be chosen from
-        self.Resolution_Values = [(640, 480), (1080, 640), (1600, 900), (1920, 1080)]
+        self.Resolution_Values = [(640, 480), (1080, 640), (1280, 720), (1600, 900), (1920, 1080)]
         self.FPS_Values = ('30', '60', '120', '240')
 
     # Makes the list and dictionary that are used to change the resolution of the simulator
@@ -55,8 +55,12 @@ class StartMenu():
     # Changes the speed according to the spinbox.
     # Initiated only when up or down arrow are used in the spinbox
     def Change_Speed(self):
-        GC.Uniform_Drones_Speed = float(self.Speed_Spinbox.get())*10
+        GC.Uniform_Drones_Speed = int(self.Speed_Spinbox.get())
         print(f'Speed is: {GC.Uniform_Drones_Speed}')
+    # Changes the number of spawned drones in Tello Mode
+    def Change_Drone_Number(self):
+        GC.Drone_Number = int(self.Drone_Number_Spinbox.get())
+        print(f'Number of Tello drones is: {GC.Drone_Number}')
     # Sets the boolean that tells the main function to run the game
     # Called when the run button is pressed. It destroys the start menu
     def Run_Game(self):
@@ -69,6 +73,7 @@ class StartMenu():
         self.root = tkinter.Tk()                        # Create main tkinter window
         Main_Frame = tkinter.Frame(self.root)           # Create a frame inside the root window
         Speed_Frame = tkinter.Frame(Main_Frame)         # Create a frame for the speed spinbox inside the main frame
+        Drone_Number_Frame = tkinter.Frame(Main_Frame)
         Resolution_Frame = tkinter.Frame(Main_Frame)
         FPS_Frame = tkinter.Frame(Main_Frame)
         # Tkinter widgets use tkinter objects that have to be created
@@ -83,8 +88,8 @@ class StartMenu():
         self.FullScreen_Bool.set(False)
         self.DrawPath_Bool = tkinter.BooleanVar()
         self.DrawPath_Bool.set(False)
-        self.Speed = tkinter.DoubleVar()
-        self.Speed.set(1)
+        #self.Speed = tkinter.DoubleVar()
+        #self.Speed.set(1)
         self.Run_Bool = False
 
         TelloMode_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Tello Mode", variable = self.TelloMode_Bool,
@@ -98,15 +103,21 @@ class StartMenu():
                                                command = self.Change_Resolution)
         FPS_Label = tkinter.Label(FPS_Frame, text="Frames Per Second")
         FPS_Option = tkinter.OptionMenu(FPS_Frame, FPS, *self.FPS_Values, command = self.Change_FPS)
-        Speed_Label = tkinter.Label(Speed_Frame, text="Drone's Speed")
-        self.Speed_Spinbox = tkinter.Spinbox(Speed_Frame,text="Speed", from_=0, to=10, increment=0.1,
+        Speed_Label = tkinter.Label(Speed_Frame, text="Drone's Speed            ")
+        self.Speed_Spinbox = tkinter.Spinbox(Speed_Frame,text="Speed", from_=1, to=30, increment=1,
                                              width=5, command = self.Change_Speed)
+        Drone_Number_Label = tkinter.Label(Drone_Number_Frame, text="No. of Drones             ")
+        self.Drone_Number_Spinbox = tkinter.Spinbox(Drone_Number_Frame,text="No. of Drones", from_=1, to=10, increment=1,
+                                                    width=5, command = self.Change_Drone_Number)
         Run_Button = tkinter.Button(Main_Frame, text = "Run", command = self.Run_Game)
         # Following lines pack the frames and widgets
         Main_Frame.pack()
         Speed_Frame.pack()
         Speed_Label.pack(side=tkinter.LEFT)
         self.Speed_Spinbox.pack(side=tkinter.RIGHT)
+        Drone_Number_Frame.pack()
+        Drone_Number_Label.pack(side=tkinter.LEFT)
+        self.Drone_Number_Spinbox.pack(side=tkinter.RIGHT)
         Resolution_Frame.pack()
         Resolution_Label.pack(side=tkinter.LEFT)
         Resolution_Option.pack(side=tkinter.RIGHT)
