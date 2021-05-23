@@ -358,7 +358,10 @@ class TelloDrone():
             Converted_Yaw -= 360
         elif Converted_Yaw<-180:
             Converted_Yaw += 360
-        State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{Converted_Yaw};vgx:{int(self.Speed_x)};vgy:{int(self.Speed_y)};vgz:{int(self.Speed_z)};templ:12.2;temph:14.2;tof:{int(Dist)};h:{int(self.Pos_z)};bat:55;baro:22;time:{int(Run_Time)};agx:0;agy:0;agz:0;\r\n"
+        if GC.PosMode:
+            State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{Converted_Yaw};vgx:{int(self.Speed_x)};vgy:{int(self.Speed_y)};vgz:{int(self.Speed_z)};templ:12.2;temph:14.2;tof:{int(Dist)};h:{int(self.Pos_z)};bat:55;baro:22;time:{int(Run_Time)};agx:0;agy:0;agz:0;x:{self.Pos_x};y:{self.Pos_y};z:{self.Pos_z}\r\n"
+        else:
+            State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{Converted_Yaw};vgx:{int(self.Speed_x)};vgy:{int(self.Speed_y)};vgz:{int(self.Speed_z)};templ:12.2;temph:14.2;tof:{int(Dist)};h:{int(self.Pos_z)};bat:55;baro:22;time:{int(Run_Time)};agx:0;agy:0;agz:0;\r\n"
         return State
 
     def Get_Pos(self):

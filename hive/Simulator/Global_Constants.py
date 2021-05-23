@@ -4,5 +4,6 @@ Drone_Number = 10
 ScreenSize = ScreenWidth, ScreenHeight = 1080, 640
 FullScreen = False
 TelloMode = False
+PosMode = False
 FPS = 60
 Draw_Path = False

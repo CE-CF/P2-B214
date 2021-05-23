@@ -44,6 +44,10 @@ class StartMenu():
     def Change_TelloMode(self):
         GC.TelloMode = self.TelloMode_Bool.get()
         print(f'Tello mode is: {GC.TelloMode}')
+
+    def Change_PosMode(self):
+        GC.PosMode = self.PosMode_Bool.get()
+        print(f'GPS mode is: {GC.TelloMode}')
     # Changes the full screen boolean according the full screen tick box
     def Change_FullScreen(self):
         GC.FullScreen = self.FullScreen_Bool.get()
@@ -84,6 +88,8 @@ class StartMenu():
         FPS.set(self.FPS_Values[1])
         self.TelloMode_Bool = tkinter.BooleanVar()
         self.TelloMode_Bool.set(False)
+        self.PosMode_Bool = tkinter.BooleanVar()
+        self.PosMode_Bool.set(False)
         self.FullScreen_Bool = tkinter.BooleanVar()
         self.FullScreen_Bool.set(False)
         self.DrawPath_Bool = tkinter.BooleanVar()
@@ -94,6 +100,8 @@ class StartMenu():
 
         TelloMode_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Tello Mode", variable = self.TelloMode_Bool,
                                                  offvalue = False, onvalue = True, command = self.Change_TelloMode)
+        PosMode_Checkbox = tkinter.Checkbutton(Main_Frame, text = "GPS Mode", variable = self.PosMode_Bool,
+                                                 offvalue = False, onvalue = True, command = self.Change_PosMode)
         FullScreen_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Full Screen", variable = self.FullScreen_Bool,
                                                   offvalue = False, onvalue = True, command = self.Change_FullScreen)
         DrawPath_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Draw Drones' Path", variable = self.DrawPath_Bool,
@@ -125,6 +133,7 @@ class StartMenu():
         FPS_Label.pack(side=tkinter.LEFT)
         FPS_Option.pack(side=tkinter.RIGHT)
         TelloMode_Checkbox.pack()
+        PosMode_Checkbox.pack()
         FullScreen_Checkbox.pack()
         DrawPath_Checkbox.pack()
         Run_Button.pack()
