@@ -1,14 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
-
 from .GUI_route import App
 
 
 class MainFrame(tk.Tk):
     def __init__(self):
+        """Initialize root window"""
         super().__init__()
-
-        options = {"padx": 5, "pady": 5}
 
         # Configuration of window
         self.title("DroneHive")
@@ -26,8 +23,8 @@ class MainFrame(tk.Tk):
 
     def __create_widgets(self):
         # Create input frame
-        rando_frame = App(self)
-        rando_frame.pack()
+        GUI_Route = App(self)
+        GUI_Route.pack()
 
 
 if __name__ == "__main__":
