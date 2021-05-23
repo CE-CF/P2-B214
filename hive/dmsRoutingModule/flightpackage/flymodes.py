@@ -1,4 +1,4 @@
-from .dronecommands import instantiate, the_thread, correct_yaw, search_turns, yaw_reset, get_yaw
+from .dronecommands import instantiate, the_thread, correct_yaw, search_turns, get_yaw
 
 from routingpackage.distanceinmeters import DistanceInMeters
 import math
