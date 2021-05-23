@@ -12,17 +12,17 @@ from .SearchArea import LimitPoint
 
 class Canvas:
     def __init__(self, root):
-        self.img = ImageTk.PhotoImage(Image.open("map.png"))
+        self.img = ImageTk.PhotoImage(Image.open("hive/GUI/map.png"))
         self.canvas = tk.Canvas(root, height=620, width=620)
         self.image_container = self.canvas.create_image(
-            300, 300, image=self.img
+            0, 0, image=self.img
         )
-        self.canvas.grid(column=0, row=0, columnspan=5, rowspan=5)
+        self.canvas.grid(column=0, row=0, columnspan=5, rowspan=10)
         self.canvas.bind("<Button-1>", self.limitPoint)
         self.PointDenominator = ["A", "B", "C", "D"]
 
         self.info = tk.Label(root, text="Hello World")
-        self.info.grid(column=0, row=6, columnspan=5)
+        self.info.grid(column=0, row=11, columnspan=5)
         self.UpdateInfo()
 
     def limitPoint(self, event):
@@ -43,7 +43,7 @@ class Canvas:
             print(str(Map[0].CalculateCoordinates(event.x, event.y)))
 
     def update(self):
-        self.img = ImageTk.PhotoImage(file="map.png")
+        self.img = ImageTk.PhotoImage(file="hive\GUI\map.png")
         self.canvas.itemconfig(self.image_container)
         self.clearCanvas()
 
@@ -123,10 +123,10 @@ class Canvas:
             ) + degrees(acos((CD ** 2 + BD ** 2 - BC ** 2) / (2 * CD * BD)))
 
         if (
-            angleA >= threshold
-            or angleB >= threshold
-            or angleC >= threshold
-            or angleD >= threshold
+            angleA > threshold
+            or angleB > threshold
+            or angleC > threshold
+            or angleD > threshold
         ):
             self.deleteLatestPoint()
             showinfo(

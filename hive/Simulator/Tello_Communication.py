@@ -127,13 +127,17 @@ class Tello_Communication(Thread):
                     return "error"
         elif Command_Array[0] == "cw":
             if Array_Len != 2:
+                print("\t\t\tAREADAD")
                 return "error"
             else:
+                print("\t\t\tCW SUCCESS")
                 try:
                     Rotation = float(Command_Array[1])
                     Result = self.Tello[Drone_ID].Rotate_Yaw(Rotation)
+                    print(f'\t\t\tCW Result is: {Result}')
                     return (Result*"ok" + (not Result)*"error")
                 except(TypeError or ValueError):
+                    print("\t\t\tCW Type Error")
                     return "error"
         elif Command_Array[0] == "ccw":
             if Array_Len != 2:
@@ -196,7 +200,7 @@ class Tello_Communication(Thread):
                 except (TypeError or ValueError):
                     return "error"
         elif Command_Array[0] == "wifi":
-            pass
+            return "error"
         elif Command_Array[0] == "mon":
             return "error"
         elif Command_Array[0] == "moff":
@@ -204,7 +208,7 @@ class Tello_Communication(Thread):
         elif Command_Array[0] == "mdirection":
             return "error"
         elif Command_Array[0] == "ap":
-            pass
+            return "error"
 
         elif Command_Array[0] == "speed?":
             if Array_Len != 1:
@@ -264,13 +268,21 @@ class Tello_Communication(Thread):
     '''
 
     def Send_State(self):
+        print("Starting state sending")
         State_Port = 8890
         State_Socket = socket(AF_INET,SOCK_DGRAM)
         State_Socket.bind((self.Host, State_Port))
-        if type(self.Connected_Address) == type("String"):
-            for i in range(len(self.Tello)):
-                State_String = self.Tello[i].Get_State()
-                State_Socket.sendto(bytes(State_String, 'UTF-8'), self.Connected_Address)
+        print("State socket ready")
+        while self.Running:
+            #print(f'\t\t\tConnected Address is: {self.Connected_Address}')
+            if type(self.Connected_Address) == type("String"):
+                for i in range(len(self.Tello)):
+                    State_String = self.Tello[i].Get_State()
+                    State_Socket.sendto(bytes(State_String, 'UTF-8'), (self.Connected_Address, State_Port))
+            else:
+                continue
+        print("Ending state thread")
+        State_Socket.close()
 
     def Sort_Command(self, Command: str, Socket:socket, SendTo):
         Command_Array = Command.split(": ")
@@ -287,22 +299,26 @@ class Tello_Communication(Thread):
                 break
             else:
                 continue
-        print(f'Result is: {Result}')
+        print(f'\t\tResult is: {Result}')
         if not IP_Found:
             Result = "error ip not found"
         elif Result == "command":
-            self.Connected_Address = SendTo
+            print(f'SendTo is: {SendTo}')
+            self.Connected_Address = SendTo[0]
             Result = "ok"
         elif Result == None:
             Result = "error"
-        Socket.sendto(bytes(Result, 'UTF-8'), SendTo)
+        try:
+            Socket.sendto(bytes(Result, 'UTF-8'), SendTo)
+        except:
+            print("Intercepted error")
+            traceback.print_exc()
 
 
     def run(self):
         #Host = ''           # Symbolic name meaning all available interfaces
         #HOST = "192.168.56.1"
         Command_Port = 8889         # Arbitrary non-privileged port
-        State_Port = 8890
         Buffer_Size = 1024  # Receive Buffer size (power of 2)
 
         Command_Socket = socket(AF_INET,SOCK_DGRAM) # IPv4, UDP
@@ -312,6 +328,7 @@ class Tello_Communication(Thread):
         print('UDP server running...')
         print('Listening for incoming connections in port '+str(Command_Port))
         print("Starting state thread")
+        Sort_Thread = None
         State_Thread = threading.Thread(target=self.Send_State)
         State_Thread.start()
         print("State thread started")
@@ -342,6 +359,9 @@ class Tello_Communication(Thread):
             #s.sendto(bytes(f'General Kenobi. Please stop contacting me. I got your message from {a[0]}','UTF-8'), a)
         print(f'\tOut of while loop')
         Command_Socket.close()
+        if not Sort_Thread == None:
+            Sort_Thread.join()
+        State_Thread.join()
 
 
     def close(self):

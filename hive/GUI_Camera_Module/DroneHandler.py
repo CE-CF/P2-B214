@@ -1,7 +1,10 @@
-
 import threading
+import traceback
+
 import pygame
-from BackgroundFrameRead import BackgroundFrameRead
+import cv2
+import numpy as np
+from .BackgroundFrameRead import BackgroundFrameRead
 
 class DroneHandler:
 
@@ -18,7 +21,9 @@ class DroneHandler:
 
     def CreateBFR(self):
         BFR_IP = self.get_udp_video_address(str(self.ID))
+        print("Starting BFR")
         self.Frame = BackgroundFrameRead(BFR_IP)
+        print("BFR Started")
 
     def __init__(self, Sender,  Tello_ID = 0):
         self.ID = Tello_ID
@@ -33,7 +38,7 @@ class DroneHandler:
         BFRThread = threading.Thread(target=self.CreateBFR)
         BFRThread.start()
         # Dictionary with keyboard controls
-        self.Control_Dict = {"land":    pygame.K_B, "takeoff":  pygame.K_SPACE,
+        self.Control_Dict = {"land":    pygame.K_b, "takeoff":  pygame.K_SPACE,
                              "up":      pygame.K_UP,    "down":     pygame.K_DOWN,
                              "cw":      pygame.K_RIGHT, "ccw":      pygame.K_LEFT,
                              "forward": pygame.K_w,     "backward": pygame.K_s,
@@ -139,21 +144,33 @@ class DroneHandler:
 
     # Give the frame from the drone
     def GetFrame(self):
-        if type(self.Frame.frame) == type(None):
-            return self.Frame.PlaceholderFrame
-        else:
-            return self.Frame.frame
+        try:
+            if type(self.Frame.frame) == type(None):
+                return self.Frame.PlaceholderFrame
+            else:
+                return self.Frame.frame
+        except AttributeError:
+            #print(f'GetFrame attribute error')
+            #traceback.print_exc()
+            f = open('hive/GUI_Camera_Module/NoFrame.jpg', 'rb')
+            image_bytes = f.read()
+            return cv2.imdecode(np.frombuffer(image_bytes, np.uint8), -1)
 
     def GetFrameFPS(self):
-        return self.Frame.FPS
+        try:
+            return self.Frame.FPS
+        except AttributeError:
+            return 0
 
     # Give the battery status from the drone
     def GetBattery(self):
-        return self.Drone.get_battery()
+    #    return self.Drone.get_battery()
+        return 99
 
     # Give the flying state of the drone
     def GetFlying(self):
-        return self.Drone.is_flying
+        #return self.Drone.is_flying
+        return False
 
     # Send an emergency command to the drone
     def Emergency(self, Stop:bool = False):
@@ -171,5 +188,8 @@ class DroneHandler:
 
     # Stop the drone
     def Stop(self):
-        self.Frame.stop()
+        try:
+            self.Frame.stop()
+        except AttributeError:
+            return
 

@@ -48,6 +48,10 @@ class StartMenu():
     def Change_FullScreen(self):
         GC.FullScreen = self.FullScreen_Bool.get()
         print(f'Full screen is: {GC.FullScreen}')
+
+    def Change_DrawPath(self):
+        GC.Draw_Path = self.DrawPath_Bool.get()
+        print(f'Draw path is: {GC.Draw_Path}')
     # Changes the speed according to the spinbox.
     # Initiated only when up or down arrow are used in the spinbox
     def Change_Speed(self):
@@ -77,6 +81,8 @@ class StartMenu():
         self.TelloMode_Bool.set(False)
         self.FullScreen_Bool = tkinter.BooleanVar()
         self.FullScreen_Bool.set(False)
+        self.DrawPath_Bool = tkinter.BooleanVar()
+        self.DrawPath_Bool.set(False)
         self.Speed = tkinter.DoubleVar()
         self.Speed.set(1)
         self.Run_Bool = False
@@ -85,6 +91,8 @@ class StartMenu():
                                                  offvalue = False, onvalue = True, command = self.Change_TelloMode)
         FullScreen_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Full Screen", variable = self.FullScreen_Bool,
                                                   offvalue = False, onvalue = True, command = self.Change_FullScreen)
+        DrawPath_Checkbox = tkinter.Checkbutton(Main_Frame, text = "Draw Drones' Path", variable = self.DrawPath_Bool,
+                                                  offvalue = False, onvalue = True, command = self.Change_DrawPath)
         Resolution_Label = tkinter.Label(Resolution_Frame, text="Resolution")
         Resolution_Option = tkinter.OptionMenu(Resolution_Frame, Resolution, *self.Resolution_List,
                                                command = self.Change_Resolution)
@@ -107,6 +115,7 @@ class StartMenu():
         FPS_Option.pack(side=tkinter.RIGHT)
         TelloMode_Checkbox.pack()
         FullScreen_Checkbox.pack()
+        DrawPath_Checkbox.pack()
         Run_Button.pack()
         print("Entering menu main loop")
         self.root.mainloop()                # Start tkinter GUI loop

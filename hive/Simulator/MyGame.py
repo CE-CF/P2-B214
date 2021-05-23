@@ -22,8 +22,9 @@ class Game():
         self.Run = Run
         self.Joystick_Handler_Ran = 0
         self.clock = pygame.time.Clock()
-        self.TC = TC.Tello_Communication()
-        self.TC.start()
+        if GC.TelloMode:
+            self.TC = TC.Tello_Communication()
+            self.TC.start()
         self.DroneCameraCenterOffset = 0
     # This function was used for making a static object. It is not used right now.
     '''def init(self, ScreenHeight = 1080, ScreenWidth = 640, FullScreen = False, Run = True):
@@ -41,7 +42,7 @@ class Game():
             #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
             self.Drones = []
             for i in range(10):
-                self.Drones.append(TD.TelloDrone(100 + 100*i, 300, IP_Address=f'0.0.0.{i}'))
+                self.Drones.append(TD.TelloDrone(100 + 100*i, 300, MaxSpeed=GC.Uniform_Drones_Speed, IP_Address=f'0.0.0.{i}'))
         else:
             if pygame.joystick.get_count() == 0:
                 self.Drones = [Drone.Drone(200, 300),
@@ -59,7 +60,8 @@ class Game():
         #self.Drones = [Drone.Drone(200,300), Drone.Drone(820,300), Drone.Drone(510, 100, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i),Drone.Drone(510, 500, 1, pygame.K_j, pygame.K_l, pygame.K_k, pygame.K_i)]
         for i in self.Drones:
             if i.__class__ == TD.TelloDrone:
-                self.TC.Add_Drone(i)
+                if GC.TelloMode:
+                    self.TC.Add_Drone(i)
             else:
                 continue
 
@@ -106,7 +108,8 @@ class Game():
             return
     # Function that uninitializes the pygame module
     def close(self):
-        self.TC.close()
+        if GC.TelloMode:
+            self.TC.close()
         pygame.display.quit()
         pygame.quit()
     # Function that updates the rectangles of all displayed objects
@@ -157,6 +160,8 @@ class Game():
             Num_Pos = (self.Drones[i].Rect.left - 8, self.Drones[i].Rect.top -  16)
             self.Screen.blit(Num_Text, Num_Pos)
             self.Screen.blit(self.Drones[i].Image, self.Drones[i].Rect)
+            if GC.Draw_Path:
+                pygame.draw.lines(self.Screen, ((i*150)%255, (i*100)%255, (i*75)%255), False, self.Drones[i].Draw_Path)
         #print(self.DronesCollided)
 
     def Draw_Text(self):
@@ -193,6 +198,11 @@ class Game():
             i.Image = pygame.transform.rotate(i.Init_Image, -i.Yaw)
             i.Rect.size = i.Image.get_size()
 
+    def Drone_Update_Path(self):
+        if GC.Draw_Path:
+            for i in range(len(self.Drones)):
+                self.Drones[i].Update_Path()
+
     # The main game loop
     def Game_Loop(self):
         self.setup()
@@ -217,6 +227,7 @@ class Game():
             #Update_Rects()
             self.Drones_Collision_Handler()
             self.Drone_Update_Rot()
+            self.Drone_Update_Path()
             self.Update_Rects()
 
             #if len(eventsList) != 0:

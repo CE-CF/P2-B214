@@ -1,33 +1,37 @@
 import socket
-from threading import Lock, Thread
+import threading
+from threading import Lock
 from time import sleep
-
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.communication.client import Client
 from hive.relayBox.relayBoxUtilities.drone import Drone
 from hive.relayBox.relayBoxUtilities.droneChecker import DroneChecker
 from hive.relayBox.relayBoxUtilities.relayBoxState import (
-    Active,
-    Airborne,
-    Inactive,
     Off,
     On,
+    Inactive,
+    Active,
+    Airborne,
 )
 
 
-class RbClientUDP(Client):
+class RbClient(Client):
     def __init__(self):
         self.srv_ip = "192.168.137.1"
-        super().__init__(
-            self.srv_ip, name="Relaybox", mode=CONN_TYPE_UDP, udp_port=9241
-        )
+        super().__init__(self.srv_ip, tcp_port=9000, udp_port=9241)
         self.state = Off()
-        self.lock = Lock()
+        self.hotSpotIP = "192.168.137"  # First 3 octets of the hotspot IP
+        self.connDrones = 1
         self.response_arr = []
+        self.lock = Lock()
+        self.activeDroneList = []
+        self.DroneCheck = DroneChecker(self.hotSpotIP)
 
-    def change(self, state):  # Used to change the state of the relayBox
-        """ Change state """
-        self.state.switch(state)
+    def threaded(fn):
+        def wrapper(*args, **kwargs):
+            threading.Thread(target=fn, args=args, kwargs=kwargs).start()
+
+        return wrapper
 
     def data_parser(self, data):
         """Parse incoming packet data for easier manipulation
@@ -49,6 +53,7 @@ class RbClientUDP(Client):
 
         return d["yaw"]
 
+    @threaded
     def listener_state(self):
         """Creates a thread that listens and forwards tello state"""
         state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -59,7 +64,7 @@ class RbClientUDP(Client):
         state_sock.bind(state_address)
         stateSequenceNum = 1
 
-        while True:
+        while type(self.state) is Airborne:
             data, drone = state_sock.recvfrom(2048)
             if data == b"ok":
                 print("ok")
@@ -78,6 +83,7 @@ class RbClientUDP(Client):
         state_sock.close()
         print("Stopped listening for state")
 
+    @threaded
     def listener_stream(self):
         """" Creates a thread that listens for video stream and forward frames """
         video_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -88,7 +94,7 @@ class RbClientUDP(Client):
         video_sock.bind(video_address)
         videoSequenceNum = 1
 
-        while True:
+        while type(self.state) is Airborne:
             data, drone = video_sock.recvfrom(2048)
             if data == b"ok":
                 print("ok")
@@ -101,41 +107,6 @@ class RbClientUDP(Client):
                 videoSequenceNum += 1
         video_sock.close()
         print("Stopped listening for stream")
-
-    def run(self, packet):
-        state_thread = Thread(target=self.listener_state)
-        stream_thread = Thread(target=self.listener_stream)
-
-        state_thread.start()
-        stream_thread.start()
-
-        state_thread.join()
-        stream_thread.join()
-
-
-class RbClient(Client):
-    def __init__(self, udp_client):
-        self.srv_ip = "192.168.137.1"
-        super().__init__(
-            self.srv_ip,
-            name="Relaybox",
-            tcp_port=9000,
-            other_client=udp_client,
-        )
-        self.state = Off()
-        self.hotSpotIP = "192.168.137"  # First 3 octets of the hotspot IP
-        self.connDrones = 1
-        self.response_arr = []
-        self.lock = Lock()
-        self.activeDroneList = []
-        self.drone_ip_range = [14, 17]
-        self.DroneCheck = DroneChecker(self.hotSpotIP)
-
-    # def threaded(fn):
-    #     def wrapper(*args, **kwargs):
-    #         threading.Thread(target=fn, args=args, kwargs=kwargs).start()
-
-    #     return wrapper
 
     def eval_cmd(self, cmd_dict: dict):
         cmd = cmd_dict["CMD"]
@@ -195,11 +166,11 @@ class RbClient(Client):
             rb_port = 9000 + b_dest[3]
 
             drone = Drone(str(packet.p_dest), drone_port, rb_port)
-
+            # self.listener_state()
+            # self.listener_stream()
             print("Her kommer command")
             drone.send("command", 1)
             drone.send("streamon", 1)
-
             print(
                 "Package received from dms to {0} with {1}".format(
                     str(packet.p_dest), data
@@ -221,9 +192,7 @@ class RbClient(Client):
 
         if type(self.state) is Inactive:
             while True:
-                self.activeDroneList = self.DroneCheck.ping(
-                    self.drone_ip_range
-                )
+                self.activeDroneList = self.DroneCheck.ping()
 
                 if len(self.activeDroneList) == self.connDrones:
                     print(
@@ -252,18 +221,6 @@ class RbClient(Client):
 
 
 if __name__ == "__main__":
-    client_udp = RbClientUDP()
-    client_tcp = RbClient(client_udp)
-    client_tcp.change(On)
-
-    tcp_client_thread = Thread(target=client_tcp.start)
-    udp_client_thread = Thread(target=client_udp.start)
-
-    tcp_client_thread.daemon = True
-    udp_client_thread.daemon = True
-
-    tcp_client_thread.start()
-    udp_client_thread.start()
-
-    tcp_client_thread.join()
-    udp_client_thread.join()
+    client = RbClient()
+    client.change(On)
+    client.start()

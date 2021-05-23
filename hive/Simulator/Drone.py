@@ -45,6 +45,8 @@ class Drone():
         #self.Colided_Up = False
         # The length of the speed vector. Will be max speed when controller is implemented
         self.Speed = Speed
+        self.Real_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
+        self.Draw_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
 
     # This function handles the movement of the drones by changing their position according to their speed
     # It checks the direction the drone is going and assigns the x and y speeds accordingly
@@ -153,6 +155,17 @@ class Drone():
         self.Colided_Down = Collide_Down
         self.Colided_Up = Collide_Up
     '''
+
+    def Update_Path(self):
+        X = int(self.Pos_x); Y = int(self.Pos_y)
+        if (X == self.Real_Path[-1][0]) and (Y == self.Real_Path[-1][1]):
+            pass
+        else:
+            self.Real_Path.append((X, Y))
+        self.Draw_Path = []
+        for i in range(len(self.Real_Path)):
+            self.Draw_Path.append(((self.Real_Path[i][0] - Camera.Offset_x), (self.Real_Path[i][1] - Camera.Offset_y)))
+
     # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):
         # Checks if the rectangles collided horizontally

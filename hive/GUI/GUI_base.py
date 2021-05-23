@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from GUI.GUI_route import App
+from .GUI_route import App
 
 
 class MainFrame(tk.Tk):

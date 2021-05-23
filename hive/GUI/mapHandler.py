@@ -1,18 +1,18 @@
 from math import cos, pi
-from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as dim
-import config
+from hive.dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as dim
+from . import config
 import requests
 import numpy as np
 
 class Map:
     def __init__(self):
         self.size = 640
-        self.lat = 55.669703
-        self.long = 12.019524
+        self.lat = 55.675468
+        self.long = 12.029094
         self.zoom = 13
         self.maptype = "roadmap"
-        self.mapdecider = 0
         self.key = config.SECRET
+        self.requestMap()
 
     def setCoordinates(self, lat, long):
         self.lat = lat
@@ -33,7 +33,7 @@ class Map:
             + str(self.size)
             + "&maptype="
             + self.maptype
-            + "&style=feature:poi|visibility:off&style=feature:landscape.natural.landcover|visibility:simplified"
+            + "&style=feature:poi|visibility:off"
             + "&key="
             + str(self.key)
         )
@@ -41,6 +41,11 @@ class Map:
             img.write(image.content)
 
     def CalculateCoordinates(self, x, y):
+        """
+        Description: A function for calculating global coordinates from pixel coordinates
+        Credit: Ivan Shukshin
+        Link: https://stackoverflow.com/questions/47106276/converting-pixels-to-latlng-coordinates-from-google-static-image
+        """
         pixel_degree_x = 360 / 2 ** (self.zoom + 8)
         pixel_degree_y = 360 / 2 ** (self.zoom + 8) * cos(self.lat * pi / 180)
         point_lat = self.lat - pixel_degree_y * (y - self.size / 2)
@@ -62,13 +67,10 @@ class Map:
 
 
     def setMapType(self, canvas):
-        self.mapdecider = (self.mapdecider + 1) % 2
-        if self.mapdecider == 0:
-            self.maptype = "roadmap"
-        elif self.mapdecider == 1:
+        if self.maptype == "roadmap":
             self.maptype = "satellite"
         else:
-            print("There has been a mistake")
+            self.maptype = "roadmap"
         self.requestMap()
         canvas.update()
 

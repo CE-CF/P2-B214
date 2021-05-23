@@ -54,7 +54,13 @@ class Client(ABC):
 
     # Constructor
     def __init__(
-        self, srv_ip, mode=CONN_TYPE_TCP, tcp_port=None, udp_port=None
+        self,
+        srv_ip,
+        name="Client",
+        mode=CONN_TYPE_TCP,
+        tcp_port=None,
+        udp_port=None,
+        other_client=None,
     ):
         """Constructor for hive Client objects
 
@@ -68,12 +74,14 @@ class Client(ABC):
 
         """
         self.srv_ip = srv_ip
-        self.name = gethostname()
+        self.name = name
         self.mode = mode
-        if self.mode is CONN_TYPE_TCP:
+        self.other_client = other_client
+
+        if mode is CONN_TYPE_TCP:
             self.srv_port_tcp = tcp_port
             self.client_sock = socket(AF_INET, SOCK_STREAM)
-        elif self.mode is CONN_TYPE_UDP:
+        else:
             self.srv_port_udp = udp_port
             self.client_sock = socket(AF_INET, SOCK_DGRAM)
 
@@ -262,7 +270,17 @@ class Client(ABC):
         self.pulse = False
 
         # Send initial information
-        self.send_message("sccmd", self.srv_ip, self.name)
+        if self.other_client is not None:
+            self.send_message(
+                "sccmd",
+                self.srv_ip,
+                f"CMD:ADD_CLIENT;NAME:{self.name};"
+                + f"UDP:{self.other_client.client_sock.getsockname()[1]};",
+            )
+        else:
+            self.send_message(
+                "sccmd", self.srv_ip, f"CMD:ADD_CLIENT;NAME:{self.name};"
+            )
 
         # Receive transfer info
         mig_msg = self.recvall()
@@ -274,7 +292,7 @@ class Client(ABC):
             self.log_info(f"Received migration info: {port}")
             self.run_cmd(mig_data)
 
-        self.log_info("Sending heartbeat to new connection")
+        self.log_info("Sending OK to new connection")
         self.send_message("sccmd", "127.0.0.1", "OK")
 
         while True:

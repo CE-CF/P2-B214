@@ -18,7 +18,7 @@ class TelloDrone():
         self.RC_Ratio = self.RC_Ratio_s, self.RC_Ratio_f, self.RC_Ratio_z = [0,0,0]
         self.Acc = self.Acc_x, self.Acc_y, self.Acc_z = [0,0,0]
         self.Tot_Dist = self.Tot_Dist_x, self.Tot_Dist_y, self.Tot_Dist_z = [0,0,0]
-        self.Max_Yaw_Speed = 10
+        self.Max_Yaw_Speed = MaxSpeed
         self.Current_Yaw_Speed = 0
         self.Yaw = 0
         self.Current_Speed = MaxSpeed
@@ -52,6 +52,9 @@ class TelloDrone():
         self.MaxSpeed = MaxSpeed
 
         self.Control_Type = 0
+
+        self.Real_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
+        self.Draw_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
 
     def Check_Max_Speed(self):
         return (sqrt(self.Speed_x**2 + self.Speed_y**2 + self.Speed_z**2) >= self.MaxSpeed)
@@ -109,7 +112,7 @@ class TelloDrone():
         self.RC_Stop = True
         self.Emergency_Stop = True
         self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
-        sleep(1)
+        #sleep(1)
         self.Emergency_Stop = False
         self.RC_Stop = False
     """
@@ -300,9 +303,9 @@ class TelloDrone():
         if Max_Arg>100 or self.Executing_Command or self.Landed:
             return False
         elif not self.RC_Stop:
-            self.RC_Ratio_s = (Ratio_s/100)/sqrt(3)
-            self.RC_Ratio_f = (Ratio_f/100)/sqrt(3)
-            self.RC_Ratio_z = -(Ratio_z/100)/sqrt(3)
+            self.RC_Ratio_s = -(Ratio_s/100)/sqrt(3)
+            self.RC_Ratio_f = -(Ratio_f/100)/sqrt(3)
+            self.RC_Ratio_z = (Ratio_z/100)/sqrt(3)
             self.Current_Yaw_Speed = self.Max_Yaw_Speed*(Ratio_Yaw/100)
             return True
 
@@ -350,7 +353,12 @@ class TelloDrone():
     def Get_State(self):
         Dist = sqrt(self.Tot_Dist_x**2 + self.Tot_Dist_y**2 + self.Tot_Dist_z**2)
         Run_Time = time() - self.Start_Time
-        State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{self.Yaw};vgx:{self.Speed_x};vgy:{self.Speed_y};vgz:{self.Speed_z};templ:12.2;temph:14.2;tof:{Dist};h:{self.Pos_z};bat:55;baro:22;time:{Run_Time};agx:0;agy:0;agz:0;\r\n"
+        Converted_Yaw = int(self.Yaw)
+        if Converted_Yaw>180:
+            Converted_Yaw -= 360
+        elif Converted_Yaw<-180:
+            Converted_Yaw += 360
+        State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{Converted_Yaw};vgx:{int(self.Speed_x)};vgy:{int(self.Speed_y)};vgz:{int(self.Speed_z)};templ:12.2;temph:14.2;tof:{int(Dist)};h:{int(self.Pos_z)};bat:55;baro:22;time:{int(Run_Time)};agx:0;agy:0;agz:0;\r\n"
         return State
 
     def Get_Pos(self):
@@ -393,6 +401,15 @@ class TelloDrone():
         self.Rect.center = self.Pos_x - Camera.Offset_x, self.Pos_y - Camera.Offset_y
         self.Update_Dist()
 
+    def Update_Path(self):
+        X = int(self.Pos_x); Y = int(self.Pos_y)
+        if (X == self.Real_Path[-1][0]) and (Y == self.Real_Path[-1][1]):
+            pass
+        else:
+            self.Real_Path.append((X, Y))
+        self.Draw_Path = []
+        for i in range(len(self.Real_Path)):
+            self.Draw_Path.append(((self.Real_Path[i][0] - Camera.Offset_x), (self.Real_Path[i][1] - Camera.Offset_y)))
 
     # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):
