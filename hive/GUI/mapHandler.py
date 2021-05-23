@@ -1,14 +1,17 @@
+# Library Imports
 from math import cos, pi
-from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as dim
-import config
 import requests
 import numpy as np
+
+# Imports from files
+from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as DIM
+import config
 
 class Map:
     def __init__(self):
         self.size = 640
-        self.lat = 55.675468
-        self.long = 12.029094
+        self.lat = 57.044558
+        self.long = 9.939055
         self.zoom = 13
         self.maptype = "roadmap"
         self.key = config.SECRET
@@ -76,5 +79,5 @@ class Map:
     def calcScale(self):
         left_side = np.array(self.CalculateCoordinates(0, 620))
         right_side = np.array(self.CalculateCoordinates(620, 620))
-        return round(dim.calculate_distance(left_side, right_side), 2)
+        return round(DIM.calculate_distance(left_side, right_side), 2)
 
