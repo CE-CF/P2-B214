@@ -13,12 +13,8 @@ bodyCascade = cv2.CascadeClassifier("Resource/haarcascade_upperbody.xml") # For 
 
 # Color detection values
 fColor = [
-    [168, 78, 161, 179, 255, 255], # Red
-    #[0, 160, 150, 179, 255, 255], # Yellow
-    [13, 185, 150, 179, 255, 255], # New Yellow
-    #[93, 71, 0, 179, 255, 255], # Blue
-    #[90, 134, 0, 179, 255, 255], # New Blue
-    [93, 134, 0, 179, 255, 255], # Test Blue
+    [0, 134, 79, 39, 255, 255],
+    [93, 71, 0, 179, 255, 255]
 ]
 
 # Ignore color if in woods
