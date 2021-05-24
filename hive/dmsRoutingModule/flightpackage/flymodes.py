@@ -11,7 +11,7 @@ cmd_string = ""
 
 def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions):
     global  cmd_string
-    print("GET TO ROUTE FUNCTION BEGINS")
+    # print("GET TO ROUTE FUNCTION BEGINS")
 
     relay_box_local_position = [relay_box_global_pos[1] - origo[0], relay_box_global_pos[0] - origo[1]]
     route_starting_point = path_limit_points[0]
@@ -20,7 +20,7 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
     route_starting_point[0] = x/long
     route_starting_point[1] = y/lat
     '''
-    instantiate()
+    # instantiate()
     cmd_string = cmd_string + "init;"
 
     '''
@@ -57,33 +57,33 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
     will rotate to the right.
     '''
 
-    print("First rotation to get the right direction for the starting point")
+    # print("First rotation to get the right direction for the starting point")
 
     right = False
     left = False
 
-    the_thread("stop")
+    # the_thread("stop")
     cmd_string = cmd_string + "stop;"
 
-    time.sleep(1)
+    # time.sleep(1)
     cmd_string = cmd_string + "wait:1;"
 
     if relay_box_local_position[0] > route_starting_point[0]:
         # Rotate counterclockwise
         rotation_ccw = "ccw " + str(int(round(angle_to_first_point)))
         left = True
-        the_thread(rotation_ccw)
+        # the_thread(rotation_ccw)
         cmd_string = cmd_string + "rotate:-" + str(int(round(angle_to_first_point))) + ";"
-        time.sleep(3)
+        # time.sleep(3)
         cmd_string = cmd_string + "wait:3;"
 
     elif relay_box_local_position[0] < route_starting_point[0]:
         # Rotate clockwise
         rotation_cw = "cw " + str(int(round(angle_to_first_point)))
         right = True
-        the_thread(rotation_cw)
+        # the_thread(rotation_cw)
         cmd_string = cmd_string + "rotate:" + str(int(round(angle_to_first_point))) + ";"
-        time.sleep(3)
+        # time.sleep(3)
         cmd_string = cmd_string + "wait:3;"
 
     else:
@@ -130,7 +130,7 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
     # Angle towards the second point
     angle_to_second_point = np.degrees(np.arccos(np.dot(unit_vector_first_point_1, unit_vector_first_point_2)))
 
-    print("Second rotation to match path angle")
+    # print("Second rotation to match path angle")
 
     # When the x-value at index=0 in the path_limit_points array is smaller than the x-value at index=1
     if path_limit_points[0][0] < path_limit_points[1][0]:
@@ -165,12 +165,12 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
     cmd_string = cmd_string + "wait:2;"
 
     # Now the drone should be ready to fly straight to the second point
-    print("GET TO ROUTE FUNCTION DONE")
+    # ("GET TO ROUTE FUNCTION DONE")
 
 
 def search_route(path_width, path_limit_points, origo, path_functions, d_speed):
     global cmd_string
-    print("SEARCH ROUTE FUNCTION...")
+    # print("SEARCH ROUTE FUNCTION...")
     drone_speed = 1
     if d_speed != 0:                            # ongoing drone speed implementation
         drone_speed = d_speed
@@ -255,6 +255,7 @@ def search_route(path_width, path_limit_points, origo, path_functions, d_speed):
             degrees_pr_sec = int(round(180 / flight_time))
 
             if which_way:  # if which_way is set to true then turn left
+                # print("Turning left from path " + str(path_num) + " onto path " + str(path_num + 1)
                 # print("Turning left from path " + str(path_num) + " onto path " + str(path_num + 1)
                 #      + "... turning at " + str(degrees_pr_sec) + " deg/s for " + str(flight_time) + " seconds")
                 # search_turns(-degrees_pr_sec, flight_time)    # LOS TESTOS
