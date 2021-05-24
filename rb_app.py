@@ -18,12 +18,16 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import (
 class RbClientUDP(Client):
     def __init__(self):
         self.srv_ip = "192.168.137.1"
+        # self.srv_ip = "127.0.0.1"
         super().__init__(
             self.srv_ip, name="Relaybox", mode=CONN_TYPE_UDP, udp_port=9241
         )
         self.state = Off()
         self.lock = Lock()
-        self.response_arr = []
+        self.UDPdroneObjectList = []
+
+    def droneObjectSetter(self, droneObjectList):
+        self.UDPdroneObjectList = droneObjectList
 
     def change(self, state):  # Used to change the state of the relayBox
         """ Change state """
@@ -68,12 +72,13 @@ class RbClientUDP(Client):
             else:
                 SplitIP = str(drone[0]).split(".")
                 LastIP = int(SplitIP[-1])
+                self.lock.acquire()
                 self.send_udp(LastIP, 1, stateSequenceNum, data)
                 stateSequenceNum += 1
-                self.lock.acquire()
-                self.response_arr.append(
-                    self.data_parser(data.decode(encoding="utf-8"))
-                )
+                if len(self.UDPdroneObjectList) != 0:
+                    self.UDPdroneObjectList[-1].setYaw(
+                        self.data_parser(data.decode(encoding="utf-8"))
+                    )
                 self.lock.release()
         state_sock.close()
         print("Stopped listening for state")
@@ -116,6 +121,7 @@ class RbClientUDP(Client):
 class RbClient(Client):
     def __init__(self, udp_client):
         self.srv_ip = "192.168.137.1"
+        # self.srv_ip = "127.0.0.1"
         super().__init__(
             self.srv_ip,
             name="Relaybox",
@@ -128,8 +134,9 @@ class RbClient(Client):
         self.response_arr = []
         self.lock = Lock()
         self.activeDroneList = []
-        self.drone_ip_range = [14, 17]
+        self.drone_ip_range = [32, 37]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
+        self.TCPdroneObjectList = []
 
     # def threaded(fn):
     #     def wrapper(*args, **kwargs):
@@ -185,8 +192,6 @@ class RbClient(Client):
         # Husk at når der skal sendes data fra drone til dms, skal dataen wrappes
         # i en udp pakke, der skal være en sequence generator hver gang man modtager en pakke.
         if type(self.state) is Airborne:
-
-            data = packet.data_parser()
             b_dest = (
                 packet.p_dest.packed
             )  # Used to generate a port number for drone connection
@@ -194,21 +199,20 @@ class RbClient(Client):
             drone_port = 8889
             rb_port = 9000 + b_dest[3]
 
-            drone = Drone(str(packet.p_dest), drone_port, rb_port)
-
-            print("Her kommer command")
-            drone.send("command", 1)
-            drone.send("streamon", 1)
-
-            print(
-                "Package received from dms to {0} with {1}".format(
-                    str(packet.p_dest), data
-                )
+            self.TCPdroneObjectList.append(
+                Drone(str(packet.p_dest), drone_port, rb_port)
             )
-            for x in range(len(data)):
-                drone.send(data[x], 5)
-                sleep(5)
-            drone.send("streamoff", 1)
+            self.other_client.droneObjectSetter(self.TCPdroneObjectList)
+            self.TCPdroneObjectList[-1].parser(packet.p_data)
+
+            # print("Her kommer command")
+            # self.TCPdroneObjectList[-1].send("command", 2)
+            # sleep(2)
+            # self.TCPdroneObjectList[-1].send("streamon", 1)
+            # sleep(1)
+            # self.TCPdroneObjectList[-1].parser(data[2:])
+
+            # self.TCPdroneObjectList[-1].send("streamoff", 1)
             # drone.closeConnection()
             droneData = self.DroneCheck.activeDronePacketUpdate(
                 self.activeDroneList, "active"

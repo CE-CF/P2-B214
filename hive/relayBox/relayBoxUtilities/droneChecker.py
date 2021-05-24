@@ -8,10 +8,10 @@ class DroneChecker:
         self.host_ip = self.host.split(".")
         self.ip_range = 252
 
-    def ping(self, *range):
+    def ping(self, prange):
         alive = []
-        rangeFrom = range[0]
-        rangeTo = range[1]
+        rangeFrom = prange[0]
+        rangeTo = prange[1]
         print(
             "Pinging all hosts on {0}.{1}-{2}".format(
                 self.host, rangeFrom, rangeTo
@@ -22,7 +22,7 @@ class DroneChecker:
             for n in range(rangeFrom, rangeTo):
                 ip = "{0}.{1}".format(self.host, n)
                 result = subprocess.Popen(
-                    ["ping", "-c", "1", "-w", "100", ip],
+                    ["ping", "-n", "1", "-w", "100", ip],
                     stdout=limbo,
                     stderr=limbo,
                 ).wait()
