@@ -226,7 +226,7 @@ class Tello_Communication(threading.Thread):
             else:
                 return self.Tello[Drone_ID].Read_Time
         elif Command_Array[0] == "wifi?":
-            pass
+            return "error"
         elif Command_Array[0] == "sdk?":
             if Array_Len != 1:
                 return "error"
@@ -271,7 +271,7 @@ class Tello_Communication(threading.Thread):
         print("Starting state sending")
         State_Port = 8890
         State_Socket = socket(AF_INET,SOCK_DGRAM)
-        State_Socket.bind((self.Host, State_Port))
+        #State_Socket.bind((self.Host, State_Port))
         print("State socket ready")
         while self.Running:
             #print(f'\t\t\tConnected Address is: {self.Connected_Address}')

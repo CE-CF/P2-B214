@@ -317,7 +317,7 @@ class TelloDrone():
             self.Pos_x += self.Speed_x
             self.Pos_y += self.Speed_y
             self.Pos_z += self.Speed_z
-            self.Yaw = (self.Yaw + self.Current_Yaw_Speed) % 360
+            self.Yaw = (360 + self.Yaw + self.Current_Yaw_Speed) % 360
 
 
 
