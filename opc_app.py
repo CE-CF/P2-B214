@@ -65,7 +65,7 @@ class OpcClientUDP(Client):
     def run(self, packet: HiveU):
 
         try:
-            print(f'\t\tRun dump: {packet.ptype}, {packet.seq}, {packet.identifier}, {packet.data}')
+            #print(f'\t\tRun dump: {packet.ptype}, {packet.seq}, {packet.identifier}, {packet.data}')
             if packet.ptype == 2:
                 #RPThread = threading.Thread(target=self.Receive_Packet, args=(packet.seq, packet.identifier, packet.data,))
                 #RPThread.start()
@@ -79,7 +79,11 @@ class OpcClientUDP(Client):
             return
         else:
             try:
-                SendPort = int("22" + str(ID))
+                FullID = str(ID)
+                while len(FullID) < 3:
+                    FullID = '0' + FullID
+                SendPort = int("22" + FullID)
+                #print(f'Sending data to (127.0.0.1, {SendPort})')
                 self.client_sock.sendto(Data, ('127.0.0.1', SendPort))
                 self.LastSequence = Sequence
             except OSError:

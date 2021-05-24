@@ -355,6 +355,8 @@ class HiveT(Packet):
                 return HiveT(packet_type, packet_dest, packet_data.decode())
         except IndexError:
             return False
+        except TypeError:
+            return False
 
     @staticmethod
     def calc_checksum(
