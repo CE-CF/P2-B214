@@ -3,12 +3,12 @@ from hive.communication.packet import HiveT, HiveU
 from hive.communication.server import Server
 from hive.dataBase.tableHandlers.route import Route
 from hive.dataBase.tableHandlers.drone import Drone
-from hive.dataBase.tableHandlers.getTable import fetchall
+from hive.dataBase.tableHandlers.getTable import fetchall, fetchallBat
 from time import sleep
 
 class DmsServer(Server):
     def __init__(self):
-        super().__init__(9000, 9241, srv_ip="192.168.137.1") #, srv_ip="192.168.137.1"
+        super().__init__(9000, 9241) #, srv_ip="192.168.137.1"
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.hotSpotIP = "192.168.137"  # First 3 octets of the hotspot IP
         self.forsøg = 0
@@ -101,7 +101,7 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict)
                 if (self.forsøg == 0):
-                    dest = '192.168.137.192' #'192.168.137.171'
+                    dest = '192.168.137.36' #'192.168.137.171'
                     data = "init;stop;wait:1;rotate:-72;wait:3;getyaw;stop;land;"
                     data2 = "init;stop;wait:1;rotate:-72;wait:3;getyaw;straight:yaw:2.852546014722453;stop;rotate:52.298603625120144;wait:1;stop;wait:2;getyaw;getoppoyaw;straight:yaw:8.133271660464452;turn:57:3.141592653589793;straight:oppoyaw:7.887548788034652;turn:-57:3.141592653589793;straight:yaw:7.641825917141459;turn:57:3.141592653589793;straight:oppoyaw:7.396103047028961;stop;wait:2;rc0;stop;wait:2;rotate:56;wait:2;getyaw;straight:yaw:3.0558753392657407;stop;land;"
                     message = HiveT("drone", dest, data)
@@ -124,23 +124,24 @@ class DmsServer(Server):
                 # STATE STRING
                 if packet.seq > self.seq_dic["state"]:
                     self.seq_dic["state"] = packet.seq
-                    sameBat = 0
-                    state = str(packet.data)
-                    droneID = self.hotSpotIP+"."+str(packet.identifier)
-                    droneBat = str(self.data_parser_battery(state))
-                    print("droneBat value: "+droneBat)
-                    droneTableList = fetchall('hive.drone')
-                    print(droneTableList)
-                    for i in range (len(droneTableList)):
-                        if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
-                            sameBat +=1
-                            
-                    if (sameBat == 0):
-                        print("<<Battery has changed>>")
-                        drone = Drone(droneID, bat=self.data_parser_battery(state))
-                        drone.update()
-
                     packet.dump()
+                    if packet.seq %100 == 0:
+                        state = str(packet.data)
+                        droneID = self.hotSpotIP+"."+str(packet.identifier)
+                        droneBat = str(self.data_parser_battery(state))
+                        sameBat = 0
+                        droneTableList = fetchallBat('hive.drone')
+                        for i in range (len(droneTableList)):
+                            if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
+                                sameBat +=1
+                                
+                        if (sameBat == 0):
+                            print("<<Battery has changed>>")
+                            drone = Drone(droneID, bat=self.data_parser_battery(state))
+                            drone.update()
+                        else:
+                            print("<<Battery has not changed>>")
+
                     #pass
 
             elif packet.ptype == 2:

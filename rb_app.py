@@ -17,7 +17,8 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import (
 
 class RbClientUDP(Client):
     def __init__(self):
-        self.srv_ip = "192.168.137.1"
+        #self.srv_ip = "192.168.137.1"
+        self.srv_ip = "127.0.0.1"
         super().__init__(
             self.srv_ip, name="Relaybox", mode=CONN_TYPE_UDP, udp_port=9241
         )
@@ -74,7 +75,7 @@ class RbClientUDP(Client):
                 self.send_udp(LastIP, 1, stateSequenceNum, data)
                 stateSequenceNum += 1
                 self.lock.acquire()
-                if len(self.UDPdroneObjectList) > 0:
+                if len(self.UDPdroneObjectList) != 0:
                     self.UDPdroneObjectList[-1].setYaw(
                         self.data_parser(data.decode(encoding="utf-8"))
                     )
@@ -119,7 +120,8 @@ class RbClientUDP(Client):
 
 class RbClient(Client):
     def __init__(self, udp_client):
-        self.srv_ip = "192.168.137.1"
+        #self.srv_ip = "192.168.137.1"
+        self.srv_ip = "127.0.0.1"
         super().__init__(
             self.srv_ip,
             name="Relaybox",
@@ -132,7 +134,7 @@ class RbClient(Client):
         self.response_arr = []
         self.lock = Lock()
         self.activeDroneList = []
-        self.drone_ip_range = [190, 195]
+        self.drone_ip_range = [32, 37]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
         self.TCPdroneObjectList = []
 

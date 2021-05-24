@@ -22,7 +22,7 @@ class DroneChecker:
             for n in range(rangeFrom, rangeTo):
                 ip = "{0}.{1}".format(self.host, n)
                 result = subprocess.Popen(
-                    ["ping", "-c", "1", "-w", "100", ip],
+                    ["ping", "-n", "1", "-w", "100", ip],
                     stdout=limbo,
                     stderr=limbo,
                 ).wait()
