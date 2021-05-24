@@ -73,7 +73,7 @@ class OpcClientUDP(Client):
             return
 
     def Receive_Packet(self, Sequence, ID, Data):
-        if Sequence == self.LastSequence:
+        if Sequence <= self.LastSequence:
             return
         else:
             try:

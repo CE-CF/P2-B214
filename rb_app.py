@@ -128,7 +128,7 @@ class RbClient(Client):
         self.response_arr = []
         self.lock = Lock()
         self.activeDroneList = []
-        self.drone_ip_range = [14, 17]
+        self.drone_ip_range = [190, 195]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
 
     # def threaded(fn):

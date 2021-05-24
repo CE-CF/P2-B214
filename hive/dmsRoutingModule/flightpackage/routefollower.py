@@ -3,11 +3,12 @@ from routingpackage.distanceinmeters import DistanceInMeters
 import numpy as np
 
 angle_from_north = 0
+cmd_string = ""
 
 
-def get_to_next_point(waypoint_bool, waypoint_arr):
-    global angle_from_north
-
+def run_the_route(waypoint_bool, waypoint_arr):
+    global angle_from_north, cmd_string
+    cmd_string = cmd_string + "init;"
     if not waypoint_bool:
         return 0
     i = 0
@@ -38,42 +39,37 @@ def get_to_next_point(waypoint_bool, waypoint_arr):
         left = False
         if x1 > x2:
             # Rotate counterclockwise
-            angle_sum = (int(round(angle_to_next_point)) * (-1)) + angle_from_north
-            print("angle sum   " + str(angle_sum))
-            rotation_ccw = "ccw " + str(int(round(angle_to_next_point)))
+            angle_sum = abs((int(round(angle_to_next_point)) * (-1)) + angle_from_north)
             left = True
-            the_thread(rotation_ccw)
+            cmd_string = cmd_string + "rotate:-" + str(angle_sum) + ";"
 
         elif x1 < x2:
             # Rotate clockwise
-            angle_sum = int(round(angle_to_next_point)) + angle_from_north
-            print("angle sum   " + str(angle_sum))
-            rotation_cw = "cw " + str(int(round(angle_to_next_point)))
+            angle_sum = abs(int(round(angle_to_next_point)) + angle_from_north)
             right = True
-            the_thread(rotation_cw)
+            cmd_string = cmd_string + "rotate:" + str(angle_sum) + ";"
 
+        cmd_string = cmd_string + "wait:2;"
         # Now the drone should point towards the next point
         distance_to_next_point = DistanceInMeters.calculate_distance(waypoint_arr[i], waypoint_arr[i + 1])
-
-        # correct_yaw(distance_to_next_point) !!!!!!!!!!!!!!!!!!!!!!UNCOMMENT!!!!!!!!!!!!!!!!!!!!!!!!
+        cmd_string = cmd_string + "getyaw;"
+        cmd_string = cmd_string + "straight:yaw:" + str(distance_to_next_point) + ";"
 
         # Stop and hover
-        the_thread("stop")
+        # the_thread("stop")
+        cmd_string = cmd_string + "stop;"
 
-        # Turn again to face north
+        # Update the angle_from_north variable
         if left:
             angle_from_north = int(round(angle_to_next_point))
             rotate_back_cw = "cw " + str(int(round(angle_to_next_point)))
-            the_thread(rotate_back_cw)
+
         elif right:
             angle_from_north = int(round(angle_to_next_point)) * (-1)
             rotate_back_ccw = "ccw " + str(int(round(angle_to_next_point)))
-            the_thread(rotate_back_ccw)
+
         i = i + 1
-    # Now it should point straight north again
 
-
-def go_back_to_start(waypoint_arr):
     # Now it should go back home from the last point to the first point
     # A point north from the last point
     mup_2 = [waypoint_arr[-1][1], waypoint_arr[-1][0] + 1]
@@ -88,21 +84,31 @@ def go_back_to_start(waypoint_arr):
     unit_vector_last_2 = lpfp / np.linalg.norm(lpfp)
     angle_first_point_last_point = np.degrees(np.arccos(np.dot(unit_vector_last_1, unit_vector_last_2)))
 
-    right = False
-    left = False
     if waypoint_arr[-1][1] > waypoint_arr[0][1]:
-        # Rotate counterclockwise
-        rotation_ccw = "ccw " + str(int(round(angle_first_point_last_point)))
-        left = True
-        the_thread(rotation_ccw)
+        # Rotate clockwise
+        newer_angle = abs(360 - (angle_from_north + int(round(angle_first_point_last_point))))
+        # print("Newer angle", newer_angle)
+        # new_angle = abs(360 - (180 + int(round(angle_first_point_last_point))))
+        rotation_cw = "cw:" + str(newer_angle)
+        # the_thread(rotation_cw)
+        cmd_string = cmd_string + "rotate:" + str(newer_angle) + ";"
 
     elif waypoint_arr[-1][1] < waypoint_arr[0][1]:
-        # Rotate clockwise
-        rotation_cw = "cw " + str(int(round(angle_first_point_last_point)))
-        right = True
-        the_thread(rotation_cw)
+        # Rotate counterclockwise
+        newer_angle = abs(360 - (angle_from_north + int(round(angle_first_point_last_point))))
+        # new_angle = abs(360 - (180 + int(round(angle_first_point_last_point))))
+        # print("Newer angle ccw", newer_angle)
+        rotation_ccw = "ccw:" + str(newer_angle)
+        # the_thread(rotation_ccw)
+        cmd_string = cmd_string + "rotate:-" + str(newer_angle) + ";"
 
+    cmd_string = cmd_string + "wait:2;"
     # Now fly to the first point
     distance_last_point_first_point = DistanceInMeters.calculate_distance(waypoint_arr[-1], waypoint_arr[0])
-    # correct_yaw(distance_last_point_first_point) !!!!!!!!!!!11 UNCOMMETN!!!!!!!!!!
-    the_thread("stop")
+    cmd_string = cmd_string + "getyaw;"
+    cmd_string = cmd_string + "straight:yaw:" + str(distance_last_point_first_point) + ";"
+
+    cmd_string = cmd_string + "stop;"
+    cmd_string = cmd_string + "land;"
+    print(cmd_string)
+    return cmd_string
