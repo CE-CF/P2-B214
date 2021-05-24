@@ -1,11 +1,17 @@
 import numpy as np
 import time
+from flightpackage.routefollower import get_to_next_point, go_back_to_start
 
 from routing import Routing
 from routingpackage.distanceinmeters import DistanceInMeters
 from flightpackage.dronecommands import instantiate, the_thread, correct_yaw
 from flightpackage.flymodes import get_to_route, search_route, go_home
 from flightpackage.relayboxrouting import parser
+
+# These two booleans should be changed when the user chooses either waypoint mode or search route mode on the GUI
+waypoint_route = False
+calculate_route = False
+
 
 big_array = np.array([[57.02848118809145, 9.948913866684594],
                       [57.02867865592206, 9.949934871541862],
@@ -147,6 +153,11 @@ soccer_rb = [57.01786594422335, 9.952036864294133]
 
 # soccer_rb = [57.01773774865883, 9.952373791864979]
 
+waypoint_arr = np.array([[57.06593344368505, 9.935326097229042],
+                         [57.066095679477336, 9.935056452101701],
+                         [57.06629285188855, 9.935420028407108],
+                         [57.06635455907872, 9.936038260803215]])
+
 
 def run():
     custom_path_width = 2  # leave the value 0 and it's calculated using the drone FOV specified
@@ -184,7 +195,14 @@ def run():
     cmd_string = go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
 
     parser(cmd_string)
+    
+    #if waypoint_route:
+    #    get_to_next_point(True, waypoint_arr)
+    #    go_back_to_start(waypoint_arr)
 
+    #elif calculate_route:
+    #    custom_path_width = 0               # leave the value 0 and it's calculated using the drone FOV specified
+    
 
 if __name__ == '__main__':
     run()

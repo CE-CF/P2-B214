@@ -14,7 +14,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 state_host = ''
 state_port = 8890
 address = (state_host, state_port)
-sock.bind(address)
+# sock.bind(address)
 
 # Create socket to send commands and receive their response
 tello_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

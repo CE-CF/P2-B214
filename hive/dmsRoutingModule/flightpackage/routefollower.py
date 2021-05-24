@@ -2,12 +2,12 @@ from .dronecommands import instantiate, the_thread, correct_yaw
 from routingpackage.distanceinmeters import DistanceInMeters
 import numpy as np
 
-
 angle_from_north = 0
+
 
 def get_to_next_point(waypoint_bool, waypoint_arr):
     global angle_from_north
-    
+
     if not waypoint_bool:
         return 0
     i = 0
@@ -69,9 +69,11 @@ def get_to_next_point(waypoint_bool, waypoint_arr):
             angle_from_north = int(round(angle_to_next_point)) * (-1)
             rotate_back_ccw = "ccw " + str(int(round(angle_to_next_point)))
             the_thread(rotate_back_ccw)
-
+        i = i + 1
     # Now it should point straight north again
 
+
+def go_back_to_start(waypoint_arr):
     # Now it should go back home from the last point to the first point
     # A point north from the last point
     mup_2 = [waypoint_arr[-1][1], waypoint_arr[-1][0] + 1]

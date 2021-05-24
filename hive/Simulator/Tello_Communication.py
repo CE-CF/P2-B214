@@ -1,9 +1,9 @@
 import threading
-from threading import Thread
+import time
 from socket import socket, AF_INET, SOCK_DGRAM, timeout
 import traceback
 
-class Tello_Communication(Thread):
+class Tello_Communication(threading.Thread):
 
     def __init__(self):
         super().__init__()
@@ -280,7 +280,7 @@ class Tello_Communication(Thread):
                     State_String = self.Tello[i].Get_State()
                     State_Socket.sendto(bytes(State_String, 'UTF-8'), (self.Connected_Address, State_Port))
             else:
-                continue
+                time.sleep(0.1)
         print("Ending state thread")
         State_Socket.close()
 
@@ -350,7 +350,7 @@ class Tello_Communication(Thread):
             #UTFr = str(r, encoding = "UTF-8")
             #print(f'\tIncoming text: {UTFr}')
             print(f'\tIncoming text: {r_str}')
-            Sort_Thread = Thread(target=self.Sort_Command, args=(r_str, Command_Socket, a,))
+            Sort_Thread = threading.Thread(target=self.Sort_Command, args=(r_str, Command_Socket, a,))
             Sort_Thread.start()
             #Result = self.Sort_Command(r_str)
             #Command_Socket.sendto(bytes(Result, 'UTF-8'), a)

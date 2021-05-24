@@ -41,7 +41,7 @@ class Game():
             #self.Drones = [TD.TelloDrone(200,300), TD.TelloDrone(400,300,IP_Address="0.0.0.1")]
             #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
             self.Drones = []
-            for i in range(10):
+            for i in range(GC.Drone_Number):
                 self.Drones.append(TD.TelloDrone(100 + 100*i, 300, MaxSpeed=GC.Uniform_Drones_Speed, IP_Address=f'0.0.0.{i}'))
         else:
             if pygame.joystick.get_count() == 0:
@@ -257,6 +257,7 @@ class Game():
                         self.DroneCameraCenterOffset = (self.DroneCameraCenterOffset + 1) % len(self.Drones)
                         Camera.Offset_x = self.Drones[self.DroneCameraCenterOffset].Pos_x - self.ScreenWidth/2
                         Camera.Offset_y = self.Drones[self.DroneCameraCenterOffset].Pos_y - self.ScreenHeight/2
+                    """
                     if e.key == pygame.K_o:
                         self.Temp_Rot_Drone(self.Drones[0], 36)
                     if e.key == pygame.K_u:
@@ -271,6 +272,7 @@ class Game():
                             print(self.Joysticks[0].get_guid())
                             print(pygame.joystick.Joystick(i))
                             print(self.Joysticks[0])
+                    """
                     if e.key == pygame.K_ESCAPE:
                         self.close()
                         #sys.exit()
