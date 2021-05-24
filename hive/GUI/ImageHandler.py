@@ -194,8 +194,7 @@ class Canvas:
 
     def SendRoute(self):
         RouteList = []
-        IterationStepper = 1
-        testList.insert(0, self.PointType)
+        IterationStepper = 0
         for point in Points:
             RouteCoordinate = [point.lat, point.long]
             RouteList.insert(IterationStepper, RouteCoordinate)

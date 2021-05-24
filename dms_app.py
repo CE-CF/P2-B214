@@ -10,6 +10,7 @@ class DmsServer(Server):
     def __init__(self):
         super().__init__(9000, 9241, srv_ip="192.168.137.1") #, srv_ip="192.168.137.1"
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
+        self.hotSpotIP = "192.168.137"  # First 3 octets of the hotspot IP
         self.forsøg = 0
 
     def data_parser_battery(self, data):
@@ -78,6 +79,7 @@ class DmsServer(Server):
         if cmd == "QOS":
             pass
         if cmd == "GET_DRONE":
+            
             pass
 
     def run(self, packet, conn, mode):
@@ -123,15 +125,27 @@ class DmsServer(Server):
                 # STATE STRING
                 if packet.seq > self.seq_dic["state"]:
                     self.seq_dic["state"] = packet.seq
-                    
+                    sameBat = 0
+                    statePacket = packet.decode()
+                    droneID = self.hotSpotIP+":"+statePacket.identifier
+                    droneBat = self.data_parser_battery(statePacket)
+                    droneTableList = fetchall('hive.drone')
+                    for i in range (len(droneTableList)):
+                        if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
+                            sameBat +=1
+                            
+                    if (sameBat == 0):
+                        print("<<Battery has changed>>")
+                        drone = Drone(droneID, bat=self.data_parser_battery(statePacket))
+                        drone.update()
+
                     packet.dump()
                     #pass
 
             elif packet.ptype == 2:
                 # VIDEO
                 if packet.seq < self.seq_dic["video"]:
-                    self.seq_dic["state"] = packet.seq
-                    self.forward()
+                    self.seq_dic["video"] = packet.seq
                     #pass
 
             else:

@@ -48,6 +48,7 @@ def uplink(cmd):
             tello_sock.close()
             tello_sock.shutdown(1)
             pass
+        # cmd = "0.0.0.0: " + cmd
         cmd = cmd.encode(encoding="utf-8")
         tello_sock.sendto(cmd, tello_address)
     except KeyboardInterrupt:
@@ -136,7 +137,6 @@ def base_commands(cmd):
         uplink(cmd)
 
     elif cmd == "land":
-
         print(cmd)
         uplink(cmd)
 
@@ -203,7 +203,6 @@ def parser(cmd_str):
             element += v
         else:
             arr = element.split(delim2)
-            #print("HEEEEEEEY   ", arr, len(arr))
             if len(arr) == 1:
                 base_commands(arr[0])
             elif len(arr) == 2:
