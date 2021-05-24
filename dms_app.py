@@ -8,7 +8,7 @@ from time import sleep
 
 class DmsServer(Server):
     def __init__(self):
-        super().__init__(9000, 9241) #, srv_ip="192.168.137.1"
+        super().__init__(9000, 9241, srv_ip="192.168.137.1") #, srv_ip="192.168.137.1"
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.hotSpotIP = "192.168.137"  # First 3 octets of the hotspot IP
         self.forsøg = 0
@@ -124,8 +124,8 @@ class DmsServer(Server):
                 # STATE STRING
                 if packet.seq > self.seq_dic["state"]:
                     self.seq_dic["state"] = packet.seq
-                    packet.dump()
-                    if packet.seq %100 == 0:
+                    #packet.dump()
+                    if packet.seq %50 == 0:
                         state = str(packet.data)
                         droneID = self.hotSpotIP+"."+str(packet.identifier)
                         droneBat = str(self.data_parser_battery(state))
@@ -148,7 +148,7 @@ class DmsServer(Server):
                 # VIDEO
                 if packet.seq < self.seq_dic["video"]:
                     self.seq_dic["video"] = packet.seq
-                    #pass
+                    pass
 
             else:
                 # Wrong packet type
