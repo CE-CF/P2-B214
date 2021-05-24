@@ -23,7 +23,11 @@ class RbClientUDP(Client):
         )
         self.state = Off()
         self.lock = Lock()
-        self.response_arr = []
+        self.UDPdroneObjectList = []
+
+    def droneObjectSetter(self, droneObjectList):
+        self.UDPdroneObjectList = droneObjectList
+
 
     def change(self, state):  # Used to change the state of the relayBox
         """ Change state """
@@ -71,7 +75,7 @@ class RbClientUDP(Client):
                 self.send_udp(LastIP, 1, stateSequenceNum, data)
                 stateSequenceNum += 1
                 self.lock.acquire()
-                self.response_arr.append(
+                self.UDPdroneObjectList[-1].setYaw(
                     self.data_parser(data.decode(encoding="utf-8"))
                 )
                 self.lock.release()
@@ -130,6 +134,7 @@ class RbClient(Client):
         self.activeDroneList = []
         self.drone_ip_range = [190, 195]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
+        self.TCPdroneObjectList = []
 
     # def threaded(fn):
     #     def wrapper(*args, **kwargs):
@@ -185,7 +190,6 @@ class RbClient(Client):
         # Husk at når der skal sendes data fra drone til dms, skal dataen wrappes
         # i en udp pakke, der skal være en sequence generator hver gang man modtager en pakke.
         if type(self.state) is Airborne:
-
             data = packet.data_parser()
             b_dest = (
                 packet.p_dest.packed
@@ -194,21 +198,18 @@ class RbClient(Client):
             drone_port = 8889
             rb_port = 9000 + b_dest[3]
 
-            drone = Drone(str(packet.p_dest), drone_port, rb_port)
+            self.TCPdroneObjectList.append(Drone(str(packet.p_dest), drone_port, rb_port))
+            self.other_client.droneObjectSetter(self.TCPdroneObjectList)
+            self.TCPdroneObjectList[-1].parser(data)
 
             print("Her kommer command")
-            drone.send("command", 1)
-            drone.send("streamon", 1)
+            self.TCPdroneObjectList[-1].send("command", 2)
+            sleep(2)
+            self.TCPdroneObjectList[-1].send("streamon", 1)
+            sleep(1)
+            self.TCPdroneObjectList[-1].parser(data[2:])
 
-            print(
-                "Package received from dms to {0} with {1}".format(
-                    str(packet.p_dest), data
-                )
-            )
-            for x in range(len(data)):
-                drone.send(data[x], 5)
-                sleep(5)
-            drone.send("streamoff", 1)
+            self.TCPdroneObjectList[-1].send("streamoff", 1)
             # drone.closeConnection()
             droneData = self.DroneCheck.activeDronePacketUpdate(
                 self.activeDroneList, "active"
