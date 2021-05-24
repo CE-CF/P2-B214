@@ -3203,3 +3203,21 @@ INFO:root:[ TIME 2021-05-24 12:52:16.914487 ]: Packet received content:
 							[DATA]: init;stop;wait:1;rotate:-72;wait:3;getyaw;stop;land;
 							
 INFO:root:[ TIME 2021-05-24 12:52:16.914487 ]: PULSE: False
+INFO:root:[ TIME 2021-05-24 13:00:04.386191 ]: STARTED
+INFO:root:[ TIME 2021-05-24 13:00:04.387184 ]: STARTED
+INFO:root:[ TIME 2021-05-24 13:00:04.390184 ]: Received migration info: 61059
+INFO:root:[ TIME 2021-05-24 13:00:04.391184 ]: Sending OK to new connection
+INFO:root:[ TIME 2021-05-24 13:00:04.391961 ]: Packet received content:
+							[TYPE]: 3
+							[CHECKSUM]: b'e281dbf44161870f817dd648f7600a08c7ba3630317a8f4aa7c7f0049c8b4cce'
+							[DEST]: 127.0.0.1
+							[DATA]: DONE
+							
+INFO:root:[ TIME 2021-05-24 13:00:04.391961 ]: PULSE: False
+INFO:root:[ TIME 2021-05-24 13:00:31.423163 ]: Packet received content:
+							[TYPE]: 2
+							[CHECKSUM]: b'ba2c5ff604f96431acb47cb144466a2c2b55f4d73f492fbd21f751af62fa049e'
+							[DEST]: 192.168.137.36
+							[DATA]: init;stop;wait:1;rotate:-72;wait:3;getyaw;stop;land;
+							
+INFO:root:[ TIME 2021-05-24 13:00:31.423163 ]: PULSE: False
