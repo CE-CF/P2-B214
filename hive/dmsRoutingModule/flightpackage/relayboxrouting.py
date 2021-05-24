@@ -30,7 +30,6 @@ def get_yaw_response():
 # # # UPLINK AND DOWNLINK # # #
 
 def downlink():
-    count = 0
     while True:
         data, server = sock.recvfrom(2046)
         if data == b'ok':
@@ -42,6 +41,7 @@ def downlink():
 
 
 def uplink(cmd):
+    print("cmd", cmd)
     try:
         if 'end' in cmd:
             print('ending')
@@ -69,9 +69,9 @@ def straight(straight_yaw, flight_time):
     start_time = time.time()
 
     while (time.time() - start_time) < float(flight_time):              # if the drone flies at 1 m/s then this works
-        if float(flight_time) - (time.time() - start_time) < 2:
-            print()
-            drone_speed = 40
+        # if float(flight_time) - (time.time() - start_time) < 2:
+        #    print()
+        #    drone_speed = 40
 
         newest_yaw_response = get_yaw_response()                        # is redefined after each loop
         newest_yaw_response = int(newest_yaw_response)                  # for some reason it doesn't work in one line..
@@ -79,6 +79,7 @@ def straight(straight_yaw, flight_time):
         if newest_yaw_response == int(straight_yaw):                             # no deviation
             pass
         else:                                                           # if there is deviation...
+            print("is deviating:  ", newest_yaw_response, int(straight_yaw))
             is_deviating = True                                         # <-- this is set to true
 
         if is_deviating:
