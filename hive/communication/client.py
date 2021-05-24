@@ -85,7 +85,7 @@ class Client(ABC):
             self.srv_port_udp = udp_port
             self.client_sock = socket(AF_INET, SOCK_DGRAM)
             self.client_sock.settimeout(1)
-            self.client_sock.bind(("", 11111))
+            self.client_sock.bind(("", 0))
 
     def log_info(self, msg: str):
         """Logging helper
