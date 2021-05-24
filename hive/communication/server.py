@@ -360,11 +360,9 @@ class Router:
         self.udp_handler = handler
 
     def add_udp_info(self, name, udp_port: int):
-        print(self.dest_table)
         self.lock.acquire()
         self.dest_table[name]["udp_port"] = udp_port
         self.lock.release()
-        print(self.dest_table)
 
     def find_dest(self):
         """Finds the destination for packet in destination table
@@ -420,16 +418,16 @@ class Router:
             f"Received packet with destination: {self.packet.p_dest.exploded}"
         )
         self.lock.acquire()
+        dest_key = self.find_dest()
         if self.is_destination():
             self.log_info("Server is destination of packet")
             self.lock.release()
             return RoutingMSG.SELF_IS_DEST
-        elif self.find_dest() is None:
+        elif dest_key is None:
             self.log_info("Destination not found")
             self.lock.release
             return RoutingMSG.DEST_NOT_FOUND
         else:
-            dest_key = self.find_dest()
             self.log_info(f"Forwarding packet to destination: {dest_key} ")
             c_handler = self.dest_table[dest_key]["handler"]
             c_handler.forward(self.packet)
