@@ -10,11 +10,11 @@ from hive.communication.packet import HiveU
 
 class OpcClientTCP(Client):
     def __init__(self, OPC_UDP):
-        #super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000, other_client=OPC_UDP)
-        super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000)
+        super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000, other_client=OPC_UDP, name="OPC")
+        #super().__init__("192.168.137.1", mode=CONN_TYPE_TCP, tcp_port=9000)
 
     def eval_cmd(self, cmd_dict: dict):
-        print(f'Command Dict is: {cmd_dict}')
+        print(f'eval_cmd: Command Dict is: {cmd_dict}')
         try:
             cmd = cmd_dict["CMD"]
             args = {}
@@ -59,12 +59,13 @@ class OpcClientTCP(Client):
 
 class OpcClientUDP(Client):
     def __init__(self):
-        super().__init__("127.0.0.1", mode=CONN_TYPE_UDP, udp_port=9241)
+        super().__init__("192.168.137.1", mode=CONN_TYPE_UDP, udp_port=9241, name="OPC")
         self.LastSequence = 0
 
     def run(self, packet: HiveU):
 
         try:
+            print(f'\t\tRun dump: {packet.ptype}, {packet.seq}, {packet.identifier}, {packet.data}')
             if packet.ptype == 2:
                 #RPThread = threading.Thread(target=self.Receive_Packet, args=(packet.seq, packet.identifier, packet.data,))
                 #RPThread.start()
@@ -73,11 +74,12 @@ class OpcClientUDP(Client):
             return
 
     def Receive_Packet(self, Sequence, ID, Data):
+        #print(f'Dumpy thingy from receive packet: {Sequence}, {ID}, {Data}')
         if Sequence <= self.LastSequence:
             return
         else:
             try:
-                SendPort = int("22" + ID)
+                SendPort = int("22" + str(ID))
                 self.client_sock.sendto(Data, ('127.0.0.1', SendPort))
                 self.LastSequence = Sequence
             except OSError:
@@ -89,14 +91,19 @@ class OpcClientUDP(Client):
 def main():
     gui = MainFrame()
     OPC_UDP = OpcClientUDP()
-    gui.client = OpcClientTCP(OPC_UDP)
-    tcp_start_thread = threading.Thread(target=gui.client.start)
-    tcp_start_thread.start()
-    gui.mainloop()
-
     UDP_Start_Thread = threading.Thread(target=OPC_UDP.start)
     UDP_Start_Thread.start()
-    Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID =222), DH.DroneHandler(OPC_UDP, Tello_ID =122)]
+    OPC_TCP = OpcClientTCP(OPC_UDP)
+    tcp_start_thread = threading.Thread(target=OPC_TCP.start)
+    tcp_start_thread.start()
+    gui.client = OPC_TCP
+    gui.mainloop()
+
+    OPC_TCP.send_message(3,"192.168.137.1", "CMD:GET_DRONE;")
+    #UDP_Start_Thread = threading.Thread(target=OPC_UDP.start)
+    #UDP_Start_Thread.start()
+    #Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID =36), DH.DroneHandler(OPC_UDP, Tello_ID =122)]
+    Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID=36)]
     MainGame = Game(Handlers)
     MainGame.Game_Loop()
 

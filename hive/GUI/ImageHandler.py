@@ -13,7 +13,8 @@ class Canvas:
     Counter = 0
 
     def __init__(self, root):
-        self.img = ImageTk.PhotoImage(Image.open("hive/GUI/map.png"))
+        SearchArea.requestMap()
+        self.img = ImageTk.PhotoImage(Image.open("map.png"))
         self.canvas = tk.Canvas(root, height=620, width=620)
         self.image_container = self.canvas.create_image(0, 0, image=self.img)
         self.canvas.grid(column=0, row=0, columnspan=5, rowspan=10)

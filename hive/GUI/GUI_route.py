@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from GUI.ImageHandler import Canvas
-from GUI.ObjectHandler import *
+from .ImageHandler import Canvas
+from .ObjectHandler import *
 
 
 

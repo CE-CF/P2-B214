@@ -15,11 +15,11 @@ class MainFrame(tk.Tk):
 
     @property
     def client(self):
-        return self.client
+        return self._client
 
     @client.setter
     def client(self, client):
-        self.client = client
+        self._client = client
 
     def __create_widgets(self):
         # Create input frame
