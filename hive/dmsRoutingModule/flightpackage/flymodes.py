@@ -10,7 +10,7 @@ cmd_string = ""
 
 
 def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions):
-    global  cmd_string
+    global cmd_string
     # print("GET TO ROUTE FUNCTION BEGINS")
 
     relay_box_local_position = [relay_box_global_pos[1] - origo[0], relay_box_global_pos[0] - origo[1]]
@@ -107,12 +107,12 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
     distance_to_first_point = DistanceInMeters.calculate_distance(rb_and_start_global_arr[0],
                                                                   rb_and_start_global_arr[1])
 
-    # print("Flying straight with yaw=" + str(start_yaw) + " for " + str(distance_to_first_point) + " seconds")     # LOS TESTOS
+    # print("Flying straight with yaw=" + str(start_yaw) + " for " + str(distance_to_first_point) + " seconds")
     # correct_yaw(start_yaw, distance_to_first_point)       # LOS TESTOS
     cmd_string = cmd_string + "straight:yaw:"+str(distance_to_first_point)+";"
 
     # Stop and hover at the first point
-    #the_thread("stop")
+    # the_thread("stop")
     cmd_string = cmd_string + "stop;"
     '''
     To determine the angle between the y-axis and the first line,
@@ -138,30 +138,30 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
         if left:
             total_angle = angle_to_first_point + angle_to_second_point
             rotation_back_cw = "cw " + str(int(round(total_angle)))
-            #the_thread(rotation_back_cw)
+            # the_thread(rotation_back_cw)
             cmd_string = cmd_string + "rotate:"+str(total_angle)+";"
         elif right:
             total_angle = angle_to_first_point - angle_to_second_point
             rotation_back_ccw = "ccw " + str(int(round(total_angle)))
-            #the_thread(rotation_back_ccw)
+            # the_thread(rotation_back_ccw)
             cmd_string = cmd_string + "rotate:-" + str(total_angle) + ";"
     else:
         # Rotate back the same amount as before plus the extra angle to align with the route
         if left:
             total_angle = angle_to_first_point - angle_to_second_point
             rotation_back_cw = "cw " + str(int(round(total_angle)))
-            #the_thread(rotation_back_cw)
+            # the_thread(rotation_back_cw)
             cmd_string = cmd_string + "rotate:" + str(total_angle) + ";"
         elif right:
             total_angle = angle_to_first_point + angle_to_second_point
             rotation_back_ccw = "ccw " + str(int(round(total_angle)))
-            #the_thread(rotation_back_ccw)
+            # the_thread(rotation_back_ccw)
             cmd_string = cmd_string + "rotate:-" + str(total_angle) + ";"
-    #time.sleep(1)
+    # time.sleep(1)
     cmd_string = cmd_string + "wait:1;"
-    #the_thread("stop")
+    # the_thread("stop")
     cmd_string = cmd_string + "stop;"
-    #time.sleep(2)
+    # time.sleep(2)
     cmd_string = cmd_string + "wait:2;"
 
     # Now the drone should be ready to fly straight to the second point
@@ -175,14 +175,14 @@ def search_route(path_width, path_limit_points, origo, path_functions, d_speed):
     if d_speed != 0:                            # ongoing drone speed implementation
         drone_speed = d_speed
 
-    #drone_yaw_1 = int(get_yaw())       # LOS TESTOS
+    # drone_yaw_1 = int(get_yaw())       # LOS TESTOS
     cmd_string = cmd_string + "getyaw;"
-    #drone_yaw_2 = 0                    # LOS TESTOS
-    #if drone_yaw_1 < 0:                # LOS TESTOS
+    # drone_yaw_2 = 0                    # LOS TESTOS
+    # if drone_yaw_1 < 0:                # LOS TESTOS
     #    drone_yaw_2 = 180 + drone_yaw_1    # LOS TESTOS
-    #elif drone_yaw_1 > 0:                  # LOS TESTOS
+    # elif drone_yaw_1 > 0:                  # LOS TESTOS
     #    drone_yaw_2 = drone_yaw_1 - 180    # LOS TESTOS
-    #else:                                  # LOS TESTOS
+    # else:                                  # LOS TESTOS
     #    drone_yaw_2 = 179                  # LOS TESTOS
     cmd_string = cmd_string + "getoppoyaw;"
 
@@ -214,14 +214,14 @@ def search_route(path_width, path_limit_points, origo, path_functions, d_speed):
 
             if (path_num - 1) % 2:
 
-                #print("Flying straight with yaw=" + str(drone_yaw_1) + " for " # LOS TESTOS
+                # print("Flying straight with yaw=" + str(drone_yaw_1) + " for " # LOS TESTOS
                 #      + str(flight_time) + " seconds") # LOS TESTOS
-                #correct_yaw(drone_yaw_2, flight_time) # LOS TESTOS
+                # correct_yaw(drone_yaw_2, flight_time) # LOS TESTOS
                 cmd_string = cmd_string + "straight:oppoyaw:"+str(flight_time)+";"
             else:
-                #print("Flying straight with yaw=" + str(drone_yaw_2) + " for " # LOS TESTOS
+                # print("Flying straight with yaw=" + str(drone_yaw_2) + " for " # LOS TESTOS
                 #      + str(flight_time) + " seconds") # LOS TESTOS
-                #correct_yaw(drone_yaw_1, flight_time) # LOS TESTOS
+                # correct_yaw(drone_yaw_1, flight_time) # LOS TESTOS
                 cmd_string = cmd_string + "straight:yaw:" + str(flight_time) + ";"
 
             # if there is a point after the turn.... (i+2) because this only runs when i%2==0
@@ -265,12 +265,12 @@ def search_route(path_width, path_limit_points, origo, path_functions, d_speed):
                 #      + "... turning at " + str(degrees_pr_sec) + " deg/s for " + str(flight_time) + " seconds")
                 # search_turns(degrees_pr_sec, flight_time)     # LOS TESTOS
                 cmd_string = cmd_string + "turn:" + str(degrees_pr_sec) + ":" + str(flight_time) + ";"
-    #print("SEARCH ROUTE FUNCTION DONE")
-    #the_thread("stop")
+    # print("SEARCH ROUTE FUNCTION DONE")
+    # the_thread("stop")
     cmd_string = cmd_string + "stop;"
-    #time.sleep(2)
+    # time.sleep(2)
     cmd_string = cmd_string + "wait:2;"
-    #return cmd_string
+    # return cmd_string
 
 
 def go_home(path_limit_points, relay_box_global_pos, origo):
@@ -314,17 +314,17 @@ def go_home(path_limit_points, relay_box_global_pos, origo):
         #the_thread(rotation_cw)
         cmd_string = cmd_string + "rotate:-" + str(new_angle) + ";"
 
-    #time.sleep(2)
+    # time.sleep(2)
     cmd_string = cmd_string + "wait:2;"
     # Now fly to the relay box
     # start_yaw = get_yaw()
     cmd_string = cmd_string + "getyaw;"
     last_point_global_arr = [path_limit_points[-1][1] + origo[1], path_limit_points[-1][0] + origo[0]]
     distance_last_point_first_point = DistanceInMeters.calculate_distance(last_point_global_arr, relay_box_global_pos)
-    #print("Flying straight with yaw=" + str(start_yaw) + " for " + str(distance_last_point_first_point) + " seconds")
-    #correct_yaw(start_yaw, distance_last_point_first_point)
+    # print("Flying straight with yaw=" + str(start_yaw) + " for " + str(distance_last_point_first_point) + " seconds")
+    # correct_yaw(start_yaw, distance_last_point_first_point)
     cmd_string = cmd_string + "straight:yaw:" + str(distance_last_point_first_point) + ";"
-    #the_thread("stop")
+    # the_thread("stop")
     cmd_string = cmd_string + "stop;"
     cmd_string = cmd_string + "land;"
     return cmd_string

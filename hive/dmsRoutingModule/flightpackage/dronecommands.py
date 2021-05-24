@@ -12,14 +12,14 @@ recvThread = None
 # Create a UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 state_host = ''
-state_port = 8890
+state_port = 0
 address = (state_host, state_port)
 # sock.bind(address)
 
 # Create socket to send commands and receive their response
 tello_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 tello_host = '192.168.10.1'
-tello_port = 8889
+tello_port = 0
 tello_address = (tello_host, tello_port)
 
 
