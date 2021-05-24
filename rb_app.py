@@ -87,7 +87,7 @@ class RbClientUDP(Client):
         """" Creates a thread that listens for video stream and forward frames """
         video_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         video_host = ""
-        video_port = 1111
+        video_port = 11111
         video_address = (video_host, video_port)
         video_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         video_sock.bind(video_address)
