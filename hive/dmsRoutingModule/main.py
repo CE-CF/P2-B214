@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from flightpackage.routefollower import get_to_next_point, go_back_to_start
+from flightpackage.routefollower import run_the_route
 
 from routing import Routing
 from routingpackage.distanceinmeters import DistanceInMeters
@@ -153,52 +153,52 @@ soccer_rb = [57.01786594422335, 9.952036864294133]
 
 # soccer_rb = [57.01773774865883, 9.952373791864979]
 
-waypoint_arr = np.array([[57.06593344368505, 9.935326097229042],
-                         [57.066095679477336, 9.935056452101701],
-                         [57.06629285188855, 9.935420028407108],
-                         [57.06635455907872, 9.936038260803215]])
+waypoint_arr = np.array([[57.06593349929881, 9.935275561671238],
+                         [57.0664181279917, 9.933606849311484],
+                         [57.066864387327016, 9.935522137650894],
+                         [57.06728860418936, 9.934407419569757]])
 
 
 def run():
-    custom_path_width = 2  # leave the value 0 and it's calculated using the drone FOV specified
+    #custom_path_width = 2  # leave the value 0 and it's calculated using the drone FOV specified
 
     # Routing(  2D-array of global coordinates specifying the corners of the map,
     #           plot padding,
     #           user defined path width in meters - used for testing
     #               - leave the value 0 and it's calculated using the drone FOV specified)
-    sohn = Routing(odin_arr, 0.00002, custom_path_width)
-    sohn.get_local_coordinates()
-    sohn.analyze_coordinates()
+    #sohn = Routing(odin_arr, 0.00002, custom_path_width)
+    #sohn.get_local_coordinates()
+    #sohn.analyze_coordinates()
 
     # get_to_route( path limit points,
     #               origo global coordinates,
     #               relay box coordinates,
     #               path functions  )
-    get_to_route(sohn.get_path_limit_points(),
-                 sohn.get_origo(),
-                 odin_relay_box,
-                 sohn.get_path_functions())
+    #get_to_route(sohn.get_path_limit_points(),
+     #            sohn.get_origo(),
+      #           odin_relay_box,
+       #          sohn.get_path_functions())
 
     # search_route( path width (meters) - if default pass obj.get_path_width as parameter,
     #               path limit points,
     #               origo global points,
     #               path functions,
     #               drone speed (m/s) - default value 1 if 0 is passed as a parameter )
-    search_route(custom_path_width,
-                 sohn.get_path_limit_points(),
-                 sohn.get_origo(),
-                 sohn.get_path_functions(),
-                 0)
+    #search_route(custom_path_width,
+     #            sohn.get_path_limit_points(),
+      #           sohn.get_origo(),
+       #          sohn.get_path_functions(),
+        #         0)
 
     # print(cmd_string)
 
-    cmd_string = go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
+    #cmd_string = go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
 
-    parser(cmd_string)
+    #parser(cmd_string)
     
     #if waypoint_route:
-    #    get_to_next_point(True, waypoint_arr)
-    #    go_back_to_start(waypoint_arr)
+    run_the_route(True, waypoint_arr)
+
 
     #elif calculate_route:
     #    custom_path_width = 0               # leave the value 0 and it's calculated using the drone FOV specified
