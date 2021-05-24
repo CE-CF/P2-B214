@@ -159,7 +159,6 @@ def search_turns(degrees_pr_sec, flight_time):
 def instantiate():
     global sent, recvThread, event
 
-
     recvThread = threading.Thread(target=recv)
     recvThread.start()
 

@@ -5,6 +5,7 @@ from routing import Routing
 from routingpackage.distanceinmeters import DistanceInMeters
 from flightpackage.dronecommands import instantiate, the_thread, correct_yaw
 from flightpackage.flymodes import get_to_route, search_route, go_home
+from flightpackage.relayboxrouting import parser
 
 big_array = np.array([[57.02848118809145, 9.948913866684594],
                       [57.02867865592206, 9.949934871541862],
@@ -77,9 +78,9 @@ deg_5 = np.array([[57.04469923110424, 9.94018639764456],  # approx 5 degrees
                   [57.04343269009751, 9.940075589296312]])
 
 deg_10 = np.array([[57.04469923110424, 9.94029904764456],  # approx 10 degrees
-                  [57.04431983058689, 9.942146254577343],
-                  [57.04332179604662, 9.941749287658181],
-                  [57.04343269009751, 9.940075589296312]])
+                   [57.04431983058689, 9.942146254577343],
+                   [57.04332179604662, 9.941749287658181],
+                   [57.04343269009751, 9.940075589296312]])
 
 deg_15 = np.array([[57.04469923110424, 9.94041504764456],  # approx 15 degrees
                    [57.04431983058689, 9.942146254577343],
@@ -142,12 +143,13 @@ soccer_arr = np.array([[57.01790968504875, 9.952207436114897],
                        [57.017833800022906, 9.952494389395032]])
 
 soccer_rb = [57.01786594422335, 9.952036864294133]
+
+
 # soccer_rb = [57.01773774865883, 9.952373791864979]
 
 
 def run():
-
-    custom_path_width = 2               # leave the value 0 and it's calculated using the drone FOV specified
+    custom_path_width = 2  # leave the value 0 and it's calculated using the drone FOV specified
 
     # Routing(  2D-array of global coordinates specifying the corners of the map,
     #           plot padding,
@@ -177,7 +179,11 @@ def run():
                  sohn.get_path_functions(),
                  0)
 
-    go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
+    # print(cmd_string)
+
+    cmd_string = go_home(sohn.get_path_limit_points(), odin_relay_box, sohn.get_origo())
+
+    parser(cmd_string)
 
 
 if __name__ == '__main__':
