@@ -33,9 +33,10 @@ class DmsServer(Server):
 
         return d["bat"]
 
-    def eval_cmd(self, data, cmd_dict: dict):
+    def eval_cmd(self, data, cmd_dict: dict, connection =None):
         cmd = cmd_dict["CMD"]
         args = {}
+        self.conn = connection
 
         for key in cmd_dict.keys():
             if key != "CMD":
@@ -80,7 +81,18 @@ class DmsServer(Server):
             pass
         if cmd == "GET_DRONE":
             
-            pass
+            test1 = fetchall('hive.drone')
+
+            OPCstring = "CMD:GET_DRONE;"
+            for x in range (len(test1)):
+                OPCstring += test1[x]['drone']+":"+test1[x]['droneID']+";"
+            dest = '192.168.137.36' # OPC IP
+
+            message = HiveT(3, dest, OPCstring)
+            message = HiveT.encode_packet(message)
+            print(message)
+            self.conn.send(message)
+            #pass
 
     def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:
@@ -99,10 +111,11 @@ class DmsServer(Server):
                 # Server/client cmd code here
                 cmd_dict = packet.data_parser()
                 data = packet.data_parser()
-                self.eval_cmd(data, cmd_dict)
+                self.eval_cmd(data, cmd_dict, connection=conn)
+            
                 if (self.forsøg == 0):
                     dest = '192.168.137.36' #'192.168.137.171'
-                    data = "init;stop;wait:1;rotate:-72;wait:3;getyaw;stop;land;"
+                    data = "init;stop;wait:15;rotate:-72;wait:3;getyaw;stop;land;"
                     data2 = "init;stop;wait:1;rotate:-72;wait:3;getyaw;straight:yaw:2.852546014722453;stop;rotate:52.298603625120144;wait:1;stop;wait:2;getyaw;getoppoyaw;straight:yaw:8.133271660464452;turn:57:3.141592653589793;straight:oppoyaw:7.887548788034652;turn:-57:3.141592653589793;straight:yaw:7.641825917141459;turn:57:3.141592653589793;straight:oppoyaw:7.396103047028961;stop;wait:2;rc0;stop;wait:2;rotate:56;wait:2;getyaw;straight:yaw:3.0558753392657407;stop;land;"
                     message = HiveT("drone", dest, data)
                     message = HiveT.encode_packet(message)
@@ -110,6 +123,7 @@ class DmsServer(Server):
                     self.forsøg += 1
                     print(message)
                     conn.send(message)
+                
             else:
                 # Wrong packet type
                 pass
@@ -125,7 +139,7 @@ class DmsServer(Server):
                 if packet.seq > self.seq_dic["state"]:
                     self.seq_dic["state"] = packet.seq
                     #packet.dump()
-                    if packet.seq %50 == 0:
+                    if packet.seq %100 == 0:
                         state = str(packet.data)
                         droneID = self.hotSpotIP+"."+str(packet.identifier)
                         droneBat = str(self.data_parser_battery(state))

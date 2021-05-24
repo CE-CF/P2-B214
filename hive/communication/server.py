@@ -378,10 +378,10 @@ class Router:
     def broadcast_hiveu(self, packet: HiveU):
         if packet.ptype == 2:
             self.lock.acquire()
-            print("Checking table")
             for x in self.dest_table:
                 if "OPC" in x and "udp_port" in self.dest_table[x]:
-                    print(f"Found {x}")
+                    self.log_info(f"Found {x} with port {self.dest_table[x]['udp_port']}")
+                    packet.dump(to_stdout=False)
                     self.udp_handler.send(
                         packet,
                         (
