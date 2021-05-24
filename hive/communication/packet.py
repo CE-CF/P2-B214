@@ -82,6 +82,7 @@ class HiveU(Packet):
         dump_data = {
             "identifier": self.identifier,
             "seq": self.seq,
+            "type": self.ptype,
             "data": self.data,
         }
         if to_stdout:
@@ -109,12 +110,13 @@ class HiveU(Packet):
     # Static methods
     @staticmethod
     def decode(msg):
-        ident = msg[0]
-        seq = msg[1:4]
+        ident = msg[0]  
+        seq = msg[1:5]
         ptype = msg[5]
         data = msg[6:]
         seq_int = int.from_bytes(seq, byteorder="big")
-        return HiveU(ident, ptype, seq_int, data)
+        packet = HiveU(ident, ptype, seq_int, data)
+        return packet
 
 
 class HiveT(Packet):

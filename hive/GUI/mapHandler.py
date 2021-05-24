@@ -4,8 +4,8 @@ import requests
 import numpy as np
 
 # Imports from files
-from dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as DIM
-import config
+from hive.dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters as DIM
+from . import config
 
 class Map:
     def __init__(self):
@@ -40,6 +40,7 @@ class Map:
             + "&key="
             + str(self.key)
         )
+
         with open("map.png", "wb") as img:
             img.write(image.content)
 
