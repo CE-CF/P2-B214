@@ -31,14 +31,15 @@ class DroneHandler:
         self.Command_Counter = 1
         self.Controllable = False
         self.ControllerMode = False
-        self.RC_Mode = True
+        self.RC_Mode = False
         self.Move_Speed = 50
         self.Yaw_Speed = 80
         self.Send_Sequence = 0
+        self.Battery = 0
         BFRThread = threading.Thread(target=self.CreateBFR)
         BFRThread.start()
         # Dictionary with keyboard controls
-        self.Control_Dict = {"land":    pygame.K_b, "takeoff":  pygame.K_SPACE,
+        self.Control_Dict = {"land":    pygame.K_b,     "takeoff":  pygame.K_SPACE,
                              "up":      pygame.K_UP,    "down":     pygame.K_DOWN,
                              "cw":      pygame.K_RIGHT, "ccw":      pygame.K_LEFT,
                              "forward": pygame.K_w,     "backward": pygame.K_s,
@@ -167,7 +168,7 @@ class DroneHandler:
     # Give the battery status from the drone
     def GetBattery(self):
     #    return self.Drone.get_battery()
-        return 99
+        return int(self.Battery)
 
     # Give the flying state of the drone
     def GetFlying(self):
@@ -186,6 +187,7 @@ class DroneHandler:
     # The command that is used when the stop button is pressed. Currently only lands the drone
     def Stop_Button_Command(self):
         self.Sender.send_udp(self.ID, 0, self.Command_Counter, b"land")
+        #self.Sender.send_udp(self.ID, 0, self.Command_Counter, b"stop")
         self.Command_Counter+=1
 
     # Stop the drone

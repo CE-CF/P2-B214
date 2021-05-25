@@ -1,5 +1,6 @@
 import hashlib
 import ipaddress
+import traceback
 from abc import ABC, abstractmethod
 from binascii import hexlify
 from threading import Lock
@@ -354,8 +355,12 @@ class HiveT(Packet):
             else:
                 return HiveT(packet_type, packet_dest, packet_data.decode())
         except IndexError:
+            #print(f'\tdecode_packet IndexError')
+            #traceback.print_exc()
             return False
         except TypeError:
+            print(f'\tdecode_packet TypeError')
+            traceback.print_exc()
             return False
 
     @staticmethod

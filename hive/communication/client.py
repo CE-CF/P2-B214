@@ -190,6 +190,7 @@ class Client(ABC):
 
     def send_udp(self, ident, ptype, seq, data):
         packet = HiveU(ident, ptype, seq, data)
+        print(f'Sending packet: {packet.ptype}, {packet.identifier}, {packet.seq}, {packet.data}')
         self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
@@ -295,6 +296,7 @@ class Client(ABC):
         # Receive transfer info
         mig_msg = self.recvall()
         mig_packet = HiveT.decode_packet(mig_msg)
+
         mig_data = mig_packet.data_parser()
 
         if mig_data["CMD"] is not None:
@@ -309,7 +311,8 @@ class Client(ABC):
             # Receive msg
             msg = self.recvall()
             packet = HiveT.decode_packet(msg)
-
+            if packet == False:
+                continue
             # Log client info
             # ---
             p_dump = packet.dump(to_stdout=False)
