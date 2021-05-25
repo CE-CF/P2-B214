@@ -362,8 +362,6 @@ class HiveT(Packet):
             print(f'\tdecode_packet TypeError')
             traceback.print_exc()
             return False
-        except TypeError:
-            return False
 
     @staticmethod
     def calc_checksum(
