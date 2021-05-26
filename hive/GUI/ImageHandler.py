@@ -157,7 +157,7 @@ class Canvas:
         return True
 
     def estimate(self, client):
-        """Draws an estimated search area on the GUI"""
+        """Draws an estimated search area on the GUI and send coordinates"""
         if self.PointType == "boundary":
             if len(Points) == 4:
                 if self.AngleChecker():
@@ -169,12 +169,12 @@ class Canvas:
                 return 0
 
         for c in range(-1, len(Points) - 1):
-            if c == -1:
+            if c == -1 and self.PointType == "waypoint":
                 self.canvas.create_line(
                     Points[c].trueX,
                     Points[c].trueY,
-                    Points[c - 1].trueX,
-                    Points[c - 1].trueY,
+                    Points[c + 1].trueX,
+                    Points[c + 1].trueY,
                     width=2,
                     dash=(5, 4)
                 )

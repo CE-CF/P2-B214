@@ -22,11 +22,9 @@ class Map:
     def setCoordinates(self, lat, long):
         self.lat = lat
         self.long = long
-        print("Random")
         self.requestMap()
 
     def requestMap(self):
-        # https://maps.googleapis.com/maps/api/staticmap?center=Berkeley,CA&zoom=14&size=400x400&key=
         image = requests.get(
             "https://maps.googleapis.com/maps/api/staticmap?center="
             + str(self.lat)
