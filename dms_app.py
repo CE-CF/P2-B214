@@ -46,10 +46,19 @@ class DmsServer(Server):
             # pass
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
+<<<<<<< HEAD
             droneState = data["STATE"]
             droneList = droneList[2:]
             droneIDList = droneIDList[2:]
             droneTableList = fetchall("hive.drone")
+=======
+            droneState = data['STATE']
+            droneLat = data['LAT']
+            droneLong = data['LONG']
+            droneList = droneList[4:]
+            droneIDList = droneIDList[4:]
+            droneTableList = fetchall('hive.drone')
+>>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
             counter = 0
 
             for i in range(len(droneList)):
@@ -60,6 +69,7 @@ class DmsServer(Server):
 
                 if counter > 0:
                     print("<<Drone exists>>")
+<<<<<<< HEAD
                     drone = Drone(
                         droneIDList[i],
                         droneList[i],
@@ -77,11 +87,19 @@ class DmsServer(Server):
                         0.000000,
                         0.000000,
                     )
+=======
+                    drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
+                    drone.update()
+                else:
+                    print("<<Drone does not exist>>")
+                    drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
+>>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
                     drone.insert()
 
         if cmd == "UPDATE_DRONE":
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
+<<<<<<< HEAD
             droneState = data["STATE"]
             droneList = droneList[2:]
             droneIDList = droneIDList[2:]
@@ -93,6 +111,15 @@ class DmsServer(Server):
                     0.000000,
                     0.000000,
                 )
+=======
+            droneState = data['STATE']
+            droneLat = data['LAT']
+            droneLong = data['LONG']
+            droneList = droneList[4:]
+            droneIDList = droneIDList[4:]
+            for i in range (len(droneList)):
+                drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
+>>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
                 drone.update()
 
         if cmd == "QOS":
@@ -106,17 +133,41 @@ class DmsServer(Server):
             test1 = fetchall("hive.drone")
 
             OPCstring = "CMD:GET_DRONE;"
+<<<<<<< HEAD
             for x in range(len(test1)):
                 OPCstring += (
                     test1[x]["drone"] + ":" + test1[x]["droneID"] + ";"
                 )
             dest = "192.168.137.36"  # OPC IP
+=======
+            for x in range (len(test1)):
+                OPCstring += test1[x]['drone']+":"+test1[x]['droneID']+";"
+            dest = '192.168.137.55' # OPC IP
+>>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
 
             message = HiveT(3, dest, OPCstring)
             message = HiveT.encode_packet(message)
             print(message)
             self.conn.send(message)
+<<<<<<< HEAD
             # pass
+=======
+            #pass
+        
+        if cmd == "GET_LOC":
+            test1 = fetchall('hive.drone')
+
+            OPCstring = "CMD:GET_LOC;"
+            for x in range (len(test1)):
+                OPCstring += "LAT"+":"+str(test1[x]['latitude'])+";""LONG"+":"+str(test1[x]['longitude'])+";"
+            dest = '192.168.137.55' # OPC IP
+
+            message = HiveT(3, dest, OPCstring)
+            message = HiveT.encode_packet(message)
+            print(message)
+            self.conn.send(message)
+
+>>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
 
     def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:
@@ -136,17 +187,27 @@ class DmsServer(Server):
                 cmd_dict = packet.data_parser()
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict, connection=conn)
-            
+                
                 if (self.forsøg == 0):
-                    dest = '192.168.137.36' #'192.168.137.171'
-                    data = "init;stop;wait:15;rotate:-72;wait:3;getyaw;stop;land;"
-                    data2 = "init;stop;wait:1;rotate:-72;wait:3;getyaw;straight:yaw:2.852546014722453;stop;rotate:52.298603625120144;wait:1;stop;wait:2;getyaw;getoppoyaw;straight:yaw:8.133271660464452;turn:57:3.141592653589793;straight:oppoyaw:7.887548788034652;turn:-57:3.141592653589793;straight:yaw:7.641825917141459;turn:57:3.141592653589793;straight:oppoyaw:7.396103047028961;stop;wait:2;rc0;stop;wait:2;rotate:56;wait:2;getyaw;straight:yaw:3.0558753392657407;stop;land;"
-                    message = HiveT("drone", dest, data)
-                    message = HiveT.encode_packet(message)
-                    print('Er det her det sker? forsøg {}'.format(self.forsøg))
+
+                    dest1 = "192.168.137.1" #'192.168.137.171'
+                    drone1 = "192.168.137.180"
+                    drone2 = "192.168.137.193"
+                    #cmd1 = "init;stop;wait:100;stop;land;"
+                    cmd1 = "init;stop;wait:180;stop;land;"
+                    cmd2 = "init;stop;wait:180;stop;land;"
+                    data = drone1+";"+cmd1+"|"+drone2+";"+cmd2
+                    message1 = HiveT("drone", dest1, data)
+                    message1 = HiveT.encode_packet(message1)
+                    
                     self.forsøg += 1
-                    print(message)
-                    conn.send(message)
+                    conn.send(message1)
+
+
+
+
+                    
+
                 
             else:
                 # Wrong packet type
@@ -169,16 +230,15 @@ class DmsServer(Server):
                         droneBat = str(self.data_parser_battery(state))
                         sameBat = 0
                         droneTableList = fetchallBat('hive.drone')
-                        for i in range (len(droneTableList)):
-                            if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
-                                sameBat +=1
-                                
-                        if (sameBat == 0):
-                            print("<<Battery has changed>>")
-                            drone = Drone(droneID, bat=self.data_parser_battery(state))
-                            drone.update()
-                        else:
-                            print("<<Battery has not changed>>")
+                        if len(droneTableList) != 0:    
+                            for i in range (len(droneTableList)):
+                                if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
+                                    sameBat +=1
+                                    
+                            if (sameBat == 0):
+                                print("<<Battery has changed>>")
+                                drone = Drone(droneID, bat=self.data_parser_battery(state))
+                                drone.update()
 
                     #pass
 
