@@ -4,7 +4,7 @@ from hive.communication.server import Server
 from hive.dataBase.tableHandlers.route import Route
 from hive.dataBase.tableHandlers.drone import Drone
 from hive.dataBase.tableHandlers.getTable import fetchall, fetchallBat
-from time import sleep
+from time import sleep, time
 
 class DmsServer(Server):
     def __init__(self):
@@ -82,7 +82,11 @@ class DmsServer(Server):
                 drone.update()
                 
         if cmd == "QOS":
-            pass
+            ltime = time()
+            rtime = float(args["SENT"])
+            delay = ltime - rtime
+            print(delay)
+
         if cmd == "GET_DRONE":
             
             test1 = fetchall('hive.drone')
@@ -115,7 +119,7 @@ class DmsServer(Server):
     def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:
             # TCP CODE HERE
-            packet.dump()
+            #packet.dump()
             if packet.p_type == 0 or packet.p_type == 1:
                 # Waypoint code here
                 data = packet.data_parser()
@@ -131,6 +135,7 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict, connection=conn)
                 
+                #Test drone command packet for relay box
                 if (self.forsøg == 0):
 
                     dest1 = "192.168.137.1" #'192.168.137.171'
