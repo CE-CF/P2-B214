@@ -30,6 +30,10 @@ class OpcClientTCP(Client):
             pass
         if cmd == "QOS":
             pass
+        if cmd == "GET_LOC":
+            lat = cmd_dict['LAT']
+            lng = cmd_dict['LONG']
+            MainFrame.punkt(lat, lng)
         if cmd == "GET_DRONE":
             print("I RECEIVED SOME DRONES")
 
@@ -136,7 +140,8 @@ def main():
     tcp_start_thread.start()
     gui.client = OPC_TCP
     gui.mainloop()
-    print(f'\t\tGUI Routing donw')
+    gui.client.send_message(3, "192.168.137.1", "CMD:GET_LOC;")
+    print(f'\t\tGUI Routing done')
     OPC_TCP.send_message(3,"192.168.137.1", "CMD:GET_DRONE;")
     #UDP_Start_Thread = threading.Thread(target=OPC_UDP.start)
     #UDP_Start_Thread.start()
