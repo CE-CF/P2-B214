@@ -13,8 +13,8 @@ bodyCascade = cv2.CascadeClassifier("Resource/haarcascade_upperbody.xml") # For 
 
 # Color detection values
 fColor = [
-    [0, 134, 79, 39, 255, 255],
-    [93, 71, 0, 179, 255, 255]
+    [150, 125, 75, 179, 255, 255],
+    #[93, 71, 0, 179, 255, 255]
 ]
 
 # Ignore color if in woods
@@ -119,23 +119,21 @@ def getContours(img):
         area = cv2.contourArea(cnt)
         if area > 800:
             cv2.drawContours(output, cnt, -1, (255, 0, 0), 3)
-            peri = cv2.arcLength(cnt, True)
-            approx = cv2.approxPolyDP(cnt, 0.02*peri, True)
-            x, y, w, h = cv2.boundingRect(approx)
+
 
 while True: # Searches each frame for faces, bodies and colors
     ret, frame = VideoCapture.read()
     output = frame
     findColor(frame, fColor)
-    findFace(frame)
-    findBody(frame)
-    if POIDetected:
-        print("###################")
-        print("!!!POI Detected!!!")
-        print("###################")
-        print("Image saved at C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\ ")
-        cv2.imwrite("C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\POI_{:02d}.png".format(image_count), output)
-        image_count += 1
-        POIDetected = False
+    #findFace(frame)
+    #findBody(frame)
+    # if POIDetected:
+    #     print("###################")
+    #     print("!!!POI Detected!!!")
+    #     print("###################")
+    #     print("Image saved at C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\ ")
+    #     cv2.imwrite("C:\\Users\\chejs\\OneDrive\\Dokumenter\\GitHub\\P2-B214\\hive\\VideoAnalyzer\\Output\\POI_{:02d}.png".format(image_count), output)
+    #     image_count += 1
+    #     POIDetected = False
     cv2.imshow("Original", output)
     cv2.waitKey(1)

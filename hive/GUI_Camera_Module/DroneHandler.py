@@ -21,9 +21,9 @@ class DroneHandler:
 
     def CreateBFR(self):
         BFR_IP = self.get_udp_video_address(str(self.ID))
-        print("Starting BFR")
-        self.Frame = BackgroundFrameRead(BFR_IP)
-        print("BFR Started")
+        print(f"Starting BFR: {self.ID}")
+        self.Frame = BackgroundFrameRead(BFR_IP, self.ID)
+        print(f"BFR Started: {self.ID}")
 
     def __init__(self, Sender,  Tello_ID = 0):
         self.ID = Tello_ID
