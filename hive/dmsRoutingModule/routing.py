@@ -59,7 +59,7 @@ class Routing(Coordinates):
         # we find the x- and y-axis ratios of coordinate-distances and distances in meters
         # this way we can convert back and forth between those
         # as long as we are working with vertical and horizontal distances - very useful
-        self.x_ratio, self.y_ratio = get_x_y_meter_to_coordinates_ratio(origo_c)
+        self.x_ratio, self.y_ratio = get_x_y_ratio(origo_c)
 
         # this function "run" goes through almost all functions in findroutefunctions.py
         # and it gets us an array consisting of functions of the paths(green lines) that the drone(s) need to follow

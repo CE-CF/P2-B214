@@ -137,12 +137,12 @@ def get_to_route(path_limit_points, origo, relay_box_global_pos, path_functions)
         # Rotate back the same amount as before plus the extra angle to align with the route
         if left:
             total_angle = angle_to_first_point + angle_to_second_point
-            rotation_back_cw = "cw " + str(int(round(total_angle)))
+            # rotation_back_cw = "cw " + str(int(round(total_angle)))
             # the_thread(rotation_back_cw)
             cmd_string = cmd_string + "rotate:"+str(total_angle)+";"
         elif right:
             total_angle = angle_to_first_point - angle_to_second_point
-            rotation_back_ccw = "ccw " + str(int(round(total_angle)))
+            # rotation_back_ccw = "ccw " + str(int(round(total_angle)))
             # the_thread(rotation_back_ccw)
             cmd_string = cmd_string + "rotate:-" + str(total_angle) + ";"
     else:

@@ -41,14 +41,13 @@ def downlink():
 
 
 def uplink(cmd):
-    print("cmd", cmd)
+    # print("cmd", cmd)
     try:
         if 'end' in cmd:
             print('ending')
             tello_sock.close()
             tello_sock.shutdown(1)
             pass
-        # cmd = "0.0.0.0: " + cmd
         cmd = cmd.encode(encoding="utf-8")
         tello_sock.sendto(cmd, tello_address)
     except KeyboardInterrupt:
@@ -160,6 +159,7 @@ def base_commands(cmd):
 
 
 def param_commands(cmd, value):
+    global yaw, oppo_yaw
     if cmd == "rotate":
         if int(float(value)) < 0:
             pass
@@ -211,8 +211,5 @@ def parser(cmd_str):
                     return arr[1]
                 param_commands(arr[0], arr[1])
             elif len(arr) == 3:
-                # print("boooooo   ", arr, len(arr))
-                #print("boooooo  ", arr[0], [arr[1], arr[2]])
                 param_commands(arr[0], [arr[1], arr[2]])
             element = ""
-    #print(d)
