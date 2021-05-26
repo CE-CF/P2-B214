@@ -158,11 +158,11 @@ class RbClient(Client):
         )
         self.state = Off()
         self.hotSpotIP = "192.168.137"  # First 3 octets of the hotspot IP
-        self.connDrones = 1
+        self.connDrones = 2
         self.response_arr = []
         self.lock = Lock()
         self.activeDroneList = []
-        self.drone_ip_range = [126, 161]
+        self.drone_ip_range = [179, 194]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
         self.TCPdroneObjectList = []
         self.threadCounter = 0
@@ -170,6 +170,7 @@ class RbClient(Client):
         self.cmd_str = []
         self.droneIP = []
         self.rb_port = []
+        self.rb_placement = [57.052711, 9.911936]
 
     # def threaded(fn):
     #     def wrapper(*args, **kwargs):
@@ -226,7 +227,7 @@ class RbClient(Client):
             elif packet.p_type == 2:
                 # Drone cmd code here
                 droneData = self.DroneCheck.activeDronePacketUpdate(
-                    self.activeDroneList, "airborne"
+                    self.activeDroneList, "airborne", self.rb_placement[0], self.rb_placement[1]
                 )
                 print("Ved skift fra active til airborne {}".format(droneData))
                 self.send_message(
@@ -259,15 +260,14 @@ class RbClient(Client):
                 print(self.cmd_str[i])
                 self.TCPdroneObjectList.append(Drone(str(self.droneIP[i]), drone_port, self.rb_port[i], self.cmd_str[i]))
 
-            self.other_client.droneObjectSetter(self.TCPdroneObjectList)
 
             for i in range (len(self.TCPdroneObjectList)):
                 self.TCPdroneObjectList[i].start()
 
-            self.other_client.droneThreadSetter(self.airborneDroneThreads)
+            self.other_client.droneObjectSetter(self.TCPdroneObjectList)
             
             droneData = self.DroneCheck.activeDronePacketUpdate(
-                self.activeDroneList, "active"
+                self.activeDroneList, "active", self.rb_placement[0], self.rb_placement[1]
             )
             print("Ved skift fra airborne til active {}".format(droneData))
             """
@@ -291,7 +291,7 @@ class RbClient(Client):
                         + "\n"
                     )
                     droneData = self.DroneCheck.activeDronePacketAdd(
-                        self.activeDroneList, "active"
+                        self.activeDroneList, "active", self.rb_placement[0], self.rb_placement[1]
                     )
                     print(
                         "Ved skift fra inactive til active {}".format(

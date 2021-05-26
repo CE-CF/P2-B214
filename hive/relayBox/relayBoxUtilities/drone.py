@@ -214,8 +214,8 @@ class Drone(threading.Thread):
             time.sleep(2)
             self.uplink("rc 0 0 0 0")
             time.sleep(2)
-            self.uplink("takeoff")
-            time.sleep(5)
+            #self.uplink("takeoff")
+            #time.sleep(5)
 
         elif cmd == "rc0":
             print(cmd)

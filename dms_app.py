@@ -47,8 +47,10 @@ class DmsServer(Server):
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
             droneState = data['STATE']
-            droneList = droneList[2:]
-            droneIDList = droneIDList[2:]
+            droneLat = data['LAT']
+            droneLong = data['LONG']
+            droneList = droneList[4:]
+            droneIDList = droneIDList[4:]
             droneTableList = fetchall('hive.drone')
             counter = 0
             
@@ -60,21 +62,23 @@ class DmsServer(Server):
                         
                 if (counter > 0):
                     print("<<Drone exists>>")
-                    drone = Drone(droneIDList[i], droneList[i], droneState, 0.000000, 0.000000)
+                    drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
                     drone.update()
                 else:
                     print("<<Drone does not exist>>")
-                    drone = Drone(droneIDList[i], droneList[i], droneState, 0.000000, 0.000000)
+                    drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
                     drone.insert()
         
         if cmd == "UPDATE_DRONE":
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
             droneState = data['STATE']
-            droneList = droneList[2:]
-            droneIDList = droneIDList[2:]
+            droneLat = data['LAT']
+            droneLong = data['LONG']
+            droneList = droneList[4:]
+            droneIDList = droneIDList[4:]
             for i in range (len(droneList)):
-                drone = Drone(droneIDList[i], droneList[i], droneState, 0.000000, 0.000000)
+                drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
                 drone.update()
                 
         if cmd == "QOS":
@@ -86,13 +90,27 @@ class DmsServer(Server):
             OPCstring = "CMD:GET_DRONE;"
             for x in range (len(test1)):
                 OPCstring += test1[x]['drone']+":"+test1[x]['droneID']+";"
-            dest = '192.168.137.59' # OPC IP
+            dest = '192.168.137.55' # OPC IP
 
             message = HiveT(3, dest, OPCstring)
             message = HiveT.encode_packet(message)
             print(message)
             self.conn.send(message)
             #pass
+        
+        if cmd == "GET_LOC":
+            test1 = fetchall('hive.drone')
+
+            OPCstring = "CMD:GET_LOC;"
+            for x in range (len(test1)):
+                OPCstring += "LAT"+":"+str(test1[x]['latitude'])+";""LONG"+":"+str(test1[x]['longitude'])+";"
+            dest = '192.168.137.55' # OPC IP
+
+            message = HiveT(3, dest, OPCstring)
+            message = HiveT.encode_packet(message)
+            print(message)
+            self.conn.send(message)
+
 
     def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:
@@ -112,15 +130,15 @@ class DmsServer(Server):
                 cmd_dict = packet.data_parser()
                 data = packet.data_parser()
                 self.eval_cmd(data, cmd_dict, connection=conn)
-            
+                
                 if (self.forsøg == 0):
 
                     dest1 = "192.168.137.1" #'192.168.137.171'
-                    drone1 = "192.168.137.127"
-                    drone2 = "192.168.137.160"
+                    drone1 = "192.168.137.180"
+                    drone2 = "192.168.137.193"
                     #cmd1 = "init;stop;wait:100;stop;land;"
-                    cmd1 = ""
-                    cmd2 = "init;stop;wait:100;stop;land;"
+                    cmd1 = "init;stop;wait:180;stop;land;"
+                    cmd2 = "init;stop;wait:180;stop;land;"
                     data = drone1+";"+cmd1+"|"+drone2+";"+cmd2
                     message1 = HiveT("drone", dest1, data)
                     message1 = HiveT.encode_packet(message1)

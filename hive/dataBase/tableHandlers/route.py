@@ -11,7 +11,7 @@ class Route(TableHandler):
     
     def insert(self):
         if self.routeType in [0,1]:
-            if ((len(self.routeCor)) >= 256):
+            if ((len(self.routeCor)) <= 256):
                 try:
                     super().connector()                             # Connect to database
                     super().getCursor()                             # Activate mysql.connector.cursor
@@ -60,7 +60,7 @@ class Route(TableHandler):
                     for x in self.routeCor:
                         for y in x:
                             route_data += tuple(y)                  # Appending the coordinates to the route_data tuple
-
+                    print(mySql_insert_query)
                     super().commit(mySql_insert_query, route_data)  # execute and commit insert query
                     print("Succesfully committed: "+mySql_insert_query)
                     print("with values: {}".format(route_data))

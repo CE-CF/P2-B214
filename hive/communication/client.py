@@ -190,7 +190,7 @@ class Client(ABC):
 
     def send_udp(self, ident, ptype, seq, data):
         packet = HiveU(ident, ptype, seq, data)
-        print(f'Sending packet: {packet.ptype}, {packet.identifier}, {packet.seq}, {packet.data}')
+        #print(f'Sending packet: {packet.ptype}, {packet.identifier}, {packet.seq}, {packet.data}')
         self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
