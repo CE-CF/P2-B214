@@ -10,7 +10,7 @@ from socket import (
     gethostname,
     socket,
 )
-from time import sleep
+from time import sleep, time
 
 from hive.communication import BUFFER_SIZE, CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.exceptions.packet_exceptions import DecodeErrorChecksum
@@ -267,6 +267,11 @@ class Client(ABC):
             self.client_sock = socket(AF_INET, SOCK_STREAM)
             self.client_sock.connect((self.srv_ip, new_port))
             print("Migration completed")
+        if cmd == "QOS":
+            ltime = time()
+            rtime = float(args["SENT"])
+            delay = ltime - rtime
+            print(delay)
 
     def tcp_flow(self):
         self.pulse = False

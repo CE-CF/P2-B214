@@ -183,7 +183,7 @@ class RbClient(Client):
             elif packet.p_type == 3:
                 # Server/client cmd code here
                 cmd_dict = packet.data_parser()
-                self.eval_cmd(cmd_dict)
+                self.run_cmd(cmd_dict)
                 # pass
             else:
                 # Wrong packet type

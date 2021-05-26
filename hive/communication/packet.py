@@ -110,7 +110,7 @@ class HiveU(Packet):
     # Static methods
     @staticmethod
     def decode(msg):
-        ident = msg[0]  
+        ident = msg[0]
         seq = msg[1:5]
         ptype = msg[5]
         data = msg[6:]
