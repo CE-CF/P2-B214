@@ -9,6 +9,7 @@ from socket import (
     SOCK_STREAM,
     gethostname,
     socket,
+    timeout,
 )
 from time import sleep, time
 
@@ -84,7 +85,7 @@ class Client(ABC):
         else:
             self.srv_port_udp = udp_port
             self.client_sock = socket(AF_INET, SOCK_DGRAM)
-            self.client_sock.settimeout(1)
+            #self.client_sock.settimeout(1)
             self.client_sock.bind(("", 0))
 
     def log_info(self, msg: str):
@@ -189,6 +190,7 @@ class Client(ABC):
 
     def send_udp(self, ident, ptype, seq, data):
         packet = HiveU(ident, ptype, seq, data)
+        #print(f'Sending packet: {packet.ptype}, {packet.identifier}, {packet.seq}, {packet.data}')
         self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
@@ -215,9 +217,16 @@ class Client(ABC):
         """
         msg = b""
         while True:
-            data_part = self.client_sock.recv(BUFFER_SIZE)
-            msg += data_part
-            if len(data_part) < BUFFER_SIZE:
+            try:
+                data_part = self.client_sock.recv(BUFFER_SIZE)
+                msg += data_part
+                if len(data_part) < BUFFER_SIZE:
+                    break
+            except timeout:
+                print(f"recvall in client timed out")
+                continue
+            except ConnectionResetError:
+                print(f"recvall in client Connection Reset Error")
                 break
         return bytes(msg)
 
@@ -292,6 +301,7 @@ class Client(ABC):
         # Receive transfer info
         mig_msg = self.recvall()
         mig_packet = HiveT.decode_packet(mig_msg)
+
         mig_data = mig_packet.data_parser()
 
         if mig_data["CMD"] is not None:
@@ -306,7 +316,8 @@ class Client(ABC):
             # Receive msg
             msg = self.recvall()
             packet = HiveT.decode_packet(msg)
-
+            if packet == False:
+                continue
             # Log client info
             # ---
             p_dump = packet.dump(to_stdout=False)
@@ -323,14 +334,23 @@ class Client(ABC):
             self.run(packet)
 
     def recv_udp(self):
-        bytes_addr = self.client_sock.recvfrom(BUFFER_SIZE)
-        return bytes_addr[0], bytes_addr[1]
+        try:
+            bytes_addr = self.client_sock.recvfrom(BUFFER_SIZE)
+            return bytes_addr[0], bytes_addr[1]
+        except timeout:
+            print(f"recv_udp in client timed out")
+            return False, False
+        except ConnectionResetError:
+            #print(f"recv_udp in client Connection Reset Error")
+            return False, False
 
     def udp_flow(self):
         self.run(packet=None)
         while True:
             # Receive msg
             msg, addr = self.recv_udp()
+            if type(msg) == type(False) or type(addr)  == type(False):
+                continue
             packet = HiveU.decode(msg)
 
             # Log client info

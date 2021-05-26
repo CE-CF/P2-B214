@@ -43,75 +43,35 @@ class DmsServer(Server):
                 args[key] = cmd_dict[key]
 
         if cmd == "ADD_DRONE":
-            # pass
+            #pass
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
-<<<<<<< HEAD
-            droneState = data["STATE"]
-            droneList = droneList[2:]
-            droneIDList = droneIDList[2:]
-            droneTableList = fetchall("hive.drone")
-=======
             droneState = data['STATE']
             droneLat = data['LAT']
             droneLong = data['LONG']
             droneList = droneList[4:]
             droneIDList = droneIDList[4:]
             droneTableList = fetchall('hive.drone')
->>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
             counter = 0
-
-            for i in range(len(droneList)):
-                for j in range(len(droneTableList)):
-
-                    if droneTableList[j]["droneID"] == droneIDList[i]:
-                        counter += 1
-
-                if counter > 0:
+            
+            for i in range (len(droneList)):
+                for j in range (len(droneTableList)):
+                 
+                    if droneTableList[j]['droneID'] == droneIDList[i]:
+                        counter +=1
+                        
+                if (counter > 0):
                     print("<<Drone exists>>")
-<<<<<<< HEAD
-                    drone = Drone(
-                        droneIDList[i],
-                        droneList[i],
-                        droneState,
-                        0.000000,
-                        0.000000,
-                    )
-                    drone.update()
-                else:
-                    print("<<Drone does not exist>>")
-                    drone = Drone(
-                        droneIDList[i],
-                        droneList[i],
-                        droneState,
-                        0.000000,
-                        0.000000,
-                    )
-=======
                     drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
                     drone.update()
                 else:
                     print("<<Drone does not exist>>")
                     drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
->>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
                     drone.insert()
-
+        
         if cmd == "UPDATE_DRONE":
             droneList = [drone for drone, droneID in data.items()]
             droneIDList = [droneID for drone, droneID in data.items()]
-<<<<<<< HEAD
-            droneState = data["STATE"]
-            droneList = droneList[2:]
-            droneIDList = droneIDList[2:]
-            for i in range(len(droneList)):
-                drone = Drone(
-                    droneIDList[i],
-                    droneList[i],
-                    droneState,
-                    0.000000,
-                    0.000000,
-                )
-=======
             droneState = data['STATE']
             droneLat = data['LAT']
             droneLong = data['LONG']
@@ -119,39 +79,23 @@ class DmsServer(Server):
             droneIDList = droneIDList[4:]
             for i in range (len(droneList)):
                 drone = Drone(droneIDList[i], droneList[i], droneState, droneLat, droneLong)
->>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
                 drone.update()
-
+                
         if cmd == "QOS":
-            ltime = time()
-            rtime = float(args["SENT"])
-            delay = ltime - rtime
-            print(delay)
-
+            pass
         if cmd == "GET_DRONE":
-
-            test1 = fetchall("hive.drone")
+            
+            test1 = fetchall('hive.drone')
 
             OPCstring = "CMD:GET_DRONE;"
-<<<<<<< HEAD
-            for x in range(len(test1)):
-                OPCstring += (
-                    test1[x]["drone"] + ":" + test1[x]["droneID"] + ";"
-                )
-            dest = "192.168.137.36"  # OPC IP
-=======
             for x in range (len(test1)):
                 OPCstring += test1[x]['drone']+":"+test1[x]['droneID']+";"
             dest = '192.168.137.55' # OPC IP
->>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
 
             message = HiveT(3, dest, OPCstring)
             message = HiveT.encode_packet(message)
             print(message)
             self.conn.send(message)
-<<<<<<< HEAD
-            # pass
-=======
             #pass
         
         if cmd == "GET_LOC":
@@ -167,7 +111,6 @@ class DmsServer(Server):
             print(message)
             self.conn.send(message)
 
->>>>>>> 670bbbbba33ebcdcb6819792b2fb1cfbdc86022d
 
     def run(self, packet, conn, mode):
         if mode is CONN_TYPE_TCP:

@@ -29,3 +29,6 @@ server.log
 *.log
 *.log
 *.log
+*.log
+*.log
+hive/VideoAnalyzer/test.py

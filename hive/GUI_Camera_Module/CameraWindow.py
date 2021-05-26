@@ -73,11 +73,11 @@ class CameraWindow:
             Battery_Text = pygame.font.SysFont("Arial", 32).render(str(int(Battery_Level)), False, pygame.Color("red"))
             self.Image.blit(Battery_Text, (0,64))
             # Stuff to draw the flying status of the drone
-            if self.Drone.GetFlying():
-                Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("green"))
-            else:
-                Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("red"))
-            self.Image.blit(Flying_Text, (0,128))
+            #if self.Drone.GetFlying():
+            #    Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("green"))
+            #else:
+            #    Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("red"))
+            #self.Image.blit(Flying_Text, (0,128))
             Surface.blit(self.Image, self.Rect)
         else:
             self.FrameRatio = self.FrameRatio/2
@@ -102,11 +102,11 @@ class CameraWindow:
                     Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, pygame.Color("red"))
                     self.Image.blit(Battery_Text, (0,48))
                     # Stuff to draw the flying status of the drone
-                    if self.Drone.GetFlying():
-                        Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
-                    else:
-                        Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("red"))
-                    self.Image.blit(Flying_Text, (0,96))
+                    #if self.Drone.GetFlying():
+                    #    Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
+                    #else:
+                    #    Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("red"))
+                    #self.Image.blit(Flying_Text, (0,96))
                     Surface.blit(self.Image, self.Rect)
                 else:
                     self.Rect = pygame.rect.Rect(0,0,0,0)
@@ -135,11 +135,11 @@ class CameraWindow:
                 Battery_Text = pygame.font.SysFont("Arial", 16).render(str(int(Battery_Level)), False, pygame.Color("red"))
                 self.Image.blit(Battery_Text, (0,48))
                 # Stuff to draw the flying status of the drone
-                if self.Drone.GetFlying():
-                    Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
-                else:
-                    Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("red"))
-                self.Image.blit(Flying_Text, (0,96))
+                #if self.Drone.GetFlying():
+                #    Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("green"))
+                #else:
+                #    Flying_Text = pygame.font.SysFont("Arial", 16).render(("Flying"), False, pygame.Color("red"))
+                #self.Image.blit(Flying_Text, (0,96))
                 Surface.blit(self.Image, self.Rect)
 
     # This function draws a camera when another camera is focused.

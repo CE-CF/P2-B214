@@ -1,4 +1,5 @@
 from . import mapHandler
 
 Points = []
-SearchArea = mapHandler.Map()
+Kort = []
+Kort.append(mapHandler.Map())

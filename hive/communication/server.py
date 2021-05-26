@@ -85,6 +85,7 @@ class UDPPacketHandler(Thread):
                 f"""Connection Information:
 \t\t\t\t\t\t\t- Client Address: {addr}"""
             )
+            """
             p_dump = packet.dump(to_stdout=False)
             log_string = ""
             for k in p_dump:
@@ -94,6 +95,7 @@ class UDPPacketHandler(Thread):
             self.log_info(
                 "Packet received content:" + "\n\t\t\t\t\t\t\t" + log_string
             )
+            """
             self.target(packet, self.conn_sock, CONN_TYPE_UDP)
         self.log_info("ENDED")
 
@@ -329,6 +331,9 @@ class Router:
                 "\t\t\tThread-ID:"
                 + f"{self.dest_table[x]['handler'].thread_id}\n"
             )
+            if "udp_port" in self.dest_table[x]:
+                log_string += f"\t\t\tupd_port: {self.dest_table[x]['udp_port']}"
+
             log_string += "\n=============================================\n"
         self.log_info(log_string)
         self.lock.release()
@@ -396,7 +401,7 @@ class Router:
         elif packet.ptype == 0:
             self.lock.acquire()
             for x in self.dest_table:
-                if "Relaybox" in x:
+                if "Relaybox" in x and "udp_port" in self.dest_table[x]:
                     self.udp_handler.send(
                         packet,
                         (

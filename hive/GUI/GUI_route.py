@@ -9,6 +9,8 @@ class App(ttk.Frame):
     def __init__(self, container):
         super().__init__(container)
 
+
+
         self.__create_widgets()
 
     def __create_widgets(self):
@@ -17,15 +19,15 @@ class App(ttk.Frame):
         canvas.update()
 
         # Map Prefrences
-        tk.Button(self, text="+", command=lambda: SearchArea.ZoomIn(canvas)).grid(
+        tk.Button(self, text="+", command=lambda: Kort[0].ZoomIn(canvas)).grid(
             column=6, row=0
         )
 
-        tk.Button(self, text="-", command=lambda: SearchArea.ZoomOut(canvas)).grid(
+        tk.Button(self, text="-", command=lambda: Kort[0].ZoomOut(canvas)).grid(
             column=6, row=1
         )
 
-        tk.Button(self, text="Maptype", command=lambda: SearchArea.setMapType(canvas)).grid(
+        tk.Button(self, text="Maptype", command=lambda: Kort[0].setMapType(canvas)).grid(
             column=6, row=2
         )
 

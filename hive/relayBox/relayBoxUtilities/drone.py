@@ -7,10 +7,12 @@ import threading
 import time
 
 
-class Drone:
-    def __init__(self, droneID, dronePort, rbPort):
+class Drone(threading.Thread):
+    def __init__(self, droneID, dronePort, rbPort, cmdstr):
         """ Creating a socket to the drone"""
         if (self.testSocket(droneID, dronePort, rbPort)) == True:
+            super(Drone, self).__init__()
+            self._stop_event = threading.Event()
             self.droneID = droneID
             self.drone = (droneID, dronePort)
             self.rb = ("", rbPort)
@@ -19,8 +21,17 @@ class Drone:
             self.yaw_response = []
             self.yaw = 0
             self.oppo_yaw = 0
+            self.cmdstr = cmdstr
+            self.stopVariable = True
+            self.keepThreadRunning = True
         else:
             print("Drone object was not created, port was not open")
+
+    def stop(self):
+        self.stopVariable = False
+
+    def stopThread(self):
+        self.keepThreadRunning = False
 
     def testSocket(self, socket_ip, socket_port, bind_port):
         """ Test to see if a socket is open """
@@ -43,6 +54,8 @@ class Drone:
         # a_socket.shutdown(socket.SHUT_RDWR)
 
         return output
+    def getID(self):
+        return self.droneID
 
     def setYaw(self, yaw):
         self.yaw_response.append(yaw)
@@ -196,13 +209,13 @@ class Drone:
         if cmd == "init":
             print(cmd)
             self.uplink("command")
-            time.sleep(2)
+            time.sleep(3)
             self.uplink("streamon")
             time.sleep(2)
             self.uplink("rc 0 0 0 0")
             time.sleep(2)
-            self.uplink("takeoff")
-            time.sleep(5)
+            #self.uplink("takeoff")
+            #time.sleep(5)
 
         elif cmd == "rc0":
             print(cmd)
@@ -279,18 +292,28 @@ class Drone:
         element = ""
         print(cmd_str)
         for _, v in enumerate(cmd_str):
-            if v is not delim1:
-                element += v
-            else:
-                arr = element.split(delim2)
-                if len(arr) == 1:
-                    self.base_commands(arr[0])
-                elif len(arr) == 2:
-                    if arr[0] == "yaw":  # downlink() needs to parse self.yaw
-                        return arr[1]
-                    self.param_commands(arr[0], arr[1])
-                elif len(arr) == 3:
-                    # print("boooooo   ", arr, len(arr))
-                    # print("boooooo  ", arr[0], [arr[1], arr[2]])
-                    self.param_commands(arr[0], [arr[1], arr[2]])
-                element = ""
+            if self.stopVariable:
+                if v is not delim1:
+                    element += v
+                else:
+                    arr = element.split(delim2)
+                    if len(arr) == 1:
+                        self.base_commands(arr[0])
+                    elif len(arr) == 2:
+                        if arr[0] == "yaw":  # downlink() needs to parse self.yaw
+                            return arr[1]
+                        self.param_commands(arr[0], arr[1])
+                    elif len(arr) == 3:
+                        # print("boooooo   ", arr, len(arr))
+                        # print("boooooo  ", arr[0], [arr[1], arr[2]])
+                        self.param_commands(arr[0], [arr[1], arr[2]])
+                    element = ""
+
+    def run(self):
+        
+        self.parser(self.cmdstr)
+        while True:
+            if not self.keepThreadRunning:
+                break
+
+

@@ -34,7 +34,7 @@ class DroneChecker:
 
         return alive
 
-    def activeDronePacketAdd(self, ActiveDrones, state=None):
+    def activeDronePacketAdd(self, ActiveDrones, state=None, lat =None, long = None):
         droneName = "RelayBoxDrone"
         outputList = []
         outputString = ""
@@ -44,12 +44,12 @@ class DroneChecker:
                 "{0}{1}:{2}".format(droneName, (x + 1), ActiveDrones[x])
             )
 
-        CMDSTATE = "CMD:ADD_DRONE;STATE:{0};".format(state)
+        CMDSTATE = "CMD:ADD_DRONE;STATE:{0};LAT:{1};LONG:{2};".format(state, lat, long)
         outputString = CMDSTATE + (";".join(outputList)) + ";"
 
         return outputString
 
-    def activeDronePacketUpdate(self, ActiveDrones, state=None):
+    def activeDronePacketUpdate(self, ActiveDrones, state=None, lat =None, long = None):
         droneName = "RelayBoxDrone"
         outputList = []
         outputString = ""
@@ -59,7 +59,7 @@ class DroneChecker:
                 "{0}{1}:{2}".format(droneName, (x + 1), ActiveDrones[x])
             )
 
-        CMDSTATE = "CMD:UPDATE_DRONE;STATE:{0};".format(state)
+        CMDSTATE = "CMD:UPDATE_DRONE;STATE:{0};LAT:{1};LONG:{2};".format(state, lat, long)
         outputString = CMDSTATE + (";".join(outputList)) + ";"
 
         return outputString
