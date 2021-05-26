@@ -86,7 +86,7 @@ class DmsServer(Server):
             OPCstring = "CMD:GET_DRONE;"
             for x in range (len(test1)):
                 OPCstring += test1[x]['drone']+":"+test1[x]['droneID']+";"
-            dest = '192.168.137.36' # OPC IP
+            dest = '192.168.137.59' # OPC IP
 
             message = HiveT(3, dest, OPCstring)
             message = HiveT.encode_packet(message)
@@ -114,15 +114,25 @@ class DmsServer(Server):
                 self.eval_cmd(data, cmd_dict, connection=conn)
             
                 if (self.forsøg == 0):
-                    dest = '192.168.137.36' #'192.168.137.171'
-                    data = "init;stop;wait:15;rotate:-72;wait:3;getyaw;stop;land;"
-                    data2 = "init;stop;wait:1;rotate:-72;wait:3;getyaw;straight:yaw:2.852546014722453;stop;rotate:52.298603625120144;wait:1;stop;wait:2;getyaw;getoppoyaw;straight:yaw:8.133271660464452;turn:57:3.141592653589793;straight:oppoyaw:7.887548788034652;turn:-57:3.141592653589793;straight:yaw:7.641825917141459;turn:57:3.141592653589793;straight:oppoyaw:7.396103047028961;stop;wait:2;rc0;stop;wait:2;rotate:56;wait:2;getyaw;straight:yaw:3.0558753392657407;stop;land;"
-                    message = HiveT("drone", dest, data)
-                    message = HiveT.encode_packet(message)
-                    print('Er det her det sker? forsøg {}'.format(self.forsøg))
+
+                    dest1 = "192.168.137.1" #'192.168.137.171'
+                    drone1 = "192.168.137.127"
+                    drone2 = "192.168.137.160"
+                    #cmd1 = "init;stop;wait:100;stop;land;"
+                    cmd1 = ""
+                    cmd2 = "init;stop;wait:100;stop;land;"
+                    data = drone1+";"+cmd1+"|"+drone2+";"+cmd2
+                    message1 = HiveT("drone", dest1, data)
+                    message1 = HiveT.encode_packet(message1)
+                    
                     self.forsøg += 1
-                    print(message)
-                    conn.send(message)
+                    conn.send(message1)
+
+
+
+
+                    
+
                 
             else:
                 # Wrong packet type
@@ -145,16 +155,15 @@ class DmsServer(Server):
                         droneBat = str(self.data_parser_battery(state))
                         sameBat = 0
                         droneTableList = fetchallBat('hive.drone')
-                        for i in range (len(droneTableList)):
-                            if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
-                                sameBat +=1
-                                
-                        if (sameBat == 0):
-                            print("<<Battery has changed>>")
-                            drone = Drone(droneID, bat=self.data_parser_battery(state))
-                            drone.update()
-                        else:
-                            print("<<Battery has not changed>>")
+                        if len(droneTableList) != 0:    
+                            for i in range (len(droneTableList)):
+                                if (droneTableList[i]['droneID'] == droneID) and (droneTableList[i]['battery'] == droneBat):
+                                    sameBat +=1
+                                    
+                            if (sameBat == 0):
+                                print("<<Battery has changed>>")
+                                drone = Drone(droneID, bat=self.data_parser_battery(state))
+                                drone.update()
 
                     #pass
 

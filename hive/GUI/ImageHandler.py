@@ -1,4 +1,5 @@
 # Library Imports
+import time
 import tkinter as tk
 from math import acos, degrees, sqrt
 from tkinter.messagebox import showinfo
@@ -10,15 +11,16 @@ from .SearchArea import LimitPoint
 
 class Canvas:
     PointType = "boundary"
+    dPointType = 1
     Counter = 0
 
     def __init__(self, root):
-        SearchArea.requestMap()
+        Kort[0].requestMap()
         self.img = ImageTk.PhotoImage(Image.open("map.png"))
         self.canvas = tk.Canvas(root, height=620, width=620)
         self.image_container = self.canvas.create_image(0, 0, image=self.img)
-        self.canvas.grid(column=0, row=0, columnspan=5, rowspan=10)
-        self.canvas.bind("<Button-1>", self.limitPoint)
+        self.canvas.grid(column=0, row=0, columnspan=5, rowspan=5)
+        self.canvas.bind("<Button-1>", self.addPoint)
 
         # Scale Label
         self.info = tk.Label(root, text="")
@@ -29,7 +31,7 @@ class Canvas:
         self.gui_pointtype = tk.Label(root, text=str(self.PointType))
         self.gui_pointtype.grid(column=7, row=3)
 
-    def limitPoint(self, event):
+    def addPoint(self, event):
         """Adds a point to the map"""
         if self.PointType == "boundary":
             if len(Points) >= 4:
@@ -51,7 +53,7 @@ class Canvas:
         else:
             Points[-1].drawPoint(self.canvas)
 
-        lat, long = SearchArea.CalculateCoordinates(event.x, event.y)
+        lat, long = Kort[0].CalculateCoordinates(event.x, event.y)
         Points[len(Points) - 1].setLongLat(lat, long)
 
     def update(self):
@@ -154,7 +156,7 @@ class Canvas:
 
         return True
 
-    def estimate(self):
+    def estimate(self, client):
         """Draws an estimated search area on the GUI"""
         if self.PointType == "boundary":
             if len(Points) == 4:
@@ -167,23 +169,35 @@ class Canvas:
                 return 0
 
         for c in range(-1, len(Points) - 1):
-            self.canvas.create_line(
-                Points[c].trueX,
-                Points[c].trueY,
-                Points[c + 1].trueX,
-                Points[c + 1].trueY,
-                width=2,
-        )
-        self.SendRoute()
+            if c == -1:
+                self.canvas.create_line(
+                    Points[c].trueX,
+                    Points[c].trueY,
+                    Points[c - 1].trueX,
+                    Points[c - 1].trueY,
+                    width=2,
+                    dash=(5, 4)
+                )
+            else:
+                self.canvas.create_line(
+                    Points[c].trueX,
+                    Points[c].trueY,
+                    Points[c + 1].trueX,
+                    Points[c + 1].trueY,
+                    width=2,
+                )
+        self.SendRoute(client)
 
     def UpdateInfo(self):
-        self.info["text"] = "Afstand fra kant til kant: " + str(SearchArea.calcScale()) + " m"
+        self.info["text"] = "Afstand fra kant til kant: " + str(Kort[0].calcScale()) + " m"
 
     def ChangePointType(self):
         if self.PointType == "boundary":
             self.PointType = "waypoint"
+            self.dPointType = 0
         else:
             self.PointType = "boundary"
+            self.dPointType = 1
 
         self.gui_pointtype["text"] = self.PointType
         self.clearCanvas()
@@ -193,12 +207,14 @@ class Canvas:
         self.Counter += 1
         return Denominator
 
-    def SendRoute(self):
-        RouteList = []
-        IterationStepper = 0
+    def SendRoute(self, client):
+        RouteList = ""
         for point in Points:
-            RouteCoordinate = [point.lat, point.long]
-            RouteList.insert(IterationStepper, RouteCoordinate)
-            IterationStepper += 1
-        print(testList)
+            RouteList += "{}:{};".format(round(point.lat, 6), round(point.long, 6))
+        client.send_message(self.dPointType, client.srv_ip, RouteList)
+
+    def GetCoor(self, client):
+        client.send_message(3, client.srv_ip, "CMD:GET_LOC;")
+
+
 
