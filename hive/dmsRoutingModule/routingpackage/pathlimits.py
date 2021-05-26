@@ -61,8 +61,7 @@ class PathLimits:
                 # else: they are being added from direction2 to direction1
 
                 if i % 2 == 0:
-                    x_intersection = \
-                        s.find_x_intersection(s.path_functions[i], intersection_functions[j])
+                    x_intersection = s.find_x_intersection(s.path_functions[i], intersection_functions[j])
                     if s.local_c[original_indexes[j]][0] > s.local_c[(original_indexes[j] + 1) % 4][0]:
                         min_x = s.local_c[(original_indexes[j] + 1) % 4][0]
                         max_x = s.local_c[original_indexes[j]][0]

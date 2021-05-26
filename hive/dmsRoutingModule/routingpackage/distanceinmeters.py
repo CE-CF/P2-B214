@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 
-def get_x_y_meter_to_coordinates_ratio(origo_c):
+def get_x_y_ratio(origo_c):
 
     origo_correct_order = [origo_c[1], origo_c[0]]
 
