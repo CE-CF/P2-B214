@@ -1,6 +1,6 @@
 from .dronecommands import instantiate, the_thread, correct_yaw, search_turns, get_yaw
 
-from routingpackage.distanceinmeters import DistanceInMeters
+from hive.dmsRoutingModule.routingpackage.distanceinmeters import DistanceInMeters
 import math
 import time
 # from ..routingpackage.findroutefunctions import run

@@ -1,3 +1,4 @@
+
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
 from hive.communication.packet import HiveT, HiveU
 from hive.communication.server import Server
@@ -5,6 +6,10 @@ from hive.dataBase.tableHandlers.route import Route
 from hive.dataBase.tableHandlers.drone import Drone
 from hive.dataBase.tableHandlers.getTable import fetchall, fetchallBat
 from time import sleep, time
+
+from hive.dmsRoutingModule.routing import Routing
+from hive.dmsRoutingModule.flightpackage.flymodes import get_to_route, go_home, search_route
+import numpy as np
 
 class DmsServer(Server):
     def __init__(self):
@@ -125,7 +130,28 @@ class DmsServer(Server):
                 data = packet.data_parser()
                 route = Route(packet.p_dest, packet.p_type, data)
                 route.insert()
+                rb_placement = [57.052711, 9.911936]
+                sohn = Routing(data, 0.00002, 0)
+                sohn.get_local_coordinates()
+                sohn.analyze_coordinates()
+                
+                get_to_route(sohn.get_path_limit_points(),
+                 sohn.get_origo(),
+                 rb_placement,
+                 sohn.get_path_functions())
+                
+                search_route(sohn.get_path_width(),
+                 sohn.get_path_limit_points(),
+                 sohn.get_origo(),
+                 sohn.get_path_functions(),
+                 0)
+
+                cmd_string = go_home(sohn.get_path_limit_points(), rb_placement, sohn.get_origo())
+
+                print(cmd_string)
+                 
                 conn.send(b"Succes")
+
             elif packet.p_type == 2:
                 # Drone cmd code here
                 pass

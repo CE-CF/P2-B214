@@ -1,11 +1,11 @@
 import numpy as np
-from coordinates import Coordinates
-from routingpackage.findfunctions import find_functions
-import routingpackage.findroutefunctions
-from routingpackage.distanceinmeters import *
-from routingpackage.pathlimits import *
-from plots import Plot, show_plots
-
+from .coordinates import Coordinates
+from .routingpackage.findfunctions import find_functions
+from .routingpackage import findroutefunctions
+from .routingpackage.distanceinmeters import *
+from .routingpackage.pathlimits import *
+from .plots import *#show_plots, Plot
+#from . import plots
 
 # TLDR: the Routing-cass consists of the analyze-coordinates()-method that:
 #   # finds border-functions to the local coordinate system
@@ -51,6 +51,7 @@ class Routing(Coordinates):
         # we append the plot-object of the borders and points to the plots-array(red lines, blue dots)
         # this way we can save the plots and show them at the same time - less inefficient...
         self.append_plot(Plot(self.local_c, self.functions, 'r', True))
+        #self.append_plot(plots.Plot(self.local_c, self.functions, 'r', True))
 
         # we get the global coordinates of origo [lon, lat] = [x, y]
         # origo is then used to convert local coordinates back to global - calculate_distance only takes global_c
@@ -64,12 +65,12 @@ class Routing(Coordinates):
         # this function "run" goes through almost all functions in findroutefunctions.py
         # and it gets us an array consisting of functions of the paths(green lines) that the drone(s) need to follow
         self.path_functions, self.longest_line_index, self.path_width = \
-            routingpackage.findroutefunctions.run(self.global_c, self.local_c, self.functions,
+            findroutefunctions.run(self.global_c, self.local_c, self.functions,
                                                   origo_c, self.x_ratio, self.y_ratio, self.ud_path_width)
 
         # in findroutefunctions.py we retrieve the functions of the points' projection(blue lines) onto the function of
         # the border line that is the longest
-        self.append_plot(routingpackage.findroutefunctions.get_plots())
+        self.append_plot(findroutefunctions.get_plots())
 
         pl = PathLimits(self.path_functions, self.functions, self.longest_line_index, self.local_c)
         self.path_limit_points = pl.run()
@@ -78,6 +79,7 @@ class Routing(Coordinates):
 
         # after accumulating plots in the plots-array we are now able to show them all at once
         show_plots(self.plots, self.plot_padding)
+        #plots.show_plots(self.plots, self.plot_padding)
 
     # the first if-statement checks if the plots-parameter is an array/list
     # if it is, it will iterate through the array/list while it appends each element to the plots-array

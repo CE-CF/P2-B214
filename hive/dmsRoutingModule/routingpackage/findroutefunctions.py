@@ -1,5 +1,5 @@
 import math
-from plots import Plot
+from hive.dmsRoutingModule.plots import Plot
 from .distanceinmeters import DistanceInMeters
 from sympy import *
 import numpy as np
@@ -146,7 +146,7 @@ def find_intersection_corresponding_path_width(path_width, paths, func, x_ratio,
     arr = []
     pon = 0
 
-    angle = abs(math.degrees(atan2(perp_func_slope, 1)))
+    angle = abs(math.degrees(math.atan2(perp_func_slope, 1)))
     scaler = 1 - (angle / 90)
 
     weird_value = 0
