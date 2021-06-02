@@ -197,9 +197,10 @@ class TelloDrone():
             Target_x *= abs(Target_x)>0.0000001
             Target_y = Amount_RL*sin(self.Yaw*(pi/180)) - (Amount_FB*cos(self.Yaw*(pi/180)))
             Target_y *= abs(Target_y)>0.0000001
-            New_Sum = abs(Target_x) + abs(Target_y) + abs(Amount_z)
-            Unit_Vector_Converter = sqrt((Target_x**2 + Target_y**2 + Amount_z**2))/New_Sum
-            Speed_Neutralizer = New_Sum*Unit_Vector_Converter
+            #New_Sum = abs(Target_x) + abs(Target_y) + abs(Amount_z)
+            #Unit_Vector_Converter = sqrt((Target_x**2 + Target_y**2 + Amount_z**2))/New_Sum
+            #Speed_Neutralizer = New_Sum*Unit_Vector_Converter
+            Speed_Neutralizer = sqrt((Target_x**2 + Target_y**2 + Amount_z**2))
             self.Speed_x = (abs(Target_x)/Speed_Neutralizer)*Speed*(1-2*(Target_x<0))
             self.Speed_y = (abs(Target_y)/Speed_Neutralizer)*Speed*(1-2*(Target_y<0))
             self.Speed_z = (abs(Amount_z)/Speed_Neutralizer)*Speed*(1-2*(Amount_z<0))
