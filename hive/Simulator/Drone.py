@@ -5,7 +5,7 @@ from math import sqrt
 
 class Drone():
     # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
-    def __init__(self, Start_x, Start_y, Speed = 10, Control_Type = 0,
+    def __init__(self, Start_x, Start_y, FPS, Speed = 10, Control_Type = 0,
                  Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT,
                  Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP,
                  Joystick_xAxis = "Axis 0", Joystick_yAxis = "Axis 1"):
@@ -18,6 +18,7 @@ class Drone():
         # Load the image of the drone
         self.Init_Image = pygame.image.load("Drone_Icon.png")
         self.Image = self.Init_Image
+        self.FPS = FPS
         # Set movement keys
         self.Key_Left = Key_Left
         self.Key_Right = Key_Right
@@ -44,7 +45,7 @@ class Drone():
         #self.Colided_Down = False
         #self.Colided_Up = False
         # The length of the speed vector. Will be max speed when controller is implemented
-        self.Speed = Speed
+        self.Speed = Speed/self.FPS
         self.Real_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
         self.Draw_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
 
@@ -165,6 +166,12 @@ class Drone():
         self.Draw_Path = []
         for i in range(len(self.Real_Path)):
             self.Draw_Path.append(((self.Real_Path[i][0] - Camera.Offset_x), (self.Real_Path[i][1] - Camera.Offset_y)))
+
+    def Update_FPS_Speed(self, FPS):
+        FPS_Ratio = self.FPS/FPS
+        self.FPS = FPS
+        self.Speed = self.Speed*FPS_Ratio
+        #self.Max_Yaw_Speed = self.Max_Yaw_Speed*FPS_Ratio
 
     # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):

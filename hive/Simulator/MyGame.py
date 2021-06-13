@@ -42,17 +42,18 @@ class Game():
             #self.Drones = [TD.TelloDrone(200,300,65*2), TD.TelloDrone(400,300,65*3), TD.TelloDrone(300,200)]
             self.Drones = []
             for i in range(GC.Drone_Number):
-                self.Drones.append(TD.TelloDrone(100 + 100*i, 300, MaxSpeed=GC.Uniform_Drones_Speed, IP_Address=f'0.0.0.{i}'))
+                self.Drones.append(TD.TelloDrone(100 + 100*i, 300, MaxSpeed=GC.Uniform_Drones_Speed,
+                                                 MaxYawSpeed=GC.Uniform_Yaw_Speed, IP_Address=f'0.0.0.{i}'))
         else:
             if pygame.joystick.get_count() == 0:
-                self.Drones = [Drone.Drone(200, 300),
-                               Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 0,
+                self.Drones = [Drone.Drone(200, 300, GC.FPS),
+                               Drone.Drone(800, 300, GC.FPS, GC.Uniform_Drones_Speed, 0,
                                            pygame.K_j, pygame.K_l,pygame.K_k, pygame.K_i)]
             else:
-                self.Drones = [Drone.Drone(200, 300),
-                               Drone.Drone(800, 300, GC.Uniform_Drones_Speed, 1,
+                self.Drones = [Drone.Drone(200, 300, GC.FPS),
+                               Drone.Drone(800, 300, GC.FPS, GC.Uniform_Drones_Speed, 1,
                                            Joystick_xAxis="Axis0", Joystick_yAxis="Axis1"),
-                               Drone.Drone(500, 300, GC.Uniform_Drones_Speed, 2,
+                               Drone.Drone(500, 300, GC.FPS, GC.Uniform_Drones_Speed, 2,
                                            "Button13", "Button14", "Button12", "Button11")]
         self.DronesCollided = []
         for i in range(len(self.Drones)):
@@ -202,6 +203,9 @@ class Game():
         if GC.Draw_Path:
             for i in range(len(self.Drones)):
                 self.Drones[i].Update_Path()
+    def Drone_Update_FPS_Speed(self, FPS):
+        for i in range(len(self.Drones)):
+            self.Drones[i].Update_FPS_Speed(FPS)
 
     # The main game loop
     def Game_Loop(self):
@@ -211,6 +215,7 @@ class Game():
         # The while loop. Might also just be a while True
         while self.Run:
             self.clock.tick(GC.FPS)
+            FPS_For_Speed = self.clock.get_fps() + 1*(self.clock.get_fps()==0)
             eventsList = pygame.event.get()             # Get the list of all events
             keyPressList = pygame.key.get_pressed()     # Get the list of all keyboard key's held
             self.Joystick_Handler(0)
@@ -219,10 +224,11 @@ class Game():
                 #print(self.JoysticksInput[0])
                 #print("Button 0 is pressed")
             self.Screen.fill((255,255,255))             # Fill screen with white to refresh
-            Camera.Offset_Handler(30)
+            Camera.Offset_Handler(30/FPS_For_Speed)
             #Game.MainCamera.Movement_Handler(1)
             #self.Drones[0].Movement_Handler(1)
             #self.Drones[1].Movement_Handler(1)
+            self.Drone_Update_FPS_Speed(FPS_For_Speed)
             self.Drones_Movement_Handler(eventsList)
             #Update_Rects()
             self.Drones_Collision_Handler()

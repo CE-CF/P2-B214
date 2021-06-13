@@ -11,14 +11,15 @@ from time import time, sleep
 
 class TelloDrone():
     # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
-    def __init__(self, Start_x, Start_y, MaxSpeed = 16, Online_Mode = False, IP_Address = "0.0.0.0"):
+    def __init__(self, Start_x, Start_y, MaxSpeed = 16, MaxYawSpeed = 16, IP_Address = "0.0.0.0"):
         self.Pos = self.Pos_x, self.Pos_y, self.Pos_z = [Start_x, Start_y, 0]
         self.Last_Pos = self.Last_Pos_x, self.Last_Pos_y, self.Last_Pos_z = self.Pos
         self.Speed = self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
         self.RC_Ratio = self.RC_Ratio_s, self.RC_Ratio_f, self.RC_Ratio_z = [0,0,0]
         self.Acc = self.Acc_x, self.Acc_y, self.Acc_z = [0,0,0]
         self.Tot_Dist = self.Tot_Dist_x, self.Tot_Dist_y, self.Tot_Dist_z = [0,0,0]
-        self.Max_Yaw_Speed = MaxSpeed
+        self.FPS = GC.FPS
+        self.Max_Yaw_Speed = MaxYawSpeed/self.FPS
         self.Current_Yaw_Speed = 0
         self.Yaw = 0
         self.Current_Speed = MaxSpeed
@@ -49,7 +50,7 @@ class TelloDrone():
         self.Move_x = 0.0
         self.Move_y = 0.0
         # The max speed that the drone can move in the simulation
-        self.MaxSpeed = MaxSpeed
+        self.MaxSpeed = MaxSpeed/self.FPS
 
         self.Control_Type = 0
 
@@ -414,6 +415,15 @@ class TelloDrone():
         self.Draw_Path = []
         for i in range(len(self.Real_Path)):
             self.Draw_Path.append(((self.Real_Path[i][0] - Camera.Offset_x), (self.Real_Path[i][1] - Camera.Offset_y)))
+
+    def Update_FPS_Speed(self, FPS):
+        FPS_Ratio = self.FPS/FPS
+        self.FPS = FPS
+        self.MaxSpeed = self.MaxSpeed*FPS_Ratio
+        self.Max_Yaw_Speed = self.Max_Yaw_Speed*FPS_Ratio
+        # The two lines bellow might result in errors due to race conditions, but I couldn't care less right now.
+        self.Current_Speed = self.Current_Speed*FPS_Ratio
+        self.Current_Yaw_Speed = self.Current_Yaw_Speed*FPS_Ratio
 
     # Final collision algoirthm. Argument(The rectangle to check if the drone collided with)
     def Check_Collision(self, Rect):

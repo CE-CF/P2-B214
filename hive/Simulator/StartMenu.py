@@ -58,9 +58,15 @@ class StartMenu():
         print(f'Draw path is: {GC.Draw_Path}')
     # Changes the speed according to the spinbox.
     # Initiated only when up or down arrow are used in the spinbox
-    def Change_Speed(self):
-        GC.Uniform_Drones_Speed = int(self.Speed_Spinbox.get())
+    #def Change_Speed(self):
+    #    GC.Uniform_Drones_Speed = int(self.Speed_Spinbox.get())
+    #    print(f'Speed is: {GC.Uniform_Drones_Speed}')
+    def Change_Speed(self, Speed):
+        GC.Uniform_Drones_Speed = int(Speed)
         print(f'Speed is: {GC.Uniform_Drones_Speed}')
+    def Change_Yaw(self, Speed):
+        GC.Uniform_Yaw_Speed = Speed
+        print(f'Yaw Speed is: {GC.Uniform_Yaw_Speed}')
     # Changes the number of spawned drones in Tello Mode
     def Change_Drone_Number(self):
         GC.Drone_Number = int(self.Drone_Number_Spinbox.get())
@@ -77,6 +83,7 @@ class StartMenu():
         self.root = tkinter.Tk()                        # Create main tkinter window
         Main_Frame = tkinter.Frame(self.root)           # Create a frame inside the root window
         Speed_Frame = tkinter.Frame(Main_Frame)         # Create a frame for the speed spinbox inside the main frame
+        Yaw_Frame = tkinter.Frame(Main_Frame)
         Drone_Number_Frame = tkinter.Frame(Main_Frame)
         Resolution_Frame = tkinter.Frame(Main_Frame)
         FPS_Frame = tkinter.Frame(Main_Frame)
@@ -111,10 +118,14 @@ class StartMenu():
                                                command = self.Change_Resolution)
         FPS_Label = tkinter.Label(FPS_Frame, text="Frames Per Second")
         FPS_Option = tkinter.OptionMenu(FPS_Frame, FPS, *self.FPS_Values, command = self.Change_FPS)
-        Speed_Label = tkinter.Label(Speed_Frame, text="Drone's Speed            ")
-        self.Speed_Spinbox = tkinter.Spinbox(Speed_Frame,text="Speed", from_=1, to=30, increment=1,
-                                             width=5, command = self.Change_Speed)
-        Drone_Number_Label = tkinter.Label(Drone_Number_Frame, text="No. of Drones             ")
+        #Speed_Label = tkinter.Label(Speed_Frame, text="Drone's Speed            ")
+        Speed_Label = tkinter.Label(Speed_Frame, text="Drone's Speed    ")
+        #self.Speed_Spinbox = tkinter.Spinbox(Speed_Frame,text="Speed", from_=1, to=30, increment=1,
+        #                                     width=5, command = self.Change_Speed)
+        Speed_Scale = tkinter.Scale(Speed_Frame, from_=1, to=200, orient=tkinter.HORIZONTAL, command=self.Change_Speed)
+        Yaw_Label = tkinter.Label(Yaw_Frame, text="Drone's Rotation")
+        Yaw_Scale = tkinter.Scale(Yaw_Frame, from_=1, to=200, orient=tkinter.HORIZONTAL, command=self.Change_Yaw)
+        Drone_Number_Label = tkinter.Label(Drone_Number_Frame, text="No. of Drones            ")
         self.Drone_Number_Spinbox = tkinter.Spinbox(Drone_Number_Frame,text="No. of Drones", from_=1, to=10, increment=1,
                                                     width=5, command = self.Change_Drone_Number)
         Run_Button = tkinter.Button(Main_Frame, text = "Run", command = self.Run_Game)
@@ -122,7 +133,11 @@ class StartMenu():
         Main_Frame.pack()
         Speed_Frame.pack()
         Speed_Label.pack(side=tkinter.LEFT)
-        self.Speed_Spinbox.pack(side=tkinter.RIGHT)
+        #self.Speed_Spinbox.pack(side=tkinter.RIGHT)
+        Speed_Scale.pack(side=tkinter.RIGHT)
+        Yaw_Frame.pack()
+        Yaw_Label.pack(side=tkinter.LEFT)
+        Yaw_Scale.pack(side=tkinter.RIGHT)
         Drone_Number_Frame.pack()
         Drone_Number_Label.pack(side=tkinter.LEFT)
         self.Drone_Number_Spinbox.pack(side=tkinter.RIGHT)
