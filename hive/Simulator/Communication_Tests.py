@@ -1,6 +1,8 @@
 from socket import *
 from threading import Thread
 
+"""Run this script to work as client and send messages to the simulation"""
+
 Run_Receive = True
 
 Server_IP = "127.0.0.1"

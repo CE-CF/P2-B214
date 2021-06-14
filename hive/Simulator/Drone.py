@@ -4,7 +4,8 @@ import pygame
 from math import sqrt
 
 class Drone():
-    # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
+    # Arguments( Start x pos, Start y pos, Movement speed, Control mode between analog or digital,
+    #            the four digital keys that move the drone, the two digital axis that move the drone)
     def __init__(self, Start_x, Start_y, FPS, Speed = 10, Control_Type = 0,
                  Key_Left = pygame.K_LEFT, Key_Right = pygame.K_RIGHT,
                  Key_Down = pygame.K_DOWN, Key_Up = pygame.K_UP,
@@ -18,6 +19,7 @@ class Drone():
         # Load the image of the drone
         self.Init_Image = pygame.image.load("Drone_Icon.png")
         self.Image = self.Init_Image
+        # Get the initial FPS of the simulation
         self.FPS = FPS
         # Set movement keys
         self.Key_Left = Key_Left
@@ -35,7 +37,7 @@ class Drone():
 
         self.Move_x = 0.0
         self.Move_y = 0.0
-        # x and y speed of drone. Used to move the drone's position
+        # x, y and z speed of drone. Used to move the drone's position
         self.Speed_x = 0
         self.Speed_y = 0
         self.Speed_z = 0
@@ -46,6 +48,7 @@ class Drone():
         #self.Colided_Up = False
         # The length of the speed vector. Will be max speed when controller is implemented
         self.Speed = Speed/self.FPS
+        # Arrays with the points of the path of the drone
         self.Real_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
         self.Draw_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
 
@@ -62,11 +65,13 @@ class Drone():
                            - self.Move_Up   *(self.Speed - (self.Move_Right| self.Move_Left)*self.Speed*((sqrt(2)-1)/sqrt(2))))
         self.Pos_x += self.Speed_x
         self.Pos_y += self.Speed_y
+
     # This function updates the rectangle's position to match the drone's position
     def Update_Rect(self):
         self.Rect.topleft = self.Pos_x - Camera.Offset_x, self.Pos_y - Camera.Offset_y
         #self.Rect.topleft = self.Pos_x - OLD_Camera.Camera.Offset_x, self.Pos_y - OLD_Camera.Camera.Offset_y
-    # This function takes the list of keys pressed by the keyboard and assigns them to their corresponding move booleans
+
+    # This function takes the list of keys pressed by the input devices and assigns them to their corresponding move booleans
     def Keyhold(self, keyPressList, Joystick_InputDict = {}):
         if self.Control_Type == 0:
             self.Move_Left = keyPressList[self.Key_Left]
@@ -157,6 +162,7 @@ class Drone():
         self.Colided_Up = Collide_Up
     '''
 
+    # Function that updates the path arrays of the drone
     def Update_Path(self):
         X = int(self.Pos_x); Y = int(self.Pos_y)
         if (X == self.Real_Path[-1][0]) and (Y == self.Real_Path[-1][1]):
@@ -167,6 +173,7 @@ class Drone():
         for i in range(len(self.Real_Path)):
             self.Draw_Path.append(((self.Real_Path[i][0] - Camera.Offset_x), (self.Real_Path[i][1] - Camera.Offset_y)))
 
+    # Function to provide the FPS to the drone and update its speed
     def Update_FPS_Speed(self, FPS):
         FPS_Ratio = self.FPS/FPS
         self.FPS = FPS

@@ -9,6 +9,8 @@ from time import time, sleep
 
 # Every 65 pixel = 10 cm
 
+"""I think this is the old Tello drone class. I don't think it is used anywhere"""
+
 class NewDrone():
     # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
     def __init__(self, Start_x, Start_y, MaxSpeed = 65, Online_Mode = False, ip_Address = "0.0.0.0"):

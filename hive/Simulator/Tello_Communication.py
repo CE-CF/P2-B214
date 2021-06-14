@@ -3,27 +3,30 @@ import time
 from socket import socket, AF_INET, SOCK_DGRAM, timeout
 import traceback
 
+"""UDP server that manages the communication between clients and the simulated Tello drones"""
+
 class Tello_Communication(threading.Thread):
 
     def __init__(self):
         super().__init__()
-        self.Host = ''           # Symbolic name meaning all available interfaces
-        self.Running = True
-        self.Tello = []
-        self.Connected_Address = None
+        self.Host = ''                  # Symbolic name meaning all available interfaces
+        self.Running = True             # Used by all while loops, so that they all can stop together
+        self.Tello = []                 # Array to hold all simulated Tello drones
+        self.Connected_Address = None   # Holds the IP address of the client to receive the Tello state
 
 
     """
     The receive command
     """
-
+    # Runs the corresponding drone function according to the received command. Args(Command to read, Index of Tello drone)
+    # It first splits the command with space as a delimiter, then checks if the first word is a valid command
+    # Then it checks to see that the arguments match the number of accepted arguments, and uses these arguments to run a function
     def Receive_Command(self, Command: str, Drone_ID):
         Command_Array = Command.split(" ")
         Array_Len = len(Command_Array)
         if len(Command_Array) == 0:
             return "error"
         elif Command_Array[0] == "command":
-            # If it ever happens make this the thing that activates the drone
             if Array_Len != 1:
                 return "error"
             else:
@@ -241,6 +244,7 @@ class Tello_Communication(threading.Thread):
         else:
             return "error"
 
+    # Adds a drone object to the Tello drone array. Ran from the game loop setup.
     def Add_Drone(self, Drone):
         self.Tello.append(Drone)
     '''
@@ -267,6 +271,7 @@ class Tello_Communication(threading.Thread):
             return Result
     '''
 
+    # Function to be run in a new thread that sends the state of all drones continuously
     def Send_State(self):
         print("Starting state sending")
         State_Port = 8890
@@ -275,6 +280,7 @@ class Tello_Communication(threading.Thread):
         print("State socket ready")
         while self.Running:
             #print(f'\t\t\tConnected Address is: {self.Connected_Address}')
+            # In the case there is no address to send to, then it waits
             if type(self.Connected_Address) == type("String"):
                 for i in range(len(self.Tello)):
                     State_String = self.Tello[i].Get_State()
@@ -284,37 +290,42 @@ class Tello_Communication(threading.Thread):
         print("Ending state thread")
         State_Socket.close()
 
+    # Function that sorts the string received by the server. Args(Command to sort, socket to send with, IP and port of client)
     def Sort_Command(self, Command: str, Socket:socket, SendTo):
+        # Splits so that the IP is alone and the command is alone
         Command_Array = Command.split(": ")
         Result = None
         IP_Found = False
-        print(f'\tCommand Array is: {Command_Array}')
-        print(f'\tCommand Array 0 is: {Command_Array[0]}')
+        #print(f'\tCommand Array is: {Command_Array}')
+        #print(f'\tCommand Array 0 is: {Command_Array[0]}')
+        # Goes through the list of Tello drones and checks to see if the IP of one of them matches the IP received
         for i in range(len(self.Tello)):
             #print(f'\tTello IP is : {self.Tello[i].IP_Address}')
             if self.Tello[i].IP_Address == Command_Array[0]:
-                print(f"\tfound a drone in {self.Tello[i].IP_Address}")
+                #print(f"\tfound a drone in {self.Tello[i].IP_Address}")
                 Result = self.Receive_Command(Command_Array[1], i)
                 IP_Found = True
                 break
             else:
                 continue
-        print(f'\t\tResult is: {Result}')
+        #print(f'\t\tResult is: {Result}')
         if not IP_Found:
             Result = "error ip not found"
+        # If a command command has been received. Then set the Tello state IP to the IP of the client that sent it
         elif Result == "command":
             print(f'SendTo is: {SendTo}')
             self.Connected_Address = SendTo[0]
             Result = "ok"
         elif Result == None:
             Result = "error"
+        # Send the result string back to the client
         try:
             Socket.sendto(bytes(Result, 'UTF-8'), SendTo)
         except:
             print("Intercepted error")
             traceback.print_exc()
 
-
+    # The run function of the thread. Creates the socket and used threads, then receives data in a loop.
     def run(self):
         #Host = ''           # Symbolic name meaning all available interfaces
         #HOST = "192.168.56.1"
@@ -339,17 +350,16 @@ class Tello_Communication(threading.Thread):
             except timeout:
                 #print("\tSocket timout")
                 continue
-            """
-            TODO: Implement the send in a thread,
-            so that it does not wait for the drone to finish before taking an order for a different drone.
-            """
 
             # r is the received data
             # a is the address bound to the socket on the other end of the connection
+
             r_str = str(r, 'UTF-8')
             #UTFr = str(r, encoding = "UTF-8")
             #print(f'\tIncoming text: {UTFr}')
             print(f'\tIncoming text: {r_str}')
+
+            # Sorts the command in a new thread so that the functioin is non blocking
             Sort_Thread = threading.Thread(target=self.Sort_Command, args=(r_str, Command_Socket, a,))
             Sort_Thread.start()
             #Result = self.Sort_Command(r_str)
@@ -358,6 +368,8 @@ class Tello_Communication(threading.Thread):
 
             #s.sendto(bytes(f'General Kenobi. Please stop contacting me. I got your message from {a[0]}','UTF-8'), a)
         print(f'\tOut of while loop')
+
+        # When loop is finished, it closes the sockets and joins the threads created.
         Command_Socket.close()
         if not Sort_Thread == None:
             Sort_Thread.join()

@@ -10,30 +10,29 @@ from time import time, sleep
 # Every 65 pixel = 10 cm
 
 class TelloDrone():
-    # Arguments( Start x pos, Start y pos, Movement speed, the four keys that move the drone)
-    def __init__(self, Start_x, Start_y, MaxSpeed = 16, MaxYawSpeed = 16, IP_Address = "0.0.0.0"):
+    # Arguments( Start x pos, Start y pos, Max linear speed, Max rotational speed, IP Address)
+    def __init__(self, Start_x, Start_y, MaxSpeed = 100, MaxYawSpeed = 100, IP_Address = "0.0.0.0"):
         self.Pos = self.Pos_x, self.Pos_y, self.Pos_z = [Start_x, Start_y, 0]
-        self.Last_Pos = self.Last_Pos_x, self.Last_Pos_y, self.Last_Pos_z = self.Pos
+        self.Last_Pos = self.Last_Pos_x, self.Last_Pos_y, self.Last_Pos_z = self.Pos    # Used to update distance travelled
         self.Speed = self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
-        self.RC_Ratio = self.RC_Ratio_s, self.RC_Ratio_f, self.RC_Ratio_z = [0,0,0]
-        self.Acc = self.Acc_x, self.Acc_y, self.Acc_z = [0,0,0]
+        self.RC_Ratio = self.RC_Ratio_s, self.RC_Ratio_f, self.RC_Ratio_z = [0,0,0]     # Used for handling RC movement
+        self.Acc = self.Acc_x, self.Acc_y, self.Acc_z = [0,0,0]                         # Always 0
         self.Tot_Dist = self.Tot_Dist_x, self.Tot_Dist_y, self.Tot_Dist_z = [0,0,0]
         self.FPS = GC.FPS
         self.Max_Yaw_Speed = MaxYawSpeed/self.FPS
         self.Current_Yaw_Speed = 0
         self.Yaw = 0
-        self.Current_Speed = MaxSpeed
-        self.Start_Time = time()
+        self.MaxSpeed = MaxSpeed/self.FPS
+        self.Current_Speed = self.MaxSpeed
+        self.Start_Time = time()    # Used for keeping track of run time since object creation
         #self.Command_Center = TC.Tello_Communication(self)
         self.IP_Address = IP_Address
 
-        self.Executing_Command = False
-        self.RC_Stop = False
-        self.Landed = True
+        self.Executing_Command = False  # Flag that is used to execute one command at a time. Works like a thread lock
+        self.RC_Stop = False            # Stops RC movement
+        self.Landed = True              # Flag to specify landing state of the Tello drone
         self.Video_Stream = False
-        self.Emergency_Stop = False
-
-        # Make a thread that accepts the commands
+        self.Emergency_Stop = False     # Flag to stop any command when stop or emergency commands are sent
 
         # Drone's rectangle object. Used as the place to draw the drone, and as it's collision box.
         # The arguments are it's position and it's size
@@ -41,7 +40,7 @@ class TelloDrone():
         # Load the image of the drone
         self.Init_Image = pygame.image.load("Drone_Icon.png")
         self.Image = self.Init_Image
-        # Set the booleans that activate with the movement keys
+        # Set the booleans that activate with the movement keys. Remnants of original drone
         self.Move_Left = False
         self.Move_Right = False
         self.Move_Down = False
@@ -49,21 +48,22 @@ class TelloDrone():
 
         self.Move_x = 0.0
         self.Move_y = 0.0
-        # The max speed that the drone can move in the simulation
-        self.MaxSpeed = MaxSpeed/self.FPS
 
         self.Control_Type = 0
 
+        # Arrays with points of the positions the drone went through
         self.Real_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
         self.Draw_Path = [(int(Start_x), int(Start_y)), (int(Start_x), int(Start_y))]
 
+    # Function that returns true if the speed is over the max speed
     def Check_Max_Speed(self):
-        return (sqrt(self.Speed_x**2 + self.Speed_y**2 + self.Speed_z**2) >= self.MaxSpeed)
+        return (sqrt(self.Speed_x**2 + self.Speed_y**2 + self.Speed_z**2) > self.MaxSpeed)
 
     """
     Control Command Functions
     """
 
+    # Works with land and takeoff commands
     def Landed_State(self, State):
         if self.Executing_Command or (State == self.Landed):
             return False
@@ -85,7 +85,7 @@ class TelloDrone():
             self.Executing_Command = False
             return True
 
-
+    # Works with streamon and streamoff commands
     def Stream_OnOff(self, StreamMode):
         # Executes once, no thread needed
         if StreamMode == self.Video_Stream:
@@ -94,6 +94,7 @@ class TelloDrone():
             self.Video_Stream = StreamMode
             return True
 
+    # Works on emergency command
     def Emergency(self):
         # Function that completely stops the drone in its place
         # No gravity = No crash landing
@@ -104,16 +105,18 @@ class TelloDrone():
         self.Pos_z = 0
         self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
         self.Landed = True
-        sleep(1)
+        sleep(0.1)
         self.Emergency_Stop = False
         self.RC_Stop = False
 
+    # Works on stop command
     def Stop_Command(self):
+        # Stops all other commands and sets velocit to 0
         self.RC(0,0,0,0)
         self.RC_Stop = True
         self.Emergency_Stop = True
         self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
-        #sleep(1)
+        sleep(0.1)
         self.Emergency_Stop = False
         self.RC_Stop = False
     """
@@ -161,9 +164,12 @@ class TelloDrone():
             return True
     """
 
+    # Arguments( Right or Left amount to move, Forward or Backward amount to move, Up and Down amount to move, Speed ratio)
     def Moveto(self, Amount_RL = 0, Amount_FB = 0, Amount_z = 0, Speed_Ratio = 10):
         # This function works for both the one directional command and the go command
         Amount_Sum = abs(Amount_RL) + abs(Amount_FB) + abs(Amount_z)
+
+        # Checks if no other command is executing, and that the supplied amounts are within Tello SDK specifications
         if (self.Executing_Command or self.Landed
             or ((not(20<=abs(Amount_RL)<=500)) and (Amount_RL!=0))
             or ((not(20<=abs(Amount_FB)<=500)) and (Amount_FB!=0))
@@ -174,7 +180,7 @@ class TelloDrone():
             return False
         else:
             # Moves by the certain amount between 20 and 500 in 3 directions
-            self.Executing_Command = True
+            self.Executing_Command = True       # Takes the lock
             self.RC_Stop = True
             Initial_Pos = [self.Pos_x, self.Pos_y, self.Pos_z]
             #Speed = 0.01*(Speed_Ratio/100) + 0.01*(Speed_Ratio==0)
@@ -194,23 +200,27 @@ class TelloDrone():
             Target_y = -(Amount_FB*cos(self.Yaw*(pi/180))) + Amount_RL*sin(self.Yaw*(pi/180))
             Target_y *= abs(Target_y)>0.0000001
             """
+            FloatingErrorMargin = 0.0000001
             Target_x = Amount_FB*sin(self.Yaw*(pi/180)) + Amount_RL*cos(self.Yaw*(pi/180))
-            Target_x *= abs(Target_x)>0.0000001
+            Target_x *= abs(Target_x)>FloatingErrorMargin
             Target_y = Amount_RL*sin(self.Yaw*(pi/180)) - (Amount_FB*cos(self.Yaw*(pi/180)))
-            Target_y *= abs(Target_y)>0.0000001
+            Target_y *= abs(Target_y)>FloatingErrorMargin
             #New_Sum = abs(Target_x) + abs(Target_y) + abs(Amount_z)
             #Unit_Vector_Converter = sqrt((Target_x**2 + Target_y**2 + Amount_z**2))/New_Sum
             #Speed_Neutralizer = New_Sum*Unit_Vector_Converter
+            # Speed Neutralizer is used to make sure the target position is reached in a striaght line
             Speed_Neutralizer = sqrt((Target_x**2 + Target_y**2 + Amount_z**2))
             self.Speed_x = (abs(Target_x)/Speed_Neutralizer)*Speed*(1-2*(Target_x<0))
             self.Speed_y = (abs(Target_y)/Speed_Neutralizer)*Speed*(1-2*(Target_y<0))
             self.Speed_z = (abs(Amount_z)/Speed_Neutralizer)*Speed*(1-2*(Amount_z<0))
-            print(f'{self.Speed_x}, {self.Speed_y}, {self.Speed_z}')
+            #print(f'{self.Speed_x}, {self.Speed_y}, {self.Speed_z}')
+            # This while loop is so that the drone moves smoothly
             while (((abs(self.Pos_x - Initial_Pos[0]) < abs(Target_x)) or
                     (abs(self.Pos_y - Initial_Pos[1]) < abs(Target_y)) or
                     (abs(self.Pos_z - Initial_Pos[2]) < abs(Amount_z)))):
                 #print(self.Speed)
                 #print(f'{self.Speed_x}, {self.Speed_y}, {self.Speed_z}')
+                # Checks if the emergency stop flag is set by the stop or emergency commands
                 if self.Emergency_Stop:
                     self.Executing_Command = False
                     self.RC_Stop = False
@@ -221,10 +231,11 @@ class TelloDrone():
                     self.Pos_z += self.Speed_z*(abs(self.Pos_z - Initial_Pos[2]) < abs(Amount_z))
 
                     sleep(1/GC.FPS)
-            print("Go command exit while loop")
-            print(f'Target x is: {Target_x}')
+            #print("Go command exit while loop")
+            #print(f'Target x is: {Target_x}')
+            #print(f'Target y is: {Target_y}')
+            # Move the drone to the target position, in case the while loop is off by a bit
             self.Pos_x = Initial_Pos[0] + Target_x
-            print(f'Target y is: {Target_y}')
             self.Pos_y = Initial_Pos[1] + Target_y
             self.Pos_z = Initial_Pos[2] + Amount_z
             self.Speed_x, self.Speed_y, self.Speed_z = 0,0,0
@@ -232,6 +243,7 @@ class TelloDrone():
             self.RC_Stop = False
             return True
 
+    # Used by cw and ccw comands. Arguments(Degrees to be rotate clockwise, Speed multiplier)
     def Rotate_Yaw(self, Rotation, Speed = 1):
         if((not (1<=abs(Rotation)<=360)) or (self.Executing_Command or self.Landed)):
             print("Rotation failed")
@@ -245,8 +257,8 @@ class TelloDrone():
                     self.Executing_Command = False
                     self.RC_Stop = False
                     return False
-                self.Yaw += Speed*(1-2*(Rotation<0))
-                sleep(1/GC.FPS)
+                self.Yaw += Speed*self.Current_Yaw_Speed*(1-2*(Rotation<0))
+                #sleep(1/GC.FPS)
             self.Yaw = (Init_Yaw + Rotation) % 360
             #Init_Image = self.Image
             #Init_Rect = self.Rect
@@ -267,7 +279,7 @@ class TelloDrone():
     """
     Set Commands Functions
     """
-
+    # Changes the linear speed of the drone
     def Set_Speed(self, Speed_Ratio):
         if not(10<=Speed_Ratio<=100):
             return False
@@ -299,7 +311,7 @@ class TelloDrone():
                     self.Yaw += (Yaw_Speed/100)*Yaw
             return True
     """
-
+    # Changes the variable that the RC handler works with. Called with rc command
     def RC(self, Ratio_s, Ratio_f, Ratio_z, Ratio_Yaw):
         Max_Arg = max(abs(Ratio_s), abs(Ratio_f), abs(Ratio_z), abs(Ratio_Yaw))
         if Max_Arg>100 or self.Executing_Command or self.Landed:
@@ -311,6 +323,7 @@ class TelloDrone():
             self.Current_Yaw_Speed = self.Max_Yaw_Speed*(Ratio_Yaw/100)
             return True
 
+    # RC_Handler is always running and moves the drone according the RC variables
     def RC_Handler(self):
         if not self.RC_Stop or self.Landed:
             self.Speed_x = self.Current_Speed*(self.RC_Ratio_s*cos(self.Yaw*(pi/180))-self.RC_Ratio_f*sin(self.Yaw*(pi/180)))
@@ -330,16 +343,19 @@ class TelloDrone():
     """
     Read Commands Functions
     """
-
+    # Returns the linear speed of the drone in a ration of max speed
     def Read_Speed(self):
         return str((self.Current_Speed/self.MaxSpeed))
 
+    # Returns 55 as a battery value
     def Read_Battery(self):
         return "55"
 
+    # Returns the time since the drone object was initialized
     def Read_Time(self):
         return str(time() - self.Start_Time)
 
+    # Returns the serial number in the form of the drone object identifier
     def Serial_Number(self):
         return str(self)
 
@@ -351,10 +367,11 @@ class TelloDrone():
 
     # Inside the Tello_Communication object
 
-
+    # Creates the state string and returns it
     def Get_State(self):
         Dist = sqrt(self.Tot_Dist_x**2 + self.Tot_Dist_y**2 + self.Tot_Dist_z**2)
         Run_Time = time() - self.Start_Time
+        # Converts the yaw into the format that is provided by the actual state string
         Converted_Yaw = int(self.Yaw)
         if Converted_Yaw>180:
             Converted_Yaw -= 360
@@ -366,22 +383,26 @@ class TelloDrone():
             State = f"{self.IP_Address}: pitch:0;roll:0;yaw:{Converted_Yaw};vgx:{int(self.Speed_x)};vgy:{int(self.Speed_y)};vgz:{int(self.Speed_z)};templ:12.2;temph:14.2;tof:{int(Dist)};h:{int(self.Pos_z)};bat:55;baro:22;time:{int(Run_Time)};agx:0;agy:0;agz:0;\r\n"
         return State
 
+    # Returns the position of the drone in a string
     def Get_Pos(self):
         Pos = f'{self.IP_Address}: x:{self.Pos_x}, y:{self.Pos_y}, z:{self.Pos_z}'
         return Pos
 
+    # Used to handle any user input commands if needed
     def Command_Handler(self, Events):
         #print("Command Handler working")
         for e in Events:
             if e.type == pygame.KEYDOWN:
                 print("Keydown get")
                 #print(e.key)
+                # If z is pressed then the state string is printed in the console
                 if e.key == pygame.K_z:
                     print(self.Get_State())
 
 
     # This function handles the movement of the drones by changing their position according to their speed
     # It checks the direction the drone is going and assigns the x and y speeds accordingly
+    # Remnant of the original drone class
     def Movement_Handler(self):
         if self.Control_Type == 1:
             self.Speed_x = self.Move_x*self.MaxSpeed
@@ -400,12 +421,14 @@ class TelloDrone():
         self.Tot_Dist_x += abs(self.Pos_x - self.Last_Pos_x)
         self.Tot_Dist_y += abs(self.Pos_y - self.Last_Pos_y)
         self.Tot_Dist_z += abs(self.Pos_z - self.Last_Pos_z)
+
     # This function updates the rectangle's position to match the drone's position
     def Update_Rect(self):
         #self.Rect.topleft = self.Pos_x - Camera.Offset_x, self.Pos_y - Camera.Offset_y
         self.Rect.center = self.Pos_x - Camera.Offset_x, self.Pos_y - Camera.Offset_y
         self.Update_Dist()
 
+    # This function updates the drone path array
     def Update_Path(self):
         X = int(self.Pos_x); Y = int(self.Pos_y)
         if (X == self.Real_Path[-1][0]) and (Y == self.Real_Path[-1][1]):
@@ -416,6 +439,7 @@ class TelloDrone():
         for i in range(len(self.Real_Path)):
             self.Draw_Path.append(((self.Real_Path[i][0] - Camera.Offset_x), (self.Real_Path[i][1] - Camera.Offset_y)))
 
+    # Function that sets the FPS from the simulation and updates the speeds of the drone accordingly
     def Update_FPS_Speed(self, FPS):
         FPS_Ratio = self.FPS/FPS
         self.FPS = FPS

@@ -7,6 +7,8 @@ import pygame
 """I failed in making this into an object.
 And it makes no sense to be one, cause it gotta be used by many different files"""
 
+"""I now know how to work with this as an object, but who the hell rewrites stuff that works?"""
+
 #ScreenWidth = 1080
 #ScreenHeight = 640
 #Game.Game.ScreenWidth
@@ -17,8 +19,8 @@ Offset = Offset_x, Offset_y = [Pos_x - ScreenWidth/2, Pos_y - ScreenHeight/2]   
 #Pos = Pos_x, Pos_y = [MainGame.ScreenWidth/2, MainGame.ScreenHeight/2]
 #Offset = Offset_x, Offset_y = [Pos_x - MainGame.ScreenWidth/2, Pos_y - MainGame.ScreenHeight/2]
 
-print(f'Width is: {ScreenWidth}')
-print(f'Height is: {ScreenHeight}')
+#print(f'Width is: {ScreenWidth}')
+#print(f'Height is: {ScreenHeight}')
 
 #Pos = Pos_x, Pos_y = [Game.ScreenWidth/2, Game.ScreenHeight/2]
 #Offset = Offset_x, Offset_y = [Pos_x - Game.ScreenWidth/2, Pos_y - Game.ScreenHeight/2]
