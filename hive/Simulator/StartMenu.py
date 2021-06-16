@@ -80,7 +80,8 @@ class StartMenu():
 
     # Update the drone rotation speed when the scale is changed
     def Change_Yaw(self, Speed):
-        GC.Uniform_Yaw_Speed = Speed
+        GC.Uniform_Yaw_Speed = int(Speed)
+        print(f'Type of the ting is: {type(GC.Uniform_Yaw_Speed)}')
         print(f'Yaw Speed is: {GC.Uniform_Yaw_Speed}')
 
     # Changes the number of spawned drones in Tello Mode
