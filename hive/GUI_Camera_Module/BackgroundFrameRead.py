@@ -21,9 +21,12 @@ class BackgroundFrameRead:
         self.ID = ID
         self.FPS = 0
         self.FrameCount = 0
+        # Open placeholder image and encode it into a numpy bit array
         f = open('hive/GUI_Camera_Module/NoFrame.jpg', 'rb')
         image_bytes = f.read()
         self.PlaceholderFrame = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), -1)
+        f.close()
+        # Open the video capture object and try grabbing the frame forever. This action is blocking
         print(f"\tBackgroundFrameRead started: {self.ID}")
         self.cap = cv2.VideoCapture(address)
         if not self.cap.isOpened():
@@ -32,11 +35,14 @@ class BackgroundFrameRead:
         while not self.grabbed or self.frame is None:
             self.grabbed, self.frame = self.cap.read()
         print(f"\tFrame finally grabbed: {self.ID}")
+        # The frame is grabbed and blocking stopped. Create the frame and FPS updating threads and start them.
         self.stopped = False
         self.worker = Thread(target=self.update_frame, args=(), daemon=True)
         self.worker.start()
-        self.FrameThread = Thread(target=self.Update_Frame, args=(), daemon=True)
-        self.FrameThread.start()
+        #self.FPSThread = Thread(target=self.Update_FPS_Tests, args=(), daemon=True)
+        #self.FPSThread.start()
+        self.FPSThread = Thread(target=self.Update_FPS, args=(), daemon=True)
+        self.FPSThread.start()
 
     def update_frame(self):
         """Thread worker function to retrieve frames from a VideoCapture
@@ -62,7 +68,15 @@ class BackgroundFrameRead:
                     self.Old_Frame_Time = time.time()
 
 
-    def Update_Frame(self):
+    def Update_FPS(self):
+        # Each second it updates the FPS of the feed using the amount of grabbed frames in that second
+        while not self.stopped:
+            time.sleep(1)
+            self.FPS = self.FrameCount
+            self.FrameCount = 0
+
+    def Update_FPS_Tests(self):
+        # Function used when testing the FPS of the video feed. Writes the FPS values in a csv file.
         with open(f"fps{self.ID}.csv", "a") as f:
             Seconds = 0
             f.write("\nNew Data Set:\n")

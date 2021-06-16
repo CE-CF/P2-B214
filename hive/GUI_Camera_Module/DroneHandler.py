@@ -14,11 +14,12 @@ class DroneHandler:
         while len(LastIP) < 3:
             LastIP = '0' + LastIP
         RecvPort = int("22" + LastIP)
-        address_schema = 'udp://@{ip}:{port}'  # + '?overrun_nonfatal=1&fifo_size=5000'
+        address_schema = 'udp://@{ip}:{port}'
         address = address_schema.format(ip='127.0.0.1', port=RecvPort)
         print(f'Sent address is: {address}')
         return address
 
+    # Creates the background frame read of the drone. Called in a new thread.
     def CreateBFR(self):
         BFR_IP = self.get_udp_video_address(str(self.ID))
         print(f"Starting BFR: {self.ID}")
@@ -50,7 +51,7 @@ class DroneHandler:
 
     # The control handler that takes the input and sends commands to the drone
     # This is currently mapped to the DS4, so I don't know if it works with other controllers
-    # It can be mapped to a keyboard too, but that is not yet done
+    # It is mapped to work with a keyboard too
     # Takes the keyboard input and the controller input as arguments
     def ControlHandler(self, KeyList, EventList, CD: dict):
         if self.Controllable:
@@ -157,6 +158,7 @@ class DroneHandler:
             #traceback.print_exc()
             f = open('hive/GUI_Camera_Module/NoFrame.jpg', 'rb')
             image_bytes = f.read()
+            f.close()
             return cv2.imdecode(np.frombuffer(image_bytes, np.uint8), -1)
 
     def GetFrameFPS(self):

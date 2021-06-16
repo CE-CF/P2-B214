@@ -7,22 +7,23 @@ class Game:
     # Constructer for game object with it's resolution and other options
     def __init__(self, DroneHandler: [DH.DroneHandler], ScreenWidth = 960, ScreenHeight = 720,
                  FullScreen = False, Run = True, FPS = 60):
-        pygame.init()   # Initialize all pygame modules
-        self.DH = DroneHandler # Initialize the drone handler
+        pygame.init()
+        self.DH = DroneHandler
         self.DH_Index = 0
         self.Camera_Windows = []
         for i in self.DH:
             self.Camera_Windows.append(CW.CameraWindow(i))
         self.ScreenHeightAdjuster = int(60*(ScreenHeight/720))
-        print(f'Adjuster is: {self.ScreenHeightAdjuster}')
-        print(f'Fill screen size is: {ScreenWidth}, {ScreenHeight+self.ScreenHeightAdjuster}')
+        #print(f'Adjuster is: {self.ScreenHeightAdjuster}')
+        #print(f'Fill screen size is: {ScreenWidth}, {ScreenHeight+self.ScreenHeightAdjuster}')
         self.ScreenSize = self.ScreenWidth, self.ScreenHeight = ScreenWidth, ScreenHeight+self.ScreenHeightAdjuster
         self.Screen = pygame.display.set_mode(self.ScreenSize, flags= pygame.FULLSCREEN * FullScreen)
-        print(f'Actual display size is: {self.Screen.get_size()}')
+        #print(f'Actual display size is: {self.Screen.get_size()}')
         self.Run = Run
         self.Joystick_Handler_Ran = 0
         self.clock = pygame.time.Clock()
         self.FPS = FPS
+
         self.KillAllRect = pygame.Rect(0,0,int(self.ScreenWidth/2),self.ScreenHeightAdjuster)
         self.KillAllRect.bottomright = (self.ScreenWidth, self.ScreenHeight)
         self.KillAllText = pygame.font.SysFont("Calibri", int(self.ScreenHeightAdjuster)).render("KILL ALL", True, pygame.Color("black"))
@@ -33,6 +34,7 @@ class Game:
         self.StopAllText = pygame.font.SysFont("Calibri", int(self.ScreenHeightAdjuster)).render("STOP ALL", True, pygame.Color("black"))
         self.StopAllTextRect = self.StopAllText.get_rect()
         self.StopAllTextRect.center = self.StopAllRect.center
+
     # Setup for the game loop function
     def setup(self):
         pass
@@ -70,6 +72,7 @@ class Game:
                 self.JoysticksInput[JoyNum].update({f'Ball{i}': self.Joysticks[JoyNum].get_ball(i)})
         else:
             return
+
     # Function that uninitializes the pygame module
     def close(self):
         pygame.display.quit()
@@ -144,6 +147,7 @@ class Game:
                         for i in self.DH:
                             i.Stop_Button_Command()
                     else:
+                        # Detects if a camera feed has been clicked on so it can focus it
                         Set_Focus = False; Pressed = 0
                         for i in range(len(self.Camera_Windows)):
                             result = self.Camera_Windows[i].Detect_Click(pygame.mouse.get_pos())
@@ -158,22 +162,27 @@ class Game:
                                     self.Camera_Windows[i].Focused = False
                 # Check an event of a key being pressed
                 if e.type == pygame.KEYDOWN:
+                    # Numpad 1 changes which drone is selected for setting changes
                     if e.key == pygame.K_1:
                         self.DH_Index = 0
                         print(f'Index number is: {self.DH_Index}')
+                    # Numpad 1 changes which drone is selected for setting changes
                     elif e.key == pygame.K_2:
                         self.DH_Index = 1
                         print(f'Index number is: {self.DH_Index}')
-                    if e.key == pygame.K_c: # Pressing c will give drone control to the controller
+                    # Pressing c will give drone control to the controller. Useful we demonstrating control of 2 drones.
+                    if e.key == pygame.K_c:
                         for i in range(len(self.DH)):
                             if i == self.DH_Index:
                                 self.DH[i].SetControllerMode(True)
                             else:
                                 self.DH[i].SetControllerMode(False)
+                    # Disables controller mode on all drones
                     if e.key == pygame.K_v:
                         for i in range(len(self.DH)):
                             self.DH[i].SetControllerMode(False)
                             print(f'Controller mode to drone number {i} is: {self.DH[i].Controllable}')
+                    # Turns on and off the ability to control any drone
                     if e.key == pygame.K_x:
                         for i in range(len(self.DH)):
                             self.DH[i].Controllable = not self.DH[i].Controllable

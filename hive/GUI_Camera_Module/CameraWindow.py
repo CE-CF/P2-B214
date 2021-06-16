@@ -25,6 +25,7 @@ class CameraWindow:
         self.Kill_Button.Rect.topright = ((self.FrameWidth), 0)
         pygame.draw.rect(self.Image,self.Kill_Button.Color, self.Kill_Button.Rect)
         self.Image.blit(self.Kill_Button.Text, self.Kill_Button.Rect)
+
         self.Stop_Button.Font = pygame.font.SysFont("Calibri", int(60*self.FrameRatio))
         self.Stop_Button.Text = self.Stop_Button.Font.render("Stop", True, pygame.Color("red"))
         self.Stop_Button.Rect = self.Kill_Button.Text.get_rect()
@@ -33,6 +34,7 @@ class CameraWindow:
         self.Stop_Button.Rect.bottomleft = (0, (self.FrameHeight))
         pygame.draw.rect(self.Image,self.Stop_Button.Color, self.Stop_Button.Rect)
         self.Image.blit(self.Stop_Button.Text, self.Stop_Button.Rect)
+
         self.Unfocus_Button.Rect = pygame.Rect(0,0,0,0)
         self.Unfocus_Button.Click_Rect = pygame.Rect(0,0,0,0)
         if self.Focused:
@@ -54,6 +56,7 @@ class CameraWindow:
             self.FrameRatio = min((Resolution[0]/920), (Resolution[1]/720))
         else:
             self.FrameRatio = 1
+        # If the camera is full screen, then draw it in full screen.
         if FullScreen:
             self.Frame = self.Drone.GetFrame()
             self.FrameHeight = int(self.FrameHeight*self.FrameRatio)
@@ -72,7 +75,7 @@ class CameraWindow:
             Battery_Level = self.Drone.GetBattery()
             Battery_Text = pygame.font.SysFont("Arial", 32).render(str(int(Battery_Level)), False, pygame.Color("red"))
             self.Image.blit(Battery_Text, (0,64))
-            # Stuff to draw the flying status of the drone
+            # Stuff to draw the flying status of the drone. Does not work without DJITelloPy, so removed.
             #if self.Drone.GetFlying():
             #    Flying_Text = pygame.font.SysFont("Arial", 32).render(("Flying"), False, pygame.Color("green"))
             #else:
@@ -80,7 +83,9 @@ class CameraWindow:
             #self.Image.blit(Flying_Text, (0,128))
             Surface.blit(self.Image, self.Rect)
         else:
+            # If the camera is not full screen, then make it half size
             self.FrameRatio = self.FrameRatio/2
+            # If there are more than 4 cameras, then check if this camera is one of the 4 that have to be drawn
             if No_Of_Cameras > 4:
                 if (Camera_Index-2*Camera_Scroll)>=0 and (Camera_Index-2*Camera_Scroll)<4:
                     self.Frame = self.Drone.GetFrame()
@@ -110,6 +115,7 @@ class CameraWindow:
                     Surface.blit(self.Image, self.Rect)
                 else:
                     self.Rect = pygame.rect.Rect(0,0,0,0)
+            # If there are less than 4 cameras, then draw the camera in its correct position
             else:
                 self.Frame = self.Drone.GetFrame()
                 self.FrameHeight = int(self.FrameHeight*self.FrameRatio)
@@ -178,7 +184,7 @@ class CameraWindow:
         else:
             return 0
 
-    # Runs the control handler of its corresponding drone
+    # Runs the control handler of its corresponding drone when the camera is focused
     def ControlHandler(self, KeyList, EventList, CD: dict):
         if self.Focused:
             self.Drone.ControlHandler(KeyList, EventList, CD)

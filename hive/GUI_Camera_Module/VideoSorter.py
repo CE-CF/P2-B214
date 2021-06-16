@@ -20,6 +20,8 @@ class VideoSorter(threading.Thread):
         #self.Socket.settimeout(1)
 
     """
+    Bellow code is for working with DJITelloPy instead of Hive Network module
+    
     # This function sorts the data and sends it to the correct local port
     def Send_The_Ting(self,r,a):
         try:
@@ -52,6 +54,8 @@ class VideoSorter(threading.Thread):
                 print("Some other error occured")
         self.Socket.close()
     """
+
+    # Function that receives a packet from the Hive network and sends it to it's corresponding port
     def Receive_Packet(self, Sequence, ID, Data):
         if Sequence == self.LastSequence:
             return

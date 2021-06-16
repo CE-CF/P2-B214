@@ -1,6 +1,8 @@
 import DroneHandler as DH
 from GameScreen import Game
 from VideoSorter import VideoSorter
+"""Complete version is in opc_app"""
+
 
 def main(OPC_UDP):
     VS = VideoSorter()
