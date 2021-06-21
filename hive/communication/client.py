@@ -85,7 +85,7 @@ class Client(ABC):
         else:
             self.srv_port_udp = udp_port
             self.client_sock = socket(AF_INET, SOCK_DGRAM)
-            #self.client_sock.settimeout(1)
+            # self.client_sock.settimeout(1)
             self.client_sock.bind(("", 0))
 
     def log_info(self, msg: str):
@@ -190,7 +190,7 @@ class Client(ABC):
 
     def send_udp(self, ident, ptype, seq, data):
         packet = HiveU(ident, ptype, seq, data)
-        #print(f'Sending packet: {packet.ptype}, {packet.identifier}, {packet.seq}, {packet.data}')
+        # print(f'Sending packet: {packet.ptype}, {packet.identifier}, {packet.seq}, {packet.data}')
         self.client_sock.send(packet.encode())
 
     def send_message(self, mtype, mdest, mdata):
@@ -341,7 +341,7 @@ class Client(ABC):
             print(f"recv_udp in client timed out")
             return False, False
         except ConnectionResetError:
-            #print(f"recv_udp in client Connection Reset Error")
+            # print(f"recv_udp in client Connection Reset Error")
             return False, False
 
     def udp_flow(self):
@@ -349,13 +349,13 @@ class Client(ABC):
         while True:
             # Receive msg
             msg, addr = self.recv_udp()
-            if type(msg) == type(False) or type(addr)  == type(False):
+            if type(msg) == type(False) or type(addr) == type(False):
                 continue
             packet = HiveU.decode(msg)
 
             # Log client info
             # ---
-            p_dump = packet.dump(to_stdout=False)
+            p_dump = packet.dump(to_stdout=True)
             log_string = ""
             for k in p_dump:
                 log_string += f"[{k.upper()}]: {p_dump[k]}"

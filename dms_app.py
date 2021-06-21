@@ -99,7 +99,7 @@ class DmsServer(Server):
             OPCstring = "CMD:GET_DRONE;"
             for x in range (len(test1)):
                 OPCstring += test1[x]['drone']+":"+test1[x]['droneID']+";"
-            dest = '192.168.137.55' # OPC IP
+            dest = '192.168.137.233' # OPC IP
 
             message = HiveT(3, dest, OPCstring)
             message = HiveT.encode_packet(message)
@@ -113,12 +113,29 @@ class DmsServer(Server):
             OPCstring = "CMD:GET_LOC;"
             for x in range (len(test1)):
                 OPCstring += "LAT"+":"+str(test1[x]['latitude'])+";""LONG"+":"+str(test1[x]['longitude'])+";"
-            dest = '192.168.137.55' # OPC IP
+            dest = '192.168.137.233' # OPC IP
 
             message = HiveT(3, dest, OPCstring)
             message = HiveT.encode_packet(message)
             print(message)
             self.conn.send(message)
+
+        if cmd == "GET_BAT":
+            
+            test1 = fetchall('hive.drone')
+            
+            OPCstring = "CMD:GET_BAT;"
+            for x in range (len(test1)):
+                SplitIP = str(test1[x]['droneID']).split(".")
+                LastIP = str(SplitIP[-1])
+                OPCstring += LastIP+":"+test1[x]['battery']+";"
+            dest = '192.168.137.233' # OPC IP
+            print(OPCstring)
+            message = HiveT(3, dest, OPCstring)
+            message = HiveT.encode_packet(message)
+            print(message)
+            self.conn.send(message)
+            #pass
 
 
     def run(self, packet, conn, mode):
@@ -165,11 +182,11 @@ class DmsServer(Server):
                 if (self.forsøg == 0):
 
                     dest1 = "192.168.137.1" #'192.168.137.171'
-                    drone1 = "192.168.137.180"
-                    drone2 = "192.168.137.193"
+                    drone1 = "192.168.137.21"
+                    drone2 = "192.168.137.24"
                     #cmd1 = "init;stop;wait:100;stop;land;"
-                    cmd1 = "init;stop;wait:180;stop;land;"
-                    cmd2 = "init;stop;wait:180;stop;land;"
+                    cmd1 = "init;stop;wait:120;stop;land;"
+                    cmd2 = "init;stop;wait:120;stop;land;"
                     data = drone1+";"+cmd1+"|"+drone2+";"+cmd2
                     message1 = HiveT("drone", dest1, data)
                     message1 = HiveT.encode_packet(message1)
@@ -177,12 +194,6 @@ class DmsServer(Server):
                     self.forsøg += 1
                     conn.send(message1)
 
-
-
-
-                    
-
-                
             else:
                 # Wrong packet type
                 pass

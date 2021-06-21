@@ -18,7 +18,7 @@ from hive.relayBox.relayBoxUtilities.relayBoxState import (
 class RbClientUDP(Client):
     def __init__(self):
         self.srv_ip = "192.168.137.1"
-        #self.srv_ip = "127.0.0.1"
+        # self.srv_ip = "127.0.0.1"
         super().__init__(
             self.srv_ip, name="Relaybox", mode=CONN_TYPE_UDP, udp_port=9241
         )
@@ -29,6 +29,8 @@ class RbClientUDP(Client):
         self.runCounter = 0
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.hotSpotIP = "192.168.137"
+        self.threadRunning = True
+        self.firstRun = True
 
     def droneObjectSetter(self, droneObjectList):
         self.UDPdroneObjectList = droneObjectList
@@ -83,10 +85,11 @@ class RbClientUDP(Client):
                 self.send_udp(LastIP, 1, stateSequenceNum, data)
                 stateSequenceNum += 1
                 if len(self.UDPdroneObjectList) != 0:
-                    for i in range (len(self.UDPdroneObjectList)):
+                    for i in range(len(self.UDPdroneObjectList)):
                         if self.UDPdroneObjectList[i].getID() == str(drone[0]):
-                            self.UDPdroneObjectList[-1].setYaw(self.data_parser(data.decode(encoding="utf-8"))
-                    )
+                            self.UDPdroneObjectList[-1].setYaw(
+                                self.data_parser(data.decode(encoding="utf-8"))
+                            )
                 self.lock.release()
         state_sock.close()
         print("Stopped listening for state")
@@ -116,40 +119,38 @@ class RbClientUDP(Client):
         print("Stopped listening for stream")
 
     def run(self, packet):
-        if self.runCounter == 0:
+        print("Før first run")
+        if self.firstRun:
+            print("Laver threads")
             state_thread = Thread(target=self.listener_state)
             stream_thread = Thread(target=self.listener_stream)
 
+            print("Starter threads")
             state_thread.start()
             stream_thread.start()
+            self.firstRun = False
 
-            state_thread.join()
-            stream_thread.join()
-        else:
+        print("Før type check")
+        if packet is not None:
             if packet.ptype == 0:
-                packet.dump()
-                droneIP = self.hotSpotIP+":"+str(packet.identifier)
-                print('The packet data: {0} is sent to: {1}'.format(packet.data, droneIP))
-                if packet.seq == 1:
-                    for i in range (len(self.UDPdroneThreadList)):
-                        if self.UDPdroneObjectList[i].getID() == droneIP:
-                            self.UDPdroneObjectList[i].stop()
-                if packet.seq > self.seq_dic["state"]:
-                    self.seq_dic["state"] = packet.seq
-                
-                    #for i in range (len(self.UDPdroneObjectList)):
-                    
-                    
-                    for i in range (len(self.UDPdroneThreadList)):
-                        if self.UDPdroneObjectList[i].getID() == droneIP:
-                            self.UDPdroneObjectList[i].uplink(str(packet.data))
-                
+                droneIP = self.hotSpotIP + "." + str(packet.identifier)
+                for x in self.UDPdroneObjectList:
+                    if x.getID() == droneIP:
+                        print("Found target drone")
+                        packet.dump()
+                        if packet.seq > x.cmd_seq:
+                            x.cmd_seq = packet.seq
+                            if x.threadRunning:
+                                x.stop()
+                                x.threadRunning = False
+
+                            x.uplink(packet.data.decode("utf-8"))
 
 
 class RbClient(Client):
     def __init__(self, udp_client):
         self.srv_ip = "192.168.137.1"
-        #self.srv_ip = "127.0.0.1"
+        # self.srv_ip = "127.0.0.1"
         super().__init__(
             self.srv_ip,
             name="Relaybox",
@@ -162,7 +163,7 @@ class RbClient(Client):
         self.response_arr = []
         self.lock = Lock()
         self.activeDroneList = []
-        self.drone_ip_range = [179, 194]
+        self.drone_ip_range = [20, 25]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
         self.TCPdroneObjectList = []
         self.threadCounter = 0
@@ -190,6 +191,7 @@ class RbClient(Client):
             pass
         if cmd == "QOS":
             pass
+
     def splitDroneCMD(self, droneCMD):
         droneCMDlist = droneCMD.split("|")
         return droneCMDlist
@@ -206,7 +208,7 @@ class RbClient(Client):
         """
         droneCMDlist = droneCMD.split(";")
         droneCMDlist.pop(0)
-        cmd_str = ';'.join(['{}'.format(x) for x in droneCMDlist])
+        cmd_str = ";".join(["{}".format(x) for x in droneCMDlist])
         cmd_str = cmd_str
 
         return cmd_str
@@ -227,7 +229,10 @@ class RbClient(Client):
             elif packet.p_type == 2:
                 # Drone cmd code here
                 droneData = self.DroneCheck.activeDronePacketUpdate(
-                    self.activeDroneList, "airborne", self.rb_placement[0], self.rb_placement[1]
+                    self.activeDroneList,
+                    "airborne",
+                    self.rb_placement[0],
+                    self.rb_placement[1],
                 )
                 print("Ved skift fra active til airborne {}".format(droneData))
                 self.send_message(
@@ -246,28 +251,37 @@ class RbClient(Client):
         # Husk at når der skal sendes data fra drone til dms, skal dataen wrappes
         # i en udp pakke, der skal være en sequence generator hver gang man modtager en pakke.
         if type(self.state) is Airborne:
-             # Used to generate a port number for drone connection
+            # Used to generate a port number for drone connection
             cmd_str_list = self.splitDroneCMD(packet.p_data)
-            for i in range (len(cmd_str_list)):
+            for i in range(len(cmd_str_list)):
                 self.droneIP.append(self.data_parser_droneID(cmd_str_list[i]))
                 self.cmd_str.append(self.data_parser_droneCMD(cmd_str_list[i]))
                 SplitIP = str(self.droneIP[i]).split(".")
                 LastIP = int(SplitIP[-1])
-                self.rb_port.append(9000+LastIP)
+                self.rb_port.append(9000 + LastIP)
                 drone_port = 8889
                 print(self.droneIP[i])
                 print(self.rb_port[i])
                 print(self.cmd_str[i])
-                self.TCPdroneObjectList.append(Drone(str(self.droneIP[i]), drone_port, self.rb_port[i], self.cmd_str[i]))
+                self.TCPdroneObjectList.append(
+                    Drone(
+                        str(self.droneIP[i]),
+                        drone_port,
+                        self.rb_port[i],
+                        self.cmd_str[i],
+                    )
+                )
 
-
-            for i in range (len(self.TCPdroneObjectList)):
+            for i in range(len(self.TCPdroneObjectList)):
                 self.TCPdroneObjectList[i].start()
 
             self.other_client.droneObjectSetter(self.TCPdroneObjectList)
-            
+
             droneData = self.DroneCheck.activeDronePacketUpdate(
-                self.activeDroneList, "active", self.rb_placement[0], self.rb_placement[1]
+                self.activeDroneList,
+                "active",
+                self.rb_placement[0],
+                self.rb_placement[1],
             )
             print("Ved skift fra airborne til active {}".format(droneData))
             """
@@ -291,7 +305,10 @@ class RbClient(Client):
                         + "\n"
                     )
                     droneData = self.DroneCheck.activeDronePacketAdd(
-                        self.activeDroneList, "active", self.rb_placement[0], self.rb_placement[1]
+                        self.activeDroneList,
+                        "active",
+                        self.rb_placement[0],
+                        self.rb_placement[1],
                     )
                     print(
                         "Ved skift fra inactive til active {}".format(
@@ -322,7 +339,6 @@ if __name__ == "__main__":
 
     udp_client_thread.start()
     tcp_client_thread.start()
-    
 
     tcp_client_thread.join()
     udp_client_thread.join()

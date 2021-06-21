@@ -318,10 +318,11 @@ class Router:
         self.log_info("Updating lookup table")
         self.lock.acquire()
         for x in self.clientlist:
-            self.dest_table[x.client_name] = {
-                "address": x.client_addr[0],
-                "handler": x,
-            }
+            if x.client_name not in self.dest_table:
+                self.dest_table[x.client_name] = {
+                    "address": x.client_addr[0],
+                    "handler": x,
+                }
         log_string = ""
         for x in self.dest_table:
             log_string += "\n=============================================\n"
@@ -332,10 +333,11 @@ class Router:
                 + f"{self.dest_table[x]['handler'].thread_id}\n"
             )
             if "udp_port" in self.dest_table[x]:
-                log_string += f"\t\t\tupd_port: {self.dest_table[x]['udp_port']}"
+                log_string += f"\t\t\tudp_port: {self.dest_table[x]['udp_port']}"
 
             log_string += "\n=============================================\n"
         self.log_info(log_string)
+        print(log_string)
         self.lock.release()
 
     def log_info(self, msg: str):
@@ -367,6 +369,21 @@ class Router:
     def add_udp_info(self, name, udp_port: int):
         self.lock.acquire()
         self.dest_table[name]["udp_port"] = udp_port
+        log_string = ""
+        for x in self.dest_table:
+            log_string += "\n=============================================\n"
+            log_string += f"\t\t\tClient: {x}\n"
+            log_string += f"\t\t\tAddress: {self.dest_table[x]['address']}\n"
+            log_string += (
+                "\t\t\tThread-ID:"
+                + f"{self.dest_table[x]['handler'].thread_id}\n"
+            )
+            if "udp_port" in self.dest_table[x]:
+                log_string += f"\t\t\tudp_port: {self.dest_table[x]['udp_port']}"
+
+            log_string += "\n=============================================\n"
+
+        print(log_string)
         self.lock.release()
 
     def find_dest(self):
@@ -398,10 +415,14 @@ class Router:
                     )
 
             self.lock.release()
-        elif packet.ptype == 0:
+        if packet.ptype == 0:
             self.lock.acquire()
             for x in self.dest_table:
                 if "Relaybox" in x and "udp_port" in self.dest_table[x]:
+                    self.log_info(
+                        f"Found {x} with port {self.dest_table[x]['udp_port']}"
+                    )
+                    packet.dump(to_stdout=True)
                     self.udp_handler.send(
                         packet,
                         (

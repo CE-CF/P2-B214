@@ -24,6 +24,8 @@ class Drone(threading.Thread):
             self.cmdstr = cmdstr
             self.stopVariable = True
             self.keepThreadRunning = True
+            self.threadRunning = True
+            self.cmd_seq = 0
         else:
             print("Drone object was not created, port was not open")
 
@@ -54,6 +56,7 @@ class Drone(threading.Thread):
         # a_socket.shutdown(socket.SHUT_RDWR)
 
         return output
+
     def getID(self):
         return self.droneID
 
@@ -123,6 +126,7 @@ class Drone(threading.Thread):
                 self.sock.shutdown(1)
                 pass
             # cmd = "0.0.0.0: " + cmd
+            print("Uplinking cmd: " + cmd)
             cmd = cmd.encode(encoding="utf-8")
             self.sock.sendto(cmd, self.drone)
         except KeyboardInterrupt:
@@ -214,8 +218,8 @@ class Drone(threading.Thread):
             time.sleep(2)
             self.uplink("rc 0 0 0 0")
             time.sleep(2)
-            self.uplink("takeoff")
-            time.sleep(5)
+            # self.uplink("takeoff")
+            # time.sleep(5)
 
         elif cmd == "rc0":
             print(cmd)
@@ -300,7 +304,9 @@ class Drone(threading.Thread):
                     if len(arr) == 1:
                         self.base_commands(arr[0])
                     elif len(arr) == 2:
-                        if arr[0] == "yaw":  # downlink() needs to parse self.yaw
+                        if (
+                            arr[0] == "yaw"
+                        ):  # downlink() needs to parse self.yaw
                             return arr[1]
                         self.param_commands(arr[0], arr[1])
                     elif len(arr) == 3:
@@ -310,10 +316,7 @@ class Drone(threading.Thread):
                     element = ""
 
     def run(self):
-        
         self.parser(self.cmdstr)
         while True:
             if not self.keepThreadRunning:
                 break
-
-
