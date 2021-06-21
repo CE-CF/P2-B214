@@ -415,14 +415,14 @@ class Router:
                     )
 
             self.lock.release()
-        elif packet.ptype == 0:
+        if packet.ptype == 0:
             self.lock.acquire()
             for x in self.dest_table:
                 if "Relaybox" in x and "udp_port" in self.dest_table[x]:
                     self.log_info(
                         f"Found {x} with port {self.dest_table[x]['udp_port']}"
                     )
-                    packet.dump(to_stdout=False)
+                    packet.dump(to_stdout=True)
                     self.udp_handler.send(
                         packet,
                         (
