@@ -1,4 +1,5 @@
 import threading
+import time
 import traceback
 
 import pygame
@@ -26,9 +27,10 @@ class DroneHandler:
         self.Frame = BackgroundFrameRead(BFR_IP, self.ID)
         print(f"BFR Started: {self.ID}")
 
-    def __init__(self, Sender,  Tello_ID = 0):
+    def __init__(self, Sender, TCP,  Tello_ID = 0):
         self.ID = Tello_ID
         self.Sender = Sender
+        self.TCP = TCP
         self.Command_Counter = 1
         self.Controllable = False
         self.ControllerMode = False
@@ -63,6 +65,7 @@ class DroneHandler:
                             self.Sender.send_udp(self.ID, 0, self.Command_Counter, b"land")
                             self.Command_Counter+=1
                         elif CD.get("Button0"):
+                            print("Taking off")
                             self.Sender.send_udp(self.ID, 0, self.Command_Counter, b"takeoff")
                             self.Command_Counter+=1
                         # The circle button switches RC_Mode on or off
@@ -109,6 +112,7 @@ class DroneHandler:
                             self.Sender.send_udp(self.ID, 0, self.Command_Counter, b"land")
                             self.Command_Counter+=1
                         elif KeyList[self.Control_Dict.get("takeoff")]:
+                            print("Taking off")
                             self.Sender.send_udp(self.ID, 0, self.Command_Counter, b"takeoff")
                             self.Command_Counter+=1
                         elif KeyList[self.Control_Dict.get("rc")]:
@@ -167,6 +171,10 @@ class DroneHandler:
         except AttributeError:
             return 0
 
+    def SetBattery(self, Val):
+        print(f'Setting battery value to: {Val}')
+        self.Battery = Val
+
     # Give the battery status from the drone
     def GetBattery(self):
     #    return self.Drone.get_battery()
@@ -194,6 +202,7 @@ class DroneHandler:
 
     # Stop the drone
     def Stop(self):
+
         try:
             self.Frame.stop()
         except AttributeError:

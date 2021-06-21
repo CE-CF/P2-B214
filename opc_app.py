@@ -1,3 +1,4 @@
+import time
 import traceback, threading
 
 from hive.communication import CONN_TYPE_TCP, CONN_TYPE_UDP
@@ -9,6 +10,7 @@ from hive.GUI_Camera_Module.GameScreen import Game
 from hive.communication.packet import HiveU
 
 Handlers = []
+BatUpdate = True
 
 class OpcClientTCP(Client):
     def __init__(self, OPC_UDP):
@@ -36,6 +38,19 @@ class OpcClientTCP(Client):
             MainFrame.punkt(lat, lng)
         if cmd == "GET_DRONE":
             print("I RECEIVED SOME DRONES")
+        if cmd == "GET_BAT":
+            #print(f"Ting get to battery: {len(Handlers)}")
+            for i in range(len(Handlers)):
+                try:
+                    #print(f'Going through handler: {i}')
+                    ID = str(Handlers[i].ID)
+                    #ID = "192.168.137." + ID
+                    Bat = int(cmd_dict[ID])
+                    #print(f'Battery for Hanlder {i} is: {Bat}')
+                    Handlers[i].SetBattery(Bat)
+                except KeyError:
+                    Handlers[i].SetBattery(0)
+
 
 
     def run(self, packet: HiveU):
@@ -129,8 +144,14 @@ class OpcClientUDP(Client):
 
         return d["bat"]
 
+def UpdateBat(Conn):
+    while BatUpdate:
+        Conn.send_message(3, "192.168.137.1", "CMD:GET_BAT;")
+        time.sleep(5)
+
 
 def main():
+    global Handlers
     gui = MainFrame()
     OPC_UDP = OpcClientUDP()
     UDP_Start_Thread = threading.Thread(target=OPC_UDP.start)
@@ -138,6 +159,7 @@ def main():
     OPC_TCP = OpcClientTCP(OPC_UDP)
     tcp_start_thread = threading.Thread(target=OPC_TCP.start)
     tcp_start_thread.start()
+    #time.sleep(5)
     gui.client = OPC_TCP
     gui.mainloop()
     gui.client.send_message(3, "192.168.137.1", "CMD:GET_LOC;")
@@ -145,10 +167,16 @@ def main():
     OPC_TCP.send_message(3,"192.168.137.1", "CMD:GET_DRONE;")
     #UDP_Start_Thread = threading.Thread(target=OPC_UDP.start)
     #UDP_Start_Thread.start()
-    Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID =127), DH.DroneHandler(OPC_UDP, Tello_ID =160)]
+    Handlers = [DH.DroneHandler(OPC_UDP, OPC_TCP, Tello_ID =21), DH.DroneHandler(OPC_UDP, OPC_TCP, Tello_ID =24),
+                DH.DroneHandler(OPC_UDP, OPC_TCP, Tello_ID =25), DH.DroneHandler(OPC_UDP, OPC_TCP, Tello_ID =124)]
+    #Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID =21), DH.DroneHandler(OPC_UDP, Tello_ID =24)]
     #Handlers = [DH.DroneHandler(OPC_UDP, Tello_ID=36)]
+    BatThread = threading.Thread(target=UpdateBat, args=(OPC_TCP,))
+    BatThread.start()
     MainGame = Game(Handlers)
     MainGame.Game_Loop()
+    BatUpdate = False
+    BatThread.join()
 
 
 
