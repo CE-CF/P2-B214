@@ -165,11 +165,11 @@ class DmsServer(Server):
                 if (self.forsøg == 0):
 
                     dest1 = "192.168.137.1" #'192.168.137.171'
-                    drone1 = "192.168.137.180"
-                    drone2 = "192.168.137.193"
+                    drone1 = "192.168.137.21"
+                    drone2 = "192.168.137.24"
                     #cmd1 = "init;stop;wait:100;stop;land;"
-                    cmd1 = "init;stop;wait:180;stop;land;"
-                    cmd2 = "init;stop;wait:180;stop;land;"
+                    cmd1 = "init;stop;wait:60;stop;land;"
+                    cmd2 = "init;stop;wait:60;stop;land;"
                     data = drone1+";"+cmd1+"|"+drone2+";"+cmd2
                     message1 = HiveT("drone", dest1, data)
                     message1 = HiveT.encode_packet(message1)
@@ -177,12 +177,6 @@ class DmsServer(Server):
                     self.forsøg += 1
                     conn.send(message1)
 
-
-
-
-                    
-
-                
             else:
                 # Wrong packet type
                 pass

@@ -29,6 +29,8 @@ class RbClientUDP(Client):
         self.runCounter = 0
         self.seq_dic = {"cmd": 0, "state": 0, "video": 0}
         self.hotSpotIP = "192.168.137"
+        self.threadRunning = True
+        self.firstRun = True
 
     def droneObjectSetter(self, droneObjectList):
         self.UDPdroneObjectList = droneObjectList
@@ -116,7 +118,7 @@ class RbClientUDP(Client):
         print("Stopped listening for stream")
 
     def run(self, packet):
-        if self.runCounter == 0:
+        if self.firstRun:
             state_thread = Thread(target=self.listener_state)
             stream_thread = Thread(target=self.listener_stream)
 
@@ -125,24 +127,25 @@ class RbClientUDP(Client):
 
             state_thread.join()
             stream_thread.join()
-        else:
-            if packet.ptype == 0:
-                packet.dump()
-                droneIP = self.hotSpotIP+":"+str(packet.identifier)
-                print('The packet data: {0} is sent to: {1}'.format(packet.data, droneIP))
-                if packet.seq == 1:
-                    for i in range (len(self.UDPdroneThreadList)):
-                        if self.UDPdroneObjectList[i].getID() == droneIP:
-                            self.UDPdroneObjectList[i].stop()
-                if packet.seq > self.seq_dic["state"]:
-                    self.seq_dic["state"] = packet.seq
-                
-                    #for i in range (len(self.UDPdroneObjectList)):
+            self.firstRun = False 
+
+        if packet.ptype == 0:
+            packet.dump()
+            droneIP = self.hotSpotIP+":"+str(packet.identifier)
+            print('The packet data: {0} is sent to: {1}'.format(packet.data, droneIP))
+            if self.threadRunning:
+                for i in range (len(self.UDPdroneThreadList)):
+                    if self.UDPdroneObjectList[i].getID() == droneIP:
+                        self.UDPdroneObjectList[i].stop()
+                self.threadRunning = False
+            if packet.seq > self.seq_dic["state"]:
+                self.seq_dic["state"] = packet.seq
+            
+                #for i in range (len(self.UDPdroneObjectList)):
                     
-                    
-                    for i in range (len(self.UDPdroneThreadList)):
-                        if self.UDPdroneObjectList[i].getID() == droneIP:
-                            self.UDPdroneObjectList[i].uplink(str(packet.data))
+                for i in range (len(self.UDPdroneThreadList)):
+                    if self.UDPdroneObjectList[i].getID() == droneIP:
+                        self.UDPdroneObjectList[i].uplink(str(packet.data))
                 
 
 
@@ -162,7 +165,7 @@ class RbClient(Client):
         self.response_arr = []
         self.lock = Lock()
         self.activeDroneList = []
-        self.drone_ip_range = [179, 194]
+        self.drone_ip_range = [20, 25   ]
         self.DroneCheck = DroneChecker(self.hotSpotIP)
         self.TCPdroneObjectList = []
         self.threadCounter = 0
