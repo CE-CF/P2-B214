@@ -168,8 +168,8 @@ class DmsServer(Server):
                     drone1 = "192.168.137.21"
                     drone2 = "192.168.137.24"
                     #cmd1 = "init;stop;wait:100;stop;land;"
-                    cmd1 = "init;stop;wait:60;stop;land;"
-                    cmd2 = "init;stop;wait:60;stop;land;"
+                    cmd1 = "init;stop;wait:120;stop;land;"
+                    cmd2 = "init;stop;wait:120;stop;land;"
                     data = drone1+";"+cmd1+"|"+drone2+";"+cmd2
                     message1 = HiveT("drone", dest1, data)
                     message1 = HiveT.encode_packet(message1)
