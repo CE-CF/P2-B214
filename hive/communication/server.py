@@ -333,7 +333,9 @@ class Router:
                 + f"{self.dest_table[x]['handler'].thread_id}\n"
             )
             if "udp_port" in self.dest_table[x]:
-                log_string += f"\t\t\tudp_port: {self.dest_table[x]['udp_port']}"
+                log_string += (
+                    f"\t\t\tudp_port: {self.dest_table[x]['udp_port']}"
+                )
 
             log_string += "\n=============================================\n"
         self.log_info(log_string)
@@ -379,7 +381,9 @@ class Router:
                 + f"{self.dest_table[x]['handler'].thread_id}\n"
             )
             if "udp_port" in self.dest_table[x]:
-                log_string += f"\t\t\tudp_port: {self.dest_table[x]['udp_port']}"
+                log_string += (
+                    f"\t\t\tudp_port: {self.dest_table[x]['udp_port']}"
+                )
 
             log_string += "\n=============================================\n"
 
@@ -413,13 +417,16 @@ class Router:
                             self.dest_table[x]["udp_port"],
                         ),
                     )
-
             self.lock.release()
-        elif packet.ptype == 0:
+
+        if packet.ptype == 0:
             self.lock.acquire()
             for x in self.dest_table:
                 if "Relaybox" in x and "udp_port" in self.dest_table[x]:
                     self.log_info(
+                        f"Found {x} with port {self.dest_table[x]['udp_port']}"
+                    )
+                    print(
                         f"Found {x} with port {self.dest_table[x]['udp_port']}"
                     )
                     packet.dump(to_stdout=False)
