@@ -22,7 +22,7 @@ class DroneChecker:
             for n in range(rangeFrom, rangeTo):
                 ip = "{0}.{1}".format(self.host, n)
                 result = subprocess.Popen(
-                    ["ping", "-n", "1", "-w", "100", ip],
+                    ["ping", "-c", "1", "-w", "100", ip],
                     stdout=limbo,
                     stderr=limbo,
                 ).wait()
@@ -34,7 +34,9 @@ class DroneChecker:
 
         return alive
 
-    def activeDronePacketAdd(self, ActiveDrones, state=None, lat =None, long = None):
+    def activeDronePacketAdd(
+        self, ActiveDrones, state=None, lat=None, long=None
+    ):
         droneName = "RelayBoxDrone"
         outputList = []
         outputString = ""
@@ -44,12 +46,16 @@ class DroneChecker:
                 "{0}{1}:{2}".format(droneName, (x + 1), ActiveDrones[x])
             )
 
-        CMDSTATE = "CMD:ADD_DRONE;STATE:{0};LAT:{1};LONG:{2};".format(state, lat, long)
+        CMDSTATE = "CMD:ADD_DRONE;STATE:{0};LAT:{1};LONG:{2};".format(
+            state, lat, long
+        )
         outputString = CMDSTATE + (";".join(outputList)) + ";"
 
         return outputString
 
-    def activeDronePacketUpdate(self, ActiveDrones, state=None, lat =None, long = None):
+    def activeDronePacketUpdate(
+        self, ActiveDrones, state=None, lat=None, long=None
+    ):
         droneName = "RelayBoxDrone"
         outputList = []
         outputString = ""
@@ -59,7 +65,9 @@ class DroneChecker:
                 "{0}{1}:{2}".format(droneName, (x + 1), ActiveDrones[x])
             )
 
-        CMDSTATE = "CMD:UPDATE_DRONE;STATE:{0};LAT:{1};LONG:{2};".format(state, lat, long)
+        CMDSTATE = "CMD:UPDATE_DRONE;STATE:{0};LAT:{1};LONG:{2};".format(
+            state, lat, long
+        )
         outputString = CMDSTATE + (";".join(outputList)) + ";"
 
         return outputString
