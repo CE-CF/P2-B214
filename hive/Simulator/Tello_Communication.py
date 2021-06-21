@@ -144,10 +144,12 @@ class Tello_Communication(threading.Thread):
                     return "error"
         elif Command_Array[0] == "ccw":
             if Array_Len != 2:
+                print("\t\t\tAREADAD")
                 return "error"
             else:
                 try:
                     Rotation = float(Command_Array[1])
+                    print(f'\t\t\t\t Rotation is: {Rotation}')
                     Result = self.Tello[Drone_ID].Rotate_Yaw(-Rotation)
                     return (Result*"ok" + (not Result)*"error")
                 except(TypeError or ValueError):
@@ -296,8 +298,8 @@ class Tello_Communication(threading.Thread):
         Command_Array = Command.split(": ")
         Result = None
         IP_Found = False
-        #print(f'\tCommand Array is: {Command_Array}')
-        #print(f'\tCommand Array 0 is: {Command_Array[0]}')
+        print(f'\tCommand Array is: {Command_Array}')
+        print(f'\tCommand Array 0 is: {Command_Array[0]}')
         # Goes through the list of Tello drones and checks to see if the IP of one of them matches the IP received
         for i in range(len(self.Tello)):
             #print(f'\tTello IP is : {self.Tello[i].IP_Address}')
@@ -308,7 +310,7 @@ class Tello_Communication(threading.Thread):
                 break
             else:
                 continue
-        #print(f'\t\tResult is: {Result}')
+        print(f'\t\tResult is: {Result}')
         if not IP_Found:
             Result = "error ip not found"
         # If a command command has been received. Then set the Tello state IP to the IP of the client that sent it

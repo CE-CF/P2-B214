@@ -239,7 +239,7 @@ class Game():
                 #print(self.JoysticksInput[0])
                 #print("Button 0 is pressed")
             self.Screen.fill((255,255,255))             # Fill screen with white to refresh
-            Camera.Offset_Handler(30/FPS_For_Speed)
+            Camera.Offset_Handler(200/FPS_For_Speed)
             #Game.MainCamera.Movement_Handler(1)
             #self.Drones[0].Movement_Handler(1)
             #self.Drones[1].Movement_Handler(1)

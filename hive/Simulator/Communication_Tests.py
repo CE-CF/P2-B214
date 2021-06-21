@@ -6,6 +6,7 @@ from threading import Thread
 Run_Receive = True
 
 Server_IP = "127.0.0.1"
+#Server_IP = "192.168.137.1"
 #SERVER_IP = "192.168.56.1"
 Server_Port = 8889
 #Bind_Port = 9999

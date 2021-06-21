@@ -105,7 +105,7 @@ class TelloDrone():
         self.Pos_z = 0
         self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
         self.Landed = True
-        sleep(0.1)
+        #sleep(0.1)
         self.Emergency_Stop = False
         self.RC_Stop = False
 
@@ -116,7 +116,7 @@ class TelloDrone():
         self.RC_Stop = True
         self.Emergency_Stop = True
         self.Speed_x, self.Speed_y, self.Speed_z = [0,0,0]
-        sleep(0.1)
+        #sleep(0.1)
         self.Emergency_Stop = False
         self.RC_Stop = False
     """
@@ -245,6 +245,8 @@ class TelloDrone():
 
     # Used by cw and ccw comands. Arguments(Degrees to be rotate clockwise, Speed multiplier)
     def Rotate_Yaw(self, Rotation, Speed = 1):
+        #print(f'Executing command: {self.Executing_Command}')
+        #print(f'Landed: {self.Landed}')
         if((not (1<=abs(Rotation)<=360)) or (self.Executing_Command or self.Landed)):
             print("Rotation failed")
             return False
@@ -257,8 +259,10 @@ class TelloDrone():
                     self.Executing_Command = False
                     self.RC_Stop = False
                     return False
-                self.Yaw += Speed*self.Current_Yaw_Speed*(1-2*(Rotation<0))
+                self.Yaw += Speed*self.Max_Yaw_Speed*(1-2*(Rotation<0))
+                #print(f'Yaw is: {self.Yaw}')
                 #sleep(1/GC.FPS)
+            #print("Exited while loop")
             self.Yaw = (Init_Yaw + Rotation) % 360
             #Init_Image = self.Image
             #Init_Rect = self.Rect
@@ -268,6 +272,7 @@ class TelloDrone():
             #self.Rect = Rot_Rect
             self.Executing_Command = False
             self.RC_Stop = False
+            print(f'Yaw is: {self.Yaw}')
             return True
 
     def Curveto(self, Amount_x, Amount_y, Amount_z, Speed_Ratio):
